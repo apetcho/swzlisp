@@ -133,7 +133,7 @@ void rbuffer_init(RingBuffer *rbuffer, uint32_t dsize, int init){
 
 // -*-
 void rbuffer_destroy(RingBuffer *rbuffer){
-    //! @todo
+    free(rbuffer->buffer);
 }
 
 // -*-
