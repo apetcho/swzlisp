@@ -228,6 +228,21 @@ Iterator iterator_single_value(void *value){
     return iter;
 }
 
+// -*-
+static bool _cc_has_next(Iterator *iter){
+    Iterator *iterator = iter->data;
+    intptr_t max_iterators = (intptr_t)iter->statePtr;
+    bool hasNext;
+    while(iter->stateIdx < max_iterators){
+        hasNext = iterator[iter->stateIdx].has_next(&iterator[iter->stateIdx]);
+        if(hasNext){
+            return true;
+        }
+        iterator[iterator->stateIdx].close(&iterator[iter->stateIdx]);
+        iter->stateIdx++;
+    }
+    return false;
+};
 
 // -*-
 Iterator iterator_empty(){
