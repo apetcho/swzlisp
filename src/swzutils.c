@@ -556,8 +556,7 @@ int htable_remove(HTable *htable, void *key){
 
 // -*-
 int htable_remove_ptr(HTable *htable, void *key){
-    //! @todo
-    return false;
+    return htable_remove(htable, key);
 }
 
 // -*-
