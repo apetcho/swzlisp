@@ -43,9 +43,14 @@ void cbuffer_destroy(CharBuffer* cbuffer){
     cbuffer->buffer = NULL;
 }
 
-// -*-
+/**
+ * @brief Deallocate character buffer and its wrapper structure.
+ * 
+ * @param cbuffer 
+ */
 void cbuffer_delete(CharBuffer* cbuffer){
-    //! @todo
+    cbuffer_destroy(cbuffer);
+    free(cbuffer);
 }
 
 // -*-
