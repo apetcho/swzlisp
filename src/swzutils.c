@@ -101,7 +101,10 @@ void cbuffer_clear(CharBuffer* cbuffer){
 
 // -*-
 void cbuffer_printf(CharBuffer* cbuffer, const char* fmt, ...){
-    //! @todo
+    va_list args;
+    va_start(args, fmt);
+    cbuffer_vprintf(cbuffer, fmt, args);
+    va_end(args);
 }
 
 // -*-
