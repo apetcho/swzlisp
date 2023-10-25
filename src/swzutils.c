@@ -597,8 +597,7 @@ void* htable_get_key_ptr(const HTable *htable, void *key){
 
 // -*-
 bool htable_contains(const HTable *htable, void *key){
-    //! @todo
-    return false;
+    return htable_get(htable, key) != NULL;
 }
 
 // -*-
