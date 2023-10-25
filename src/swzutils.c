@@ -33,9 +33,14 @@ CharBuffer* cbuffer_create(uint32_t capacity){
     return cbuffer;
 }
 
-// -*-
+/**
+ * @brief Deallocate CharBuffer
+ * 
+ * @param cbuffer 
+ */
 void cbuffer_destroy(CharBuffer* cbuffer){
-    //! @todo
+    free(cbuffer->buffer);
+    cbuffer->buffer = NULL;
 }
 
 // -*-
