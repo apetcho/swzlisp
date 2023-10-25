@@ -124,7 +124,11 @@ void cbuffer_vprintf(CharBuffer* cbuffer, const char* fmt, va_list args){
 // -*------------------------------------------------------------*-
 // -*-
 void rbuffer_init(RingBuffer *rbuffer, uint32_t dsize, int init){
-    //! @todo
+    rbuffer->dsize = dsize;
+    rbuffer->nalloc = init;
+    rbuffer->start = 0;
+    rbuffer->count = 0;
+    rbuffer->buffer = calloc(dsize, init);
 }
 
 // -*-
