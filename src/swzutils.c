@@ -507,7 +507,7 @@ HTable* htable_create(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t
 
 // -*-
 void htable_destroy(HTable *htable){
-    //! @todo
+    free(htable->table);
 }
 
 // -*-
