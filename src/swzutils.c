@@ -561,8 +561,11 @@ int htable_remove_ptr(HTable *htable, void *key){
 
 // -*-
 void* htable_get(const HTable *htable, void *key){
-    //! @todo
-    return NULL;
+    uint64_t index = _htable_find_retrieve(htable, key);
+    if(SWZ_MARK_AT(htable, index) != SWZ_HTABLE_FULL){
+        return NULL;
+    }
+    return SWZ_VALUE_PTR(htable, index);
 }
 
 // -*-
