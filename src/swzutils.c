@@ -106,7 +106,14 @@ void cbuffer_printf(CharBuffer* cbuffer, const char* fmt, ...){
 
 // -*-
 void cbuffer_vprintf(CharBuffer* cbuffer, const char* fmt, va_list args){
-    //! @todo
+    va_list argp;
+    int len;
+    va_copy(argp, args);
+
+    len = vsnprintf(NULL, 0, fmt, args);
+    _cbuffer_expand_to_fit(cbuffer, cbuffer->len + len + 1);
+    vsnprintf(cbuffer->buffer + cbuffer->len, len + 1, fmt, argp);
+    va_end(argp);
 }
 
 // -*------------------------------------------------------------*-
