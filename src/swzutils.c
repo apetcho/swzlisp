@@ -172,7 +172,9 @@ void rbuffer_push_back(RingBuffer *rbuffer, void *src){
 
 // -*-
 void rbuffer_pop_back(RingBuffer *rbuffer, void *dst){
-    //! @todo
+    int index = (rbuffer->start + rbuffer->count - 1) % rbuffer->nalloc;
+    memcpy(dst, (char *)rbuffer->buffer + index * rbuffer->dsize, rbuffer->dsize);
+    rbuffer->count--;
 }
 
 // -*-
