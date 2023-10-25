@@ -53,6 +53,23 @@ void cbuffer_delete(CharBuffer* cbuffer){
     free(cbuffer);
 }
 
+/**
+ * @brief Resize character buffer to fit a given amount of characters.
+ * 
+ * @param cbuffer 
+ * @param minsize 
+ */
+static void _cbuffer_expand_to_fit(CharBuffer *cbuffer, uint32_t minsize){
+    uint32_t capacity = cbuffer->capacity;
+    while(capacity < minsize){
+        capacity *= 2;
+    }
+    if(capacity != cbuffer->capacity){
+        cbuffer->buffer = realloc(cbuffer->buffer, sizeof(char) * capacity);
+        cbuffer->capacity = capacity;
+    }
+}
+
 // -*-
 void cbuffer_concat(CharBuffer* cbuffer, char *cstr){
     //! @todo
