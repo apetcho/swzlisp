@@ -81,7 +81,10 @@ void cbuffer_concat(CharBuffer* cbuffer, const char *cstr){
 
 // -*-
 void cbuffer_append(CharBuffer* cbuffer, char c){
-    //! @todo
+    _cbuffer_expand_to_fit(cbuffer, cbuffer->len + 2);
+    cbuffer->buffer[cbuffer->len] = c;
+    cbuffer->len++;
+    cbuffer->buffer[cbuffer->len] = '\0';
 }
 
 // -*-
