@@ -153,7 +153,11 @@ void rbuffer_push_front(RingBuffer *rbuffer, void *src){
 
 // -*-
 void rbuffer_pop_front(RingBuffer *rbuffer, void *dst){
-    //! @todo
+    int start;
+    start = (rbuffer->start + 1) % rbuffer->nalloc;
+    memcpy(dst, (char *)rbuffer->buffer + rbuffer->start * rbuffer->dsize, rbuffer->dsize);
+    rbuffer->start = start;
+    rbuffer->count--;
 }
 
 // -*-
