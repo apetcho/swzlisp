@@ -1,4 +1,5 @@
 #include "swzlisp.h"
+#include<inttypes.h>
 #include<stdlib.h>
 #include<string.h>
 #include<assert.h>
@@ -665,6 +666,43 @@ bool htable_float_equal(const void *lhs, const void *rhs){
     double xymax = (x > y) ? x : y;
     bool result = (diff <= xymax*eps) ? true: false;
     return result;
+}
+
+
+// -*-
+static void _htable_print(FILE* stream, const HTable *htable, PrintFn keyprintfn, PrintFn valprintfn, int fullmode){
+    uint64_t i;
+    const char *marks[] = {
+        "EMPTY",
+        " FULL",
+        "GRAVE"
+    };
+    printf(
+        "table size %" PRIu32 ", allocated %" PRIu32"\n",
+        htable->len, htable->allocated
+    );
+    for (i = 0; i < htable->allocated; i++){
+        int8_t mark = SWZ_MARK_AT(htable, i);
+        if(fullmode || mark==SWZ_HTABLE_FULL){
+            printf(
+                "[%04llu|%p|%p|%s]:\n", i,
+                SWZ_KEY_PTR(htable, i), SWZ_VALUE_PTR(htable, i),
+                marks[mark]
+            );
+            if(mark == SWZ_HTABLE_FULL){
+                printf("  key: ");
+                if (keyprintfn)
+                {
+                    keyprintfn(stream, SWZ_KEY_PTR(htable, i));
+                }
+                printf("\n  value: ");
+                if(valprintfn){
+                    valprintfn(stream, SWZ_VALUE_PTR(htable, i));
+                }
+                printf("\n");
+            }
+        }
+    }
 }
 
 // -*-

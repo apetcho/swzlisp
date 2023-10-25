@@ -110,6 +110,7 @@ uint32_t htable_string_hash(void *data);
 bool htable_string_equal(const void *lhs, const void *rhs);
 bool htable_int_equal(const void *lhs, const void *rhs);
 //! @note: extension to floating-point numbers
+
 bool htable_float_equal(const void *lhs, const void *rhs);
 Iterator htable_iterator_keys(HTable *htable);
 Iterator htable_iterator_keys_ptr(HTable *htable);
