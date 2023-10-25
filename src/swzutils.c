@@ -3,6 +3,8 @@
 #include<string.h>
 #include<assert.h>
 #include<limits.h>
+#include<math.h>
+#include<float.h>
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
@@ -627,7 +629,7 @@ bool htable_string_equal(const void *lhs, const void *rhs){
     const char *x = *(char **)lhs;
     const char *y = *(char **)rhs;
 
-    return strcmp(x, y);
+    return strcmp(x, y) == 0;
 }
 
 // -*-
@@ -653,8 +655,16 @@ bool almostEqual(double x, double y){
 */
 //! @note: extension to floating-point numbers
 bool htable_float_equal(const void *lhs, const void *rhs){
-    //! @todo
-    return false;
+    double x = *(double *)lhs;
+    double y = *(double *)rhs;
+    static double eps = DBL_EPSILON;
+
+    double diff = fabs(x - y);
+    x = fabs(x);
+    y = fabs(y);
+    double xymax = (x > y) ? x : y;
+    bool result = (diff <= xymax*eps) ? true: false;
+    return result;
 }
 
 // -*-
