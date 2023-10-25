@@ -202,7 +202,7 @@ void rbuffer_grow(RingBuffer *rbuffer){
 // -*------------------------------------------------------------*-
 
 void iterator_close_noop(Iterator* iter){
-    //! @todo
+    (void)iter;
 }
 
 // -*-
