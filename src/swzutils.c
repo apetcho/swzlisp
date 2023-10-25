@@ -293,6 +293,12 @@ Iterator iterator_concat3(Iterator a, Iterator b, Iterator c){
 }
 
 // -*-
+static void* _empty_next(Iterator *iter){
+    (void)iter;
+    return NULL;
+}
+
+// -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
     return (Iterator){0};
