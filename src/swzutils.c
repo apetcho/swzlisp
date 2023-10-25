@@ -299,6 +299,12 @@ static void* _empty_next(Iterator *iter){
 }
 
 // -*-
+static bool _empty_has_next(Iterator *iter){
+    (void)iter;
+    return false;
+}
+
+// -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
     return (Iterator){0};
