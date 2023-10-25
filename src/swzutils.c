@@ -162,7 +162,12 @@ void rbuffer_pop_front(RingBuffer *rbuffer, void *dst){
 
 // -*-
 void rbuffer_push_back(RingBuffer *rbuffer, void *src){
-    //! @todo
+    if(rbuffer->count >= rbuffer->nalloc){
+        rbuffer_grow(rbuffer);
+    }
+    int index = (rbuffer->start + rbuffer->count) % rbuffer->nalloc;
+    memcpy((char*)rbuffer->buffer + index * rbuffer->dsize, src, rbuffer->dsize);
+    rbuffer->count++;
 }
 
 // -*-
