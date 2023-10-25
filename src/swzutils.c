@@ -89,7 +89,8 @@ void cbuffer_append(CharBuffer* cbuffer, char c){
 
 // -*-
 void cbuffer_trim(CharBuffer* cbuffer){
-    //! @todo
+    cbuffer->buffer = realloc(cbuffer->buffer, sizeof(char) * cbuffer->len + 1);
+    cbuffer->capacity = cbuffer->len + 1;
 }
 
 // -*-
