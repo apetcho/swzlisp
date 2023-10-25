@@ -458,6 +458,27 @@ static uint32_t _htable_find_retrieve(const HTable *htable, void *key){
     return index;
 }
 
+// -*-
+static void _htable_resize(HTable *htable){
+    void *table;
+    uint64_t index, allocated;
+    table = htable->table;
+    allocated = htable->allocated;
+    htable->len = 0;
+    htable->allocated = _htable_next_size(allocated);
+    htable->table = calloc(htable->allocated, SWZ_ITEMSIZE(htable));
+    for (index = 0; index < allocated; index++){
+        if(SWZ_MARK_AT_BUF(htable, table, index)==SWZ_HTABLE_FULL){
+            htable_insert(
+                htable,
+                SWZ_KEY_PTR_BUF(htable, table, index),
+                SWZ_VALUE_PTR_BUF(htable, table, index)
+            );
+        }
+    }
+    free(table);
+}
+
 // -*- Find the proper index for insertion into the table
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     //! @todo
