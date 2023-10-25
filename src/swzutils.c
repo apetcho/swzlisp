@@ -1,5 +1,6 @@
 #include "swzlisp.h"
 #include<stdlib.h>
+#include<string.h>
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
@@ -71,8 +72,11 @@ static void _cbuffer_expand_to_fit(CharBuffer *cbuffer, uint32_t minsize){
 }
 
 // -*-
-void cbuffer_concat(CharBuffer* cbuffer, char *cstr){
-    //! @todo
+void cbuffer_concat(CharBuffer* cbuffer, const char *cstr){
+    size_t len = strlen(cstr);
+    _cbuffer_expand_to_fit(cbuffer, (cbuffer->len + len + 1));
+    strcpy(cbuffer->buffer + cbuffer->len, cstr);
+    cbuffer->len += len;
 }
 
 // -*-

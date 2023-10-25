@@ -22,7 +22,7 @@ void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity);
 CharBuffer* cbuffer_create(uint32_t capacity);
 void cbuffer_destroy(CharBuffer* cbuffer);
 void cbuffer_delete(CharBuffer* cbuffer);
-void cbuffer_concat(CharBuffer* cbuffer, char *cstr);
+void cbuffer_concat(CharBuffer* cbuffer, const char *cstr);
 void cbuffer_append(CharBuffer* cbuffer, char c);
 void cbuffer_trim(CharBuffer* cbuffer);
 void cbuffer_clear(CharBuffer* cbuffer);
