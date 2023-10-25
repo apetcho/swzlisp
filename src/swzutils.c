@@ -486,7 +486,15 @@ static double _htable_load_factor(HTable *htable){
 
 // -*- Find the proper index for insertion into the table
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
-    //! @todo
+    // - Initialize values
+    htable->len = 0;
+    htable->allocated = SWZ_HTABLE_INITIAL_SIZE;
+    htable->ksize = ksize;
+    htable->vsize = vsize;
+    htable->hashfn = hashfn;
+    htable->equalfn = equalfn;
+    // -*- allocate table
+    htable->table = calloc(SWZ_HTABLE_INITIAL_SIZE, SWZ_ITEMSIZE(htable));
 }
 
 // -*-
