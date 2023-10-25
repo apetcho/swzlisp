@@ -1,11 +1,24 @@
 #include "swzlisp.h"
+#include<stdlib.h>
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
 // -*------------------------------------------------------------*-
-
+/**
+ * @brief Initialize a new character buffer.
+ * 
+ * @param cbuffer  CharBuffer data structure
+ * @param capacity Initial buffer capacity
+ */
 void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity){
-    //! @todo
+    if(!cbuffer){
+        fprintf(stderr, "Invalid character buffer argument.\n");
+        abort();
+    }
+    cbuffer->buffer = calloc(sizeof(char), capacity);
+    cbuffer->buffer[0] = '\0';
+    cbuffer->capacity = capacity;
+    cbuffer->len = 0;
 }
 
 // -*-
