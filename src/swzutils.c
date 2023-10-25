@@ -326,6 +326,13 @@ static void* _array_next(Iterator *iter){
 }
 
 // -*-
+static void _array_close(Iterator *iter){
+    if((bool)iter->statePtr){
+        free(iter->data);
+    }
+}
+
+// -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
     return (Iterator){0};
