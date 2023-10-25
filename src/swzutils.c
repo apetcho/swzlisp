@@ -370,7 +370,7 @@ Iterator iterator_from_args(int n, ...){
 #define SWZ_HTABLE_EMPTY            0
 #define SWZ_HTABLE_FULL             1
 #define SWZ_HTABLE_GRAVE            2
-#define SWZ_NELEM(arg)              (sizeof(x)/sizeof((x)[0]))
+#define SWZ_NELEM(arg)              (sizeof(arg)/sizeof((arg)[0]))
 
 // --
 static const uint64_t htablePrimes[] = {
@@ -398,6 +398,13 @@ uint64_t _binary_search(const uint64_t *array, size_t len, uint64_t value){
     }
     return lo;
 }
+
+// -*-
+uint64_t _htable_next_size(uint64_t current){
+    uint64_t idx = _binary_search(htablePrimes, SWZ_NELEM(htablePrimes), current);
+    return htablePrimes[idx + 1];
+}
+
 
 // -*-
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
