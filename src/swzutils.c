@@ -274,8 +274,13 @@ Iterator iterator_concat(Iterator *iter, size_t n){
 
 // -*-
 Iterator iterator_concat2(Iterator left, Iterator right){
-    //! @todo
-    return (Iterator){0};
+    Iterator *arr = calloc(2, sizeof(Iterator));
+    if(!arr){
+        abort();
+    }
+    arr[0] = left;
+    arr[1] = right;
+    return iterator_concat(arr, 2);
 }
 
 // -*-
