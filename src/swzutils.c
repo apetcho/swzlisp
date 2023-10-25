@@ -206,6 +206,10 @@ void iterator_close_noop(Iterator* iter){
 }
 
 // -*-
+static bool _single_value_has_next(Iterator *iter){
+    return iter->index == 0;
+}
+// -*-
 Iterator iterator_empty(){
     //! @todo
     return (Iterator){0};
