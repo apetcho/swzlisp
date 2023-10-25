@@ -441,6 +441,23 @@ static uint32_t _htable_find_insert(const HTable *htable, void *key){
     return index;
 }
 
+// -*-
+static uint32_t _htable_find_retrieve(const HTable *htable, void *key){
+    uint64_t index = htable->hashfn(key) % htable->allocated;
+    uint32_t j = 1;
+
+    while(SWZ_MARK_AT(htable, index) != SWZ_HTABLE_EMPTY){
+        if(SWZ_MARK_AT(htable, index)==SWZ_HTABLE_FULL &&
+            htable->equalfn(key, SWZ_KEY_PTR(htable, index)) == 0){
+            // -
+            return index;
+        }
+        index = (index + j) % htable->allocated;
+        j += 2;
+    }
+    return index;
+}
+
 // -*- Find the proper index for insertion into the table
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     //! @todo
