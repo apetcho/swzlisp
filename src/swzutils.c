@@ -602,8 +602,7 @@ bool htable_contains(const HTable *htable, void *key){
 
 // -*-
 bool htable_contains_ptr(const HTable *htable, void *key){
-    //! @todo
-    return false;
+    return htable_contains(htable, &key);
 }
 
 // -*-
