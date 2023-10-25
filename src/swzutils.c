@@ -209,6 +209,13 @@ void iterator_close_noop(Iterator* iter){
 static bool _single_value_has_next(Iterator *iter){
     return iter->index == 0;
 }
+
+// -*-
+static void *_single_value_next(Iterator *iter){
+    iter->index++;
+    return iter->data;
+}
+
 // -*-
 Iterator iterator_empty(){
     //! @todo
