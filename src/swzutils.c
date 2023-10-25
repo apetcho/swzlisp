@@ -588,8 +588,11 @@ void* htable_get_key(const HTable *htable, void *key){
 
 // -*-
 void* htable_get_key_ptr(const HTable *htable, void *key){
-    //! @todo
-    return NULL;
+    void **result = htable_get_key(htable, &key);
+    if(!result){
+        return NULL;
+    }
+    return *result;
 }
 
 // -*-
