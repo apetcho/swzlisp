@@ -499,8 +499,10 @@ void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksiz
 
 // -*-
 HTable* htable_create(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
-    //! @todo
-    return NULL;
+    HTable *htable = NULL;
+    htable = calloc(1, sizeof(*htable));
+    htable_init(htable, hashfn, equalfn, ksize, vsize);
+    return htable;
 }
 
 // -*-
