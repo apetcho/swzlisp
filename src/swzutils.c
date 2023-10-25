@@ -15,16 +15,22 @@ void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity){
         fprintf(stderr, "Invalid character buffer argument.\n");
         abort();
     }
-    cbuffer->buffer = calloc(sizeof(char), capacity);
+    cbuffer->buffer = calloc(capacity, sizeof(char));
     cbuffer->buffer[0] = '\0';
     cbuffer->capacity = capacity;
     cbuffer->len = 0;
 }
 
-// -*-
+/**
+ * @brief Allocate and initialize a fresh character buffer.
+ * 
+ * @param capacity CharBuffer capacity.
+ * @return CharBuffer* 
+ */
 CharBuffer* cbuffer_create(uint32_t capacity){
-    //! @todo
-    return NULL;
+    CharBuffer *cbuffer = calloc(1, sizeof(CharBuffer));
+    cbuffer_init(cbuffer, capacity);
+    return cbuffer;
 }
 
 // -*-
