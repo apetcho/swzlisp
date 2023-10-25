@@ -245,10 +245,15 @@ static bool _cc_has_next(Iterator *iter){
 };
 
 // -*-
-Iterator iterator_empty(){
-    //! @todo
-    return (Iterator){0};
+static void* _cc_next(Iterator *iter){
+    Iterator *iterator = iter->data;
+    void *result = iterator[iter->stateIdx].next(&iterator->stateIdx);
+    if(result){
+        iter->index++;
+    }
+    return result;
 }
+
 // -*-
 Iterator iterator_concat(Iterator *iter, size_t n){
     //! @todo
