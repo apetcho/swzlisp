@@ -540,7 +540,7 @@ void htable_insert(HTable *htable, void *key, void *value){
 
 // -*-
 void htable_insert_ptr(HTable *htable, void *key, void *value){
-    //! @todo
+    htable_insert(htable, &key, &value);
 }
 
 // -*-
