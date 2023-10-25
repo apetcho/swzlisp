@@ -95,7 +95,8 @@ void cbuffer_trim(CharBuffer* cbuffer){
 
 // -*-
 void cbuffer_clear(CharBuffer* cbuffer){
-    //! @todo
+    cbuffer->buffer[0] = '\0';
+    cbuffer->len = 0;
 }
 
 // -*-
