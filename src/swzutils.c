@@ -314,6 +314,12 @@ Iterator iterator_empty(){
     return iter;
 }
 
+
+// -*-
+static bool _array_has_next(Iterator *iter){
+    return iter->index < iter->stateIdx;
+}
+
 // -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
