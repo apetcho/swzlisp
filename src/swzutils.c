@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<assert.h>
+#include<limits.h>
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
@@ -631,10 +632,25 @@ bool htable_string_equal(const void *lhs, const void *rhs){
 
 // -*-
 bool htable_int_equal(const void *lhs, const void *rhs){
-    //! @todo
-    return false;
+    long x = *(long *)lhs;
+    long y = *(long *)rhs;
+    return (x==y);
 }
 
+/*
+bool almostEqual(double x, double y){
+    static double eps = DBL_EPSILON;
+    double diff = fabs(x - y);
+    x = fabs(x);
+    y = fabs(y);
+    double xymax = (x > y) ? x : y;
+    if(diff <= xymax * eps){
+        return
+    }
+    bool result = (diff <= xymax*eps) ? true: false;
+    return result;
+}
+*/
 //! @note: extension to floating-point numbers
 bool htable_float_equal(const void *lhs, const void *rhs){
     //! @todo
