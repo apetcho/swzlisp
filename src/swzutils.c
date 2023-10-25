@@ -321,6 +321,11 @@ static bool _array_has_next(Iterator *iter){
 }
 
 // -*-
+static void* _array_next(Iterator *iter){
+    return ((void **)iter->data)[iter->index++];
+}
+
+// -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
     return (Iterator){0};
