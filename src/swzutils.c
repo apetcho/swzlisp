@@ -706,8 +706,32 @@ static void _htable_print(FILE* stream, const HTable *htable, PrintFn keyprintfn
 }
 
 // -*-
+static void* _htable_next(Iterator *iter){
+    void *result;
+    HTable *htable;
+    int8_t mark;
+    htable = iter->data;
+    while(iter->stateIdx < (int)htable->allocated && SWZ_MARK_AT(htable, iter->stateIdx)!=SWZ_HTABLE_FULL){
+        iter->stateIdx++;
+    }
+    mark = SWZ_MARK_AT(htable, iter->stateIdx);
+    if(mark != SWZ_HTABLE_FULL){
+        return NULL;
+    }
+    iter->index++;
+    if(!iter->stateIdx){
+        result = SWZ_KEY_PTR(htable, iter->stateIdx);
+    }else{
+        result = SWZ_VALUE_PTR(htable, iter->stateIdx);
+    }
+
+    iter->stateIdx++;
+    return result;
+}
+
+// -*-
 Iterator htable_iterator_keys(HTable *htable){
-    //! @todo
+    //! @todo    
     return (Iterator){0};
 }
 
