@@ -544,13 +544,18 @@ void htable_insert_ptr(HTable *htable, void *key, void *value){
 }
 
 // -*-
-bool htable_remove(HTable *htable, void *key){
-    //! @todo
-    return false;
+int htable_remove(HTable *htable, void *key){
+    uint64_t index = _htable_find_retrieve(htable, key);
+    if(SWZ_MARK_AT(htable, index) != SWZ_HTABLE_FULL){
+        return -1;
+    }
+    SWZ_MARK_AT(htable, index) = SWZ_HTABLE_GRAVE;
+    htable->len--;
+    return 0;
 }
 
 // -*-
-bool htable_remove_ptr(HTable *htable, void *key){
+int htable_remove_ptr(HTable *htable, void *key){
     //! @todo
     return false;
 }
