@@ -158,7 +158,22 @@ void rbuffer_pop_back(RingBuffer *rbuffer, void *dst){
 
 // -*-
 void rbuffer_grow(RingBuffer *rbuffer){
-    //! @todo
+    int i, oldalloc;
+    oldalloc = rbuffer->nalloc;
+    rbuffer->nalloc *= 2;
+    rbuffer->buffer = realloc(rbuffer->buffer, rbuffer->nalloc * rbuffer->dsize);
+    for (i = 0; i < rbuffer->count; i++){
+        int oldIdx, neoIdx;
+        oldIdx = (rbuffer->start + i) % oldalloc;
+        neoIdx = (rbuffer->start + i) % rbuffer->nalloc;
+        if(oldIdx != neoIdx){
+            memcpy(
+                (char *)rbuffer->buffer + neoIdx * rbuffer->dsize,
+                (char *)rbuffer->buffer + oldIdx * rbuffer->dsize,
+                rbuffer->nalloc
+            );
+        }
+    }
 }
 
 // -*------------------------------------------------------------*-
