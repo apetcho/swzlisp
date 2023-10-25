@@ -612,8 +612,13 @@ uint32_t htable_length(const HTable *htable){
 
 //! @note: maybe, the next four (4) function should be private
 uint32_t htable_string_hash(void *data){
-    //! @todo
-    return 0;
+    char *str = *(char **)data;
+    uint32_t result = 0;
+    while(str && *str != '\0'){
+        result = (result << 5) - result + (*str);
+        str++;
+    }
+    return result;
 }
 
 // -*-
