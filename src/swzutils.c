@@ -623,8 +623,10 @@ uint32_t htable_string_hash(void *data){
 
 // -*-
 bool htable_string_equal(const void *lhs, const void *rhs){
-    //! @todo
-    return false;
+    const char *x = *(char **)lhs;
+    const char *y = *(char **)rhs;
+
+    return strcmp(x, y);
 }
 
 // -*-
