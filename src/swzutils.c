@@ -522,7 +522,20 @@ void htable_delete(HTable *htable){
 
 // -*-
 void htable_insert(HTable *htable, void *key, void *value){
-    //! @todo
+    uint64_t index;
+    if(_htable_load_factor(htable) > SWZ_HTABLE_MAX_LOAD_FACTOR){
+        _htable_resize(htable);
+    }
+    index = _htable_find_retrieve(htable, key);
+    if(SWZ_MARK_AT(htable, index)==SWZ_HTABLE_FULL){
+        memcpy(SWZ_VALUE_PTR(htable, index), value, htable->vsize);
+        return;
+    }
+    index = _htable_find_insert(htable, key);
+    SWZ_MARK_AT(htable, index) = SWZ_HTABLE_FULL;
+    memcpy(SWZ_KEY_PTR(htable, index), key, htable->ksize);
+    memcpy(SWZ_VALUE_PTR(htable, index), value, htable->vsize);
+    htable->len++;
 }
 
 // -*-
