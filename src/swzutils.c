@@ -285,8 +285,11 @@ Iterator iterator_concat2(Iterator left, Iterator right){
 
 // -*-
 Iterator iterator_concat3(Iterator a, Iterator b, Iterator c){
-    //! @todo
-    return (Iterator){0};
+    Iterator *arr = calloc(3, sizeof(*arr));
+    arr[0] = a;
+    arr[1] = b;
+    arr[2] = c;
+    return iterator_concat(arr, 3);
 }
 
 // -*-
