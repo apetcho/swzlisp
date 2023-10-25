@@ -261,8 +261,15 @@ static void _cc_close(Iterator *iter){
 
 // -*-
 Iterator iterator_concat(Iterator *iter, size_t n){
-    //! @todo
-    return (Iterator){0};
+    Iterator iterator = {0};
+    iterator.data = iter;
+    iterator.index = 0;
+    iterator.stateIdx = 0;
+    iterator.statePtr = (void*)n;
+    iterator.has_next = _cc_has_next;
+    iterator.next = _cc_next;
+    iterator.close = _cc_close;
+    return iterator;
 }
 
 // -*-
