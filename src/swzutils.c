@@ -247,11 +247,16 @@ static bool _cc_has_next(Iterator *iter){
 // -*-
 static void* _cc_next(Iterator *iter){
     Iterator *iterator = iter->data;
-    void *result = iterator[iter->stateIdx].next(&iterator->stateIdx);
+    void *result = iterator[iter->stateIdx].next(&iterator[iter->stateIdx]);
     if(result){
         iter->index++;
     }
     return result;
+}
+
+// -*-
+static void _cc_close(Iterator *iter){
+    free(iter->data);
 }
 
 // -*-
