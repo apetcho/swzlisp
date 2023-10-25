@@ -570,8 +570,11 @@ void* htable_get(const HTable *htable, void *key){
 
 // -*-
 void* htable_get_ptr(const HTable *htable, void *key){
-    //! @todo
-    return NULL;
+    void **result = htable_get(htable, &key);
+    if(!result){
+        return NULL;
+    }
+    return *result;
 }
 
 // -*-
