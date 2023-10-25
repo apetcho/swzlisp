@@ -512,7 +512,12 @@ void htable_destroy(HTable *htable){
 
 // -*-
 void htable_delete(HTable *htable){
-    //! @todo
+    if(!htable){
+        return;
+    }
+    htable_destroy(htable);
+    free(htable);
+    htable = NULL;
 }
 
 // -*-
