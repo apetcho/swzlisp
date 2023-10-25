@@ -607,8 +607,7 @@ bool htable_contains_ptr(const HTable *htable, void *key){
 
 // -*-
 uint32_t htable_length(const HTable *htable){
-    //! @todo
-    return 0;
+    return htable->len;
 }
 
 //! @note: maybe, the next four (4) function should be private
