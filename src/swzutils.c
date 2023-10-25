@@ -364,6 +364,41 @@ Iterator iterator_from_args(int n, ...){
 // -*------------------------------------------------------------*-
 // -*- HTable                                                   -*-
 // -*------------------------------------------------------------*-
+#define SWZ_HTABLE_KEY_OFFSET       1
+#define SWZ_HTABLE_INITIAL_SIZE     31
+#define SWZ_HTABLE_MAX_LOAD_FACTOR  0.5
+#define SWZ_HTABLE_EMPTY            0
+#define SWZ_HTABLE_FULL             1
+#define SWZ_HTABLE_GRAVE            2
+#define SWZ_NELEM(arg)              (sizeof(x)/sizeof((x)[0]))
+
+// --
+static const uint64_t htablePrimes[] = {
+           31UL,         61UL,        127UL,        257UL,
+          509UL,       1021UL,       2053UL,       4093UL,
+         8191UL,      16381UL,      32771UL,      65537UL,
+       131071UL,     262147UL,     524287UL,    1048573UL, 
+      2097143UL,    4194301UL,    8388617UL,   16777213UL,
+     33554467UL,   67108859UL,  134217757UL,  268435459UL, 
+    536870909UL, 1073741827UL, 2147483647UL, 4294967291UL,
+};
+
+// -*-
+uint64_t _binary_search(const uint64_t *array, size_t len, uint64_t value){
+    size_t lo = 0;
+    size_t hi = len;
+    size_t mid;
+    while(lo < hi){
+        mid = (lo + hi) / 2;
+        if(value <= array[mid]){
+            hi = mid;
+        }else{
+            lo = mid + 1;
+        }
+    }
+    return lo;
+}
+
 // -*-
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     //! @todo
