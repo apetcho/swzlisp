@@ -305,6 +305,16 @@ static bool _empty_has_next(Iterator *iter){
 }
 
 // -*-
+Iterator iterator_empty(){
+    Iterator iter = {0};
+    iter.index = 0;
+    iter.next = _empty_next;
+    iter.has_next = _empty_has_next;
+    iter.close = iterator_close_noop;
+    return iter;
+}
+
+// -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
     //! @todo
     return (Iterator){0};
