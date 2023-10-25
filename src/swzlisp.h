@@ -85,7 +85,7 @@ typedef struct {
     uint32_t ksize;
     uint32_t vsize;
     HashFn hashfn;
-    CompareFn cmpfn;
+    CompareFn equalfn;
     void *table;
 } HTable;
 

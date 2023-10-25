@@ -384,7 +384,7 @@ static const uint64_t htablePrimes[] = {
 };
 
 // -*-
-uint64_t _binary_search(const uint64_t *array, size_t len, uint64_t value){
+static uint64_t _binary_search(const uint64_t *array, size_t len, uint64_t value){
     size_t lo = 0;
     size_t hi = len;
     size_t mid;
@@ -400,13 +400,48 @@ uint64_t _binary_search(const uint64_t *array, size_t len, uint64_t value){
 }
 
 // -*-
-uint64_t _htable_next_size(uint64_t current){
+static uint64_t _htable_next_size(uint64_t current){
     uint64_t idx = _binary_search(htablePrimes, SWZ_NELEM(htablePrimes), current);
     return htablePrimes[idx + 1];
 }
 
+#define SWZ_ITEMSIZE(htable) (SWZ_HTABLE_KEY_OFFSET + (htable)->ksize + (htable)->vsize)
+#define SWZ_MARK_AT_BUF(htable, buf, i)     \
+    (*(int8_t*)(((char*)buf) + i * SWZ_ITEMSIZE(htable)))
+#define SWZ_MARK_AT(htable, i) SWZ_MARK_AT_BUF(htable, htable->table, i)
+
+#define SWZ_KEY_PTR_BUF(htable, buf, i)     \
+    (void*)(((char*)buf) + i *SWZ_ITEMSIZE(htable) + SWZ_HTABLE_KEY_OFFSET)
+#define SWZ_KEY_PTR(htable, i) SWZ_KEY_PTR_BUF(htable, (htable)->table, i)
+
+#define SWZ_VALUE_PTR_BUF(htable, buf, i)               \
+    (void*)(((char*)buf) + i * SWZ_ITEMSIZE(htable) +   \
+    SWZ_HTABLE_KEY_OFFSET + (htable)->ksize)
+
+#define SWZ_VALUE_PTR(htable, i)    SWZ_VALUE_PTR_BUF(htable, (htable)->table, i)
+
 
 // -*-
+static uint32_t _htable_find_insert(const HTable *htable, void *key){
+    uint64_t index = htable->hashfn(key) % htable->allocated;
+    uint32_t j = 1;
+    /*
+    Continue searching until we either find a non-nil full slot, o we find the
+    key we're try to insert:
+    unitl (cell.mark != full || cell.key == key)
+    while (cell.mark == full && cell.key != key)
+    */
+    while(SWZ_MARK_AT(htable, index)==SWZ_HTABLE_FULL &&
+        htable->equalfn(key, SWZ_KEY_PTR(htable, index)) != 0){
+        // -
+        index = (index + j) % htable->allocated;
+        j += 2;
+    }
+
+    return index;
+}
+
+// -*- Find the proper index for insertion into the table
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     //! @todo
 }
