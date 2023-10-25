@@ -1,6 +1,7 @@
 #include "swzlisp.h"
 #include<stdlib.h>
 #include<string.h>
+#include<assert.h>
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
@@ -347,8 +348,17 @@ Iterator iterator_array(void **array, uint32_t len, bool own){
 
 // -*-
 Iterator iterator_from_args(int n, ...){
-    //! @todo
-    return (Iterator){0};
+    void **array = calloc(n, sizeof(void*));
+    assert(array);
+    va_list args;
+
+    va_start(args, n);
+    for (int i = 0; i < n; i++){
+        array[i] = va_arg(args, void *);
+    }
+    va_end(args);
+
+    return iterator_array(array, n, true);
 }
 
 // -*------------------------------------------------------------*-
