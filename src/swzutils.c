@@ -334,8 +334,15 @@ static void _array_close(Iterator *iter){
 
 // -*-
 Iterator iterator_array(void **array, uint32_t len, bool own){
-    //! @todo
-    return (Iterator){0};
+    Iterator iter = {0};
+    iter.index = 0;
+    iter.stateIdx = len;
+    iter.statePtr = (void *)own;
+    iter.has_next = (void *)own;
+    iter.next = _array_next;
+    iter.has_next = _array_has_next;
+    iter.close = _array_close;
+    return iter;
 }
 
 // -*-
