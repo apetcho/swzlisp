@@ -138,7 +138,17 @@ void rbuffer_destroy(RingBuffer *rbuffer){
 
 // -*-
 void rbuffer_push_front(RingBuffer *rbuffer, void *src){
-    //! @todo
+    int neostart;
+    if(rbuffer->count >= rbuffer->nalloc){
+        rbuffer_grow(rbuffer);
+    }
+    neostart = (rbuffer->start + rbuffer->nalloc - 1) % rbuffer->nalloc;
+    rbuffer->start = neostart;
+    memcpy(
+        (char *)rbuffer->buffer + rbuffer->start * rbuffer->dsize,
+        src, rbuffer->dsize
+    );
+    rbuffer->count++;
 }
 
 // -*-
