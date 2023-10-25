@@ -216,18 +216,24 @@ static void *_single_value_next(Iterator *iter){
     return iter->data;
 }
 
+
+// -*-
+Iterator iterator_single_value(void *value){
+    Iterator iter = {0};
+    iter.data = value;
+    iter.index = 0;
+    iter.has_next = _single_value_has_next;
+    iter.next = _single_value_next;
+    iter.close = iterator_close_noop;
+    return iter;
+}
+
+
 // -*-
 Iterator iterator_empty(){
     //! @todo
     return (Iterator){0};
 }
-
-// -*-
-Iterator iterator_single_value(void *value){
-    //! @todo
-    return (Iterator){0};
-}
-
 // -*-
 Iterator iterator_concat(Iterator *iter, size_t n){
     //! @todo
