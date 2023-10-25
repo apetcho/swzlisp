@@ -479,6 +479,11 @@ static void _htable_resize(HTable *htable){
     free(table);
 }
 
+// -*-
+static double _htable_load_factor(HTable *htable){
+    return ((double)htable->len) / ((double)htable->allocated);
+}
+
 // -*- Find the proper index for insertion into the table
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     //! @todo
