@@ -673,3 +673,13 @@ static void _swz_builtin_print(FILE *stream, SWZObject *obj){
     SWZBuiltin *builtin = (SWZBuiltin *)obj;
     fprintf(stream, "<builtin function '%s' @ %p>", builtin->name, obj);
 }
+
+// -*-
+static SWZObject *_swz_builtin_create(SWZLisp *swz){
+    SWZ_UNUSED(swz);
+    SWZBuiltin *builtin = calloc(1, sizeof(SWZBuiltin));
+    builtin->fun = NULL;
+    builtin->name = NULL;
+    builtin->evald = 0;
+    return (SWZObject *)builtin;
+}
