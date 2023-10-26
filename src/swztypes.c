@@ -721,4 +721,18 @@ static void _swz_lambda_print(FILE *stream, SWZObject *obj);
 static SWZObject *_swz_lambda_create(SWZRuntime *swz);
 static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 static Iterator _swz_lambda_iter(SWZObject *obj);
-static bool _swz_lambda_compare(SWZObject *self, SWZObject *other);
+static bool _swz_lambda_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzlambda = {
+    SWZ_TYPE_HEADER,
+    "lambda",               // .name
+    _swz_lambda_print,      // .print()
+    _swz_lambda_create,     // .create()
+    _swz_simple_destroy,    // .destroy()
+    _swz_lambda_iter,       // .iter()
+    _swz_eval_error,        // .eval()
+    _swz_lambda_call,       // .call()
+    _swz_lambda_compare,    // .compare()
+};
+
+SWZType *swzLambda = &_swzlambda;
