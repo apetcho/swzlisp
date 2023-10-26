@@ -70,3 +70,13 @@ static void _swz_type_print(FILE *stream, SWZObject *obj){
     SWZType *self = (SWZType *)obj;
     fprintf(stream, "%s", self->name);
 }
+
+// -*-
+static SWZObject *_swz_type_create(SWZLisp *swz){
+    SWZType *self = NULL;
+    SWZ_UNUSED(swz);
+    self = calloc(1, sizeof(*self));
+    return (SWZObject *)self;
+}
+
+//static bool _swz_type_compare(SWZObject *self, SWZObject *other);
