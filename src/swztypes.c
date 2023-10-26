@@ -134,7 +134,7 @@ static SWZObject *_swz_env_create(SWZLisp *swz){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = calloc(1, sizeof(*env));
-    env->up = NULL;
+    env->parent = NULL;
     htable_init(
         &env->scope,
         _swz_text_hash,
@@ -170,5 +170,21 @@ static void _swz_env_print(FILE *stream, SWZObject *obj){
     fprintf(stream, ")");
 }
 
-static Iterator _swz_env_iter(SWZObject *obj);
+// -*-
+static Iterator _swz_env_iter(SWZObject *obj){
+    SWZEnv *env = (SWZEnv *)obj;
+    if(env->parent){
+        return iterator_concat3(
+            iterator_single_value(env->parent),
+            htable_iterator_keys_ptr(&env->scope),
+            htable_iterator_values_ptr(&env->scope)
+        );
+    }else{
+        return iterator_concat2(
+            htable_iterator_keys_ptr(&env->scope),
+            htable_iterator_values_ptr(&env->scope)
+        );
+    }
+}
+
 static bool _swz_env_compare(SWZObject *self, SWZObject *other);

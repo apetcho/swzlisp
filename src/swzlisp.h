@@ -323,7 +323,7 @@ struct swzlisp{
 struct swzenv{
     SWZ_OBJECT_HEAD;
     HTable scope;
-    SWZEnv *up;
+    SWZEnv *parent;
 };
 
 // -
