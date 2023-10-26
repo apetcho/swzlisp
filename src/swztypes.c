@@ -279,7 +279,26 @@ static SWZObject *_swz_list_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
     return swz_call(swz, env, callable, (SWZList *)list->cdr);
 }
 
-// static void _swz_list_print(FILE *stream, SWZObject *obj);
+// -*-
+static void _swz_list_print_helper(FILE *stream, SWZList *list){
+    if(swz_nil_p((SWZObject*)list)){
+        return;
+    }
+    swz_print(stream, list->car);
+    if(list->cdr->type != swzList){
+        fprintf(stream, " . ");
+        swz_print(stream, list->cdr);
+        return;
+    }else if(!swz_nil_p((SWZObject*)list)){
+        fprintf(stream, " ");
+        _swz_list_print_helper(stream, (SWZList *)list->cdr);
+    }
+}
+// -*-
+static void _swz_list_print(FILE *stream, SWZObject *obj){
+    //-
+}
+
 // static SWZObject *_swz_list_create(SWZLisp *swz);
 // static Iterator _swz_list_iter(SWZObject *obj);
 // static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
