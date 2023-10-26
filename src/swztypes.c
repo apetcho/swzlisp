@@ -403,3 +403,14 @@ static SWZType _swzsymbol = {
 };
 
 SWZType *swzSymbol = &_swzsymbol;
+
+// -*-
+static void _swz_txt_print(FILE *stream, SWZObject *obj){
+    struct swztext *text = (struct swztext *)obj;
+    fprintf(stream, "%s", text->cstr);
+}
+
+// static SWZObject *_swz_txt_create(SWZLisp *swz);
+// static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
+// static void _swz_txt_destroy(SWZLisp *swz, void *arg);
+// static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
