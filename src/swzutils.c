@@ -785,6 +785,13 @@ Iterator htable_iterator_values(HTable *htable){
 
 // -*-
 Iterator htable_iterator_values_ptr(HTable *htable){
-    //! @todo
-    return (Iterator){0};
+    Iterator iter = {0};
+    iter.data = htable;
+    iter.index = 0;
+    iter.stateIdx = 0;
+    iter.statePtr = htable;
+    iter.has_next = _htable_has_next;
+    iter.next = _htable_next_ptr;
+    iter.close = iterator_close_noop;
+    return iter;
 }
