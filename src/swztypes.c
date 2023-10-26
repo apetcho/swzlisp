@@ -115,3 +115,16 @@ static SWZType _swzenv = {
 };
 
 SWZType *swzEnv = &_swzenv;
+
+// -*-
+static uint32_t _swz_text_hash(void *arg){
+    struct swztext **text = (struct swztext **)arg;
+    return htable_string_hash(&(*text)->cstr);
+}
+
+// -*-
+static void _swz_env_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_env_create(SWZLisp *swz);
+static void _swz_env_destroy(SWZLisp *swz, void *arg);
+static Iterator _swz_env_iter(SWZObject *obj);
+static bool _swz_env_compare(SWZObject *self, SWZObject *other);
