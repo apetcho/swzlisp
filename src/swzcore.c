@@ -12,7 +12,18 @@ const char* swzErrorNames[SWZE_COUNT] = {
 #undef SWZE_DEF
 
 
-// void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj);
+void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj){
+    htable_insert_ptr(&env->scope, symbol, obj);
+
+    SWZLambda *lambda = NULL;
+    if(obj->type == swzLambda){
+        lambda = (SWZLambda *)obj;
+        if(!lambda->name){
+            lambda->name = symbol;
+        }
+    }
+}
+
 // SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
 // SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
 // void swz_env_add_builtin(
