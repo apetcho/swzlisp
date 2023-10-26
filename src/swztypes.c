@@ -477,3 +477,9 @@ static SWZType _swzinteger = {
 };
 
 SWZType *swzInteger = &_swzinteger;
+
+// -*-
+static void _swz_integer_print(FILE *stream, SWZObject *obj){
+    SWZInteger *self = (SWZInteger *)obj;
+    fprintf(stream, "%ld", self->val);
+}
