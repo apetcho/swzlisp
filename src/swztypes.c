@@ -64,3 +64,9 @@ static SWZType _swzType = {
 };
 
 SWZType *swzType = &_swzType;
+
+// -*-
+static void _swz_type_print(FILE *stream, SWZObject *obj){
+    SWZType *self = (SWZType *)obj;
+    fprintf(stream, "%s", self->name);
+}
