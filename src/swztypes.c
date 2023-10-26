@@ -99,4 +99,19 @@ static Iterator _swz_type_iterator(SWZObject* obj){
 static void _swz_env_print(FILE *stream, SWZObject *obj);
 static SWZObject *_swz_env_create(SWZLisp *swz);
 static void _swz_env_destroy(SWZLisp *swz, void *arg);
-static Iterator _swz_env_expand(SWZObject *obj);
+static Iterator _swz_env_iter(SWZObject *obj);
+static bool _swz_env_compare(SWZObject *self, SWZObject *other);
+
+static SWZType _swzenv = {
+    SWZ_TYPE_HEADER,
+    "env",              // .name
+    _swz_env_print,     // .print()
+    _swz_env_create,    // .create()
+    _swz_env_destroy,   // .destroy()
+    _swz_env_iter,      // .iter()
+    _swz_eval_error,    // .eval()
+    _swz_call_error,    // .call()
+    _swz_env_compare,   // .compare()
+};
+
+SWZType *swzEnv = &_swzenv;
