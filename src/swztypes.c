@@ -548,6 +548,20 @@ static bool _swz_num_compare(SWZObject *self, SWZObject *other){
         SWZInteger *lhs = (SWZInteger *)self;
         if(_swz_is_integer(other)){
             SWZInteger *rhs = (SWZInteger *)other;
+        }else{
+            double x = (double)lhs->val;
+            double y = ((SWZFloat *)other)->val;
+            return _swz_almostEqual(x, y);
         }
     }
+    // self is a SWZFloat
+    if(_swz_is_integer(other)){
+        double x = ((SWZFloat *)self)->val;
+        double y = (double)((SWZInteger *)other)->val;
+        return _swz_almostEqual(x, y);
+    }
+    // both are SWZFloat
+    double x = ((SWZFloat *)self)->val;
+    double y = ((SWZFloat *)other)->val;
+    return _swz_almostEqual(x, y);
 }
