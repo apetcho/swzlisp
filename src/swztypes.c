@@ -683,3 +683,15 @@ static SWZObject *_swz_builtin_create(SWZLisp *swz){
     builtin->evald = 0;
     return (SWZObject *)builtin;
 }
+
+// -*-
+static SWZObject *_swz_builtin_call(SWZLisp* swz, SWZEnv *env, SWZObject *callable, SWZList *args){
+    SWZBuiltin *builtin = (SWZBuiltin *)callable;
+    if(builtin->evald){
+        args = swz_eval_list(swz, env, args);
+        SWZ_IS_VALID_PTR(args);
+    }else if (swz_is_bad_list(args)){
+        return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
+    }
+    return builtin->fun(swz, env, args, builtin->params);
+}

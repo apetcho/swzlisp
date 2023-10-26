@@ -277,10 +277,11 @@ extern const char *swzErrorNames[SWZE_MAX_ERR];
 SWZObject *swz_error(SWZLisp *swz, enum SWZError errnum, const char *errmsg);
 void swz_dump_stack(SWZLisp *swz, SWZLisp *stack, FILE *file);
 
-#define SWZ_IS_VALID(ptr) do {  \
-    if(!ptr){                   \
-        return NULL;            \
-    }                           \
+// -*- lisp_error_check
+#define SWZ_IS_VALID_PTR(ptr) do {  \
+    if(!ptr){                       \
+        return NULL;                \
+    }                               \
 }while(0)
 
 void swz_eprint(SWZLisp *swz, FILE *stream);
@@ -377,7 +378,7 @@ struct swzbuiltin {
     SWZ_OBJECT_HEAD;
     SWZFun fun;
     const char *name;
-    void *data;
+    void *params;
     int evald;
 };
 
