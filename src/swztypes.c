@@ -15,21 +15,21 @@
     'w'
 
 // -*-
-static SWZObject* _swz_eval_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+static SWZObject* _swz_eval_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     (void)env;
     (void)obj;
     return swz_error(swz, SWZE_EVAL, "cannot evaluate this object");
 }
 
 // -*-
-static SWZObject* _swz_eval_same(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+static SWZObject* _swz_eval_same(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     (void)swz;
     (void)env;
     return obj;
 }
 
 // -*-
-static SWZObject* _swz_call_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj, SWZList *list){
+static SWZObject* _swz_call_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj, SWZList *list){
     (void)env;
     (void)obj;
     (void)list;
@@ -37,7 +37,7 @@ static SWZObject* _swz_call_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj, SWZ
 }
 
 // -*-
-static void _swz_simple_destroy(SWZLisp *swz, void *arg){
+static void _swz_simple_destroy(SWZRuntime *swz, void *arg){
     (void)swz;
     free(arg);
 }
@@ -51,7 +51,7 @@ static bool _hash_next_index_lt_state(Iterator *iter){
 // -*- SWZType -*-
 // -*-----------*-
 static void _swz_type_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_type_create(SWZLisp *swz);
+static SWZObject *_swz_type_create(SWZRuntime *swz);
 static bool _swz_type_compare(const SWZObject *self, const SWZObject *other);
 static Iterator _swz_empty_iterator(SWZObject* obj);
 
@@ -76,7 +76,7 @@ static void _swz_type_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_type_create(SWZLisp *swz){
+static SWZObject *_swz_type_create(SWZRuntime *swz){
     SWZType *self = NULL;
     SWZ_UNUSED(swz);
     self = calloc(1, sizeof(*self));
@@ -100,8 +100,8 @@ static Iterator _swz_empty_iterator(SWZObject* obj){
 // -*- SWZEnv -*-
 // -*----------*-
 static void _swz_env_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_env_create(SWZLisp *swz);
-static void _swz_env_destroy(SWZLisp *swz, void *arg);
+static SWZObject *_swz_env_create(SWZRuntime *swz);
+static void _swz_env_destroy(SWZRuntime *swz, void *arg);
 static Iterator _swz_env_iter(SWZObject *obj);
 static bool _swz_env_compare(const SWZObject *self, const SWZObject *other);
 
@@ -133,7 +133,7 @@ static bool _swz_text_compare(const void *lhs, const void *rhs){
 }
 
 // -*-
-static SWZObject *_swz_env_create(SWZLisp *swz){
+static SWZObject *_swz_env_create(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = calloc(1, sizeof(*env));
@@ -149,7 +149,7 @@ static SWZObject *_swz_env_create(SWZLisp *swz){
     return (SWZObject *)env;
 }
 
-static void _swz_env_destroy(SWZLisp *swz, void *arg){
+static void _swz_env_destroy(SWZRuntime *swz, void *arg){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = (SWZEnv *)arg;
@@ -248,8 +248,8 @@ static bool _swz_env_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZList -*-
 // -*-----------*-
 static void _swz_list_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_list_create(SWZLisp *swz);
-static SWZObject *_swz_list_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
+static SWZObject *_swz_list_create(SWZRuntime *swz);
+static SWZObject *_swz_list_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
 static Iterator _swz_list_iter(SWZObject *obj);
 static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
 
@@ -268,7 +268,7 @@ static SWZType _swzlist = {
 SWZType *swzList = &_swzlist;
 
 // -*-
-static SWZObject *_swz_list_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+static SWZObject *_swz_list_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     SWZObject *callable;
     SWZList *list = (SWZList *)obj;
 
@@ -305,7 +305,7 @@ static void _swz_list_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_list_create(SWZLisp *swz){
+static SWZObject *_swz_list_create(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZList *list = NULL;
     list = calloc(1, sizeof(*list));
@@ -388,9 +388,9 @@ static bool _swz_list_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZSymbol -*-
 // -*-------------*-
 static void _swz_txt_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_txt_create(SWZLisp *swz);
-static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
-static void _swz_txt_destroy(SWZLisp *swz, void *arg);
+static SWZObject *_swz_txt_create(SWZRuntime *swz);
+static SWZObject *_swz_symbol_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
+static void _swz_txt_destroy(SWZRuntime *swz, void *arg);
 static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzsymbol = {
@@ -414,7 +414,7 @@ static void _swz_txt_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_txt_create(SWZLisp *swz){
+static SWZObject *_swz_txt_create(SWZRuntime *swz){
     struct swztext *text = NULL;
     SWZ_UNUSED(swz);
     text = calloc(1, sizeof(struct swztext));
@@ -424,7 +424,7 @@ static SWZObject *_swz_txt_create(SWZLisp *swz){
 }
 
 // -*-
-static void _swz_txt_destroy(SWZLisp *swz, void *arg){
+static void _swz_txt_destroy(SWZRuntime *swz, void *arg){
     struct swztext *text = (struct swztext *)arg;
     if(text->type == swzString && swz->strcache){
         swz_textchach_remove(swz->strcache, text);
@@ -440,7 +440,7 @@ static void _swz_txt_destroy(SWZLisp *swz, void *arg){
 }
 
 // -*-
-static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+static SWZObject *_swz_symbol_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     SWZ_UNUSED(swz);
     SWZSymbol *symbol = NULL;
     symbol = (SWZSymbol *)obj;
@@ -464,7 +464,7 @@ static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZInteger -*-
 // -*--------------*-
 static void _swz_integer_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_integer_create(SWZLisp *swz);
+static SWZObject *_swz_integer_create(SWZRuntime *swz);
 static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzinteger = {
@@ -488,7 +488,7 @@ static void _swz_integer_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_integer_create(SWZLisp *swz){
+static SWZObject *_swz_integer_create(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZInteger *self = calloc(1, sizeof(*self));
     self->val = 0;
@@ -575,7 +575,7 @@ static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZFloat -*-
 // -*------------*-
 static void _swz_float_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_float_create(SWZLisp *swz);
+static SWZObject *_swz_float_create(SWZRuntime *swz);
 static bool _swz_float_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzfloat = {
@@ -599,7 +599,7 @@ static void _swz_float_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_float_create(SWZLisp *swz){
+static SWZObject *_swz_float_create(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZFloat *self = calloc(1, sizeof(*self));
     self->val = (double)0;
@@ -612,19 +612,19 @@ static bool _swz_float_compare(const SWZObject *self, const SWZObject *other){
 }
 
 // -*-
-bool swz_is_number(SWZLisp *swz, SWZObject *obj){
+bool swz_is_number(SWZRuntime *swz, SWZObject *obj){
     SWZ_UNUSED(swz);
     return _swz_is_number(obj);
 }
 
 // -*-
-bool swz_is_integer(SWZLisp *swz, SWZObject *obj){
+bool swz_is_integer(SWZRuntime *swz, SWZObject *obj){
     SWZ_UNUSED(swz);
     return _swz_is_integer(obj);
 }
 
 // -*-
-bool swz_is_float(SWZLisp *swz, SWZObject *obj){
+bool swz_is_float(SWZRuntime *swz, SWZObject *obj){
     SWZ_UNUSED(swz);
     return _swz_is_float(obj);
 }
@@ -650,8 +650,8 @@ SWZType *swzString = &_swzstring;
 // -*- SWZBuiltin -*-
 // -*--------------*-
 static void _swz_builtin_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_builtin_create(SWZLisp *swz);
-static SWZObject *_swz_builtin_call(SWZLisp* swz, SWZEnv *env, SWZObject *callable, SWZList *args);
+static SWZObject *_swz_builtin_create(SWZRuntime *swz);
+static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzbuiltin = {
@@ -675,7 +675,7 @@ static void _swz_builtin_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_builtin_create(SWZLisp *swz){
+static SWZObject *_swz_builtin_create(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZBuiltin *builtin = calloc(1, sizeof(SWZBuiltin));
     builtin->fun = NULL;
@@ -685,7 +685,7 @@ static SWZObject *_swz_builtin_create(SWZLisp *swz){
 }
 
 // -*-
-static SWZObject *_swz_builtin_call(SWZLisp* swz, SWZEnv *env, SWZObject *callable, SWZList *args){
+static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *callable, SWZList *args){
     SWZBuiltin *builtin = (SWZBuiltin *)callable;
     if(builtin->evald){
         args = swz_eval_list(swz, env, args);
@@ -713,3 +713,12 @@ static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other){
         (strcmp(lhs->name, rhs->name)==0)
     );
 }
+
+// -*-------------*-
+// -*- SWZLambda -*-
+// -*-------------*-
+static void _swz_lambda_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_lambda_create(SWZRuntime *swz);
+static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
+static Iterator _swz_lambda_iter(SWZObject *obj);
+static bool _swz_lambda_compare(SWZObject *self, SWZObject *other);
