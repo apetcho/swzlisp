@@ -347,5 +347,15 @@ static bool _swz_list_has_next(Iterator *iterator){
     return iterator->index < iterator->stateIdx;
 }
 
-// static Iterator _swz_list_iter(SWZObject *obj);
+// -*-
+static Iterator _swz_list_iter(SWZObject *obj){
+    Iterator iterator = {0};
+    iterator.data = obj;
+    iterator.stateIdx = 2;
+    iterator.next = _swz_list_iter_next;
+    iterator.close = iterator_close_noop;
+    iterator.has_next = _swz_list_has_next;
+    return iterator;
+}
+
 // static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
