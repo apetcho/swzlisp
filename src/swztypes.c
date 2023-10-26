@@ -610,3 +610,12 @@ static SWZObject *_swz_float_create(SWZLisp *swz){
 static bool _swz_float_compare(const SWZObject *self, const SWZObject *other){
     return _swz_num_compare((SWZObject*)self, (SWZObject*)other);
 }
+
+// -*-
+bool swz_is_number(SWZLisp *swz, SWZObject *obj){
+    SWZ_UNUSED(swz);
+    return _swz_is_number(obj);
+}
+
+bool swz_is_integer(SWZLisp *swz, SWZObject *obj);
+bool swz_is_float(SWZLisp swz, SWZObject *obj);
