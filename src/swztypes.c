@@ -320,5 +320,23 @@ bool swz_nil_p(SWZObject *obj){
     );
 }
 
+// -*-
+static void* _swz_list_iter_next(Iterator *iterator){
+    SWZList *list = (SWZList *)iterator->data;
+    iterator->index++;
+    SWZObject *result = NULL;
+    switch (iterator->index){
+    case 1:
+        result = list->car;
+        break;
+    case 2:
+        result = list->cdr;
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
 // static Iterator _swz_list_iter(SWZObject *obj);
 // static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
