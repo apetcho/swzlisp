@@ -7,7 +7,7 @@
 #include "swzlisp.h"
 
 #define SWZ_TYPE_HEADER     \
-    &_swztypes_,            \
+    &_swzType,              \
     NULL,                   \
     'w'
 
@@ -43,3 +43,24 @@ static void _simple_free(SWZLisp *swz, void *arg){
 static bool _hash_next_index_lt_state(Iterator *iter){
     return iter->index < iter->stateIdx;
 }
+
+// -*-----------*-
+// -*- SWZType -*-
+// -*-----------*-
+static void _swz_type_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_type_create(SWZLisp *swz);
+static bool _swz_type_compare(SWZObject *self, SWZObject *other);
+
+static SWZType _swzType = {
+    SWZ_TYPE_HEADER,
+    "type",             // .name
+    _swz_type_print,    // .print()
+    _swz_type_create,   // .create()
+    _simple_free,       // .destroy()
+    iterator_empty,     // .expand()
+    _swz_eval_error,    // .eval()
+    _swz_call_error,    // .call()
+    _swz_type_compare,  // .compare()
+};
+
+SWZType *swzType = &_swzType;
