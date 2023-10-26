@@ -200,7 +200,12 @@ long swz_get_integer(const SWZInteger *self);
 SWZFloat *swz_new_float(double num);
 double swz_get_float(const SWZFloat *self);
 
-typedef SWZObject* (*SWZFun)(SWZLisp*, SWZEnv*, SWZList*, void*);
+//! @note: extension
+bool swz_is_number(SWZLisp *swz, SWZObject *obj);
+bool swz_is_integer(SWZLisp *swz, SWZObject *obj);
+bool swz_is_float(SWZLisp swz, SWZObject *obj);
+
+typedef SWZObject *(*SWZFun)(SWZLisp *, SWZEnv *, SWZList *, void *);
 
 SWZBuiltin *swz_new_builtin(SWZLisp *swz, const char* name, SWZFun fun, void *args, int evald);
 void swz_env_add_builtin(

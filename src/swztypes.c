@@ -491,3 +491,23 @@ static SWZObject *_swz_integer_create(SWZLisp *swz){
     self->val = 0;
     return (SWZObject *)self;
 }
+
+// -*-
+static bool _swz_is_integr(SWZObject *obj){
+    if(!obj){
+        return false;
+    }
+    if(obj->type != swzInteger){
+        return false;
+    }
+    return true;
+}
+
+
+
+// -*-
+static bool _swz_num_compare(SWZObject *self, SWZObject *other){
+    if(self == other){
+        return true;
+    }
+}
