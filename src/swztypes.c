@@ -358,4 +358,25 @@ static Iterator _swz_list_iter(SWZObject *obj){
     return iterator;
 }
 
-// static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
+// -*-
+static bool _swz_list_compare(const SWZObject *self, const SWZObject *other){
+    if(self == other){
+        return true;
+    }
+    if(self->type != other->type || self->type != swzList){
+        return false;
+    }
+    SWZList *lhs = (SWZList *)self;
+    SWZList *rhs = (SWZList *)other;
+    SWZObject *x = (SWZObject *)self;
+    SWZObject *y = (SWZObject *)other;
+    if (swz_nil_p(x) && swz_nil_p(y)){
+        return true;
+    }
+    if(swz_nil_p(x) || swz_nil_p(y)){
+        return false;
+    }
+    return (
+        swz_compare(lhs->car, rhs->car) && swz_compare(rhs->cdr, rhs->cdr)
+    );
+}
