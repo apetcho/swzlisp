@@ -444,4 +444,15 @@ static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
     return swz_env_lookup(swz, env, symbol);
 }
 
-// static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
+// -*-
+static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other){
+    if(self == other){
+        return true;
+    }
+    if(self->type != other->type){
+        return false;
+    }
+    struct swztext *lhs = (struct swztext *)self;
+    struct swztext *rhs = (struct swztext *)other;
+    return strcmp(lhs->cstr, rhs->cstr) == 0;
+}
