@@ -831,6 +831,13 @@ static void *_swz_lambda_iter_next(Iterator *iterator){
 
 // -*-
 static Iterator _swz_lambda_iter(SWZObject *obj){
-    //! @todo
-    return (Iterator){0};
+    SWZLambda *lambda = (SWZLambda *)obj;
+    Iterator iterator = {0};
+    iterator.data = obj;
+    iterator.stateIdx = lambda->name ? 4 : 3;
+    iterator.index = 0;
+    iterator.next = _swz_lambda_iter_next;
+    iterator.close = iterator_close_noop;
+    iterator.has_next = _hash_next_index_lt_state;
+    return iterator;
 }
