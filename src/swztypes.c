@@ -187,4 +187,56 @@ static Iterator _swz_env_iter(SWZObject *obj){
     }
 }
 
-static bool _swz_env_compare(SWZObject *self, SWZObject *other);
+// -*-
+static bool _swz_env_compare(SWZObject *self, SWZObject *other){
+    SWZEnv *lhsEnv = NULL;
+    SWZEnv *rhsEnv = NULL;
+    SWZSymbol *key = NULL;
+    SWZObject *value = NULL;
+    SWZObject *rhs = NULL;
+    Iterator iterator = {0};
+
+    // - quick checks
+    if(self == other){
+        return true;
+    }
+    if(self->type != other->type || self->type != swzEnv){
+        return false;
+    }
+    // -
+    lhsEnv = (SWZObject *)self;
+    rhsEnv = (SWZObject *)other;
+    // - now actual equality
+    if(lhsEnv->parent && rhsEnv->parent){
+        // - both parent non-NULL
+        if(!_swz_env_compare((SWZObject*)lhsEnv->parent, (SWZObject*)rhsEnv->parent)){
+            return false;
+        }
+    }else if(lhsEnv->parent || rhsEnv->parent){
+        return false;
+    }
+
+    // - now equality check of scope contents
+    if(htable_length(&lhsEnv->scope) != htable_length(&rhsEnv->scope)){
+        return false;
+    }
+
+    iterator = htable_iterator_keys_ptr(&lhsEnv->scope);
+    while(iterator.has_next(&iterator)){
+        key = (SWZSymbol *)iterator.next(&iterator);
+        rhs = (SWZObject *)htable_get_ptr(&rhsEnv->scope, key);
+        if(!rhs){
+            iterator.close(&iterator);
+            return false;
+        }
+        value = (SWZObject *)htable_get_ptr(&lhsEnv->scope, key);
+        if(!swz_compare(value, rhs)){
+            iterator.close(&iterator);
+            return false;
+        }
+    }
+
+    // -
+    iterator.close(&iterator);
+    return true;
+}
