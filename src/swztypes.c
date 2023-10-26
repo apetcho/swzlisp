@@ -970,3 +970,9 @@ static void _swz_module_print(FILE *stream, SWZObject *obj){
         module->name->cstr, module->path->cstr, (void*)module
     );
 }
+
+// -*-
+static Iterator _swz_module_iter(SWZObject *obj){
+    SWZModule *module = (SWZModule *)obj;
+    return iterator_from_args(3, module->name, module->path, module->env);
+}
