@@ -343,7 +343,7 @@ struct swztype{
     Iterator (*iter)(SWZObject*);     // iter()
     SWZObject *(*eval)(SWZLisp*, SWZEnv*, SWZObject*);
     SWZObject *(*call)(SWZLisp *, SWZEnv*, SWZObject*, SWZList*);
-    bool (*compare)(SWZObject*, SWZObject*);
+    bool (*compare)(const SWZObject*, const SWZObject*);
     // equalfn
     // hashfn
 };
