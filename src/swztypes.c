@@ -740,10 +740,22 @@ SWZType *swzLambda = &_swzlambda;
 // -*-
 static void _swz_lambda_print(FILE *stream, SWZObject *obj){
     SWZLambda *lambda = (SWZLambda *)obj;
-    char *name = lambda->fbinding ? lambda->fbinding->cstr : "anonymous";
-    if(lambda->lambda_type == SWZT_LAMBDA){
-        fprintf(stream, "<lambda '%s' @ %p>", name, obj);
+    char *cstr = lambda->name ? lambda->name->cstr : "anonymous";
+    if(lambda->kind == SWZK_LAMBDA){
+        fprintf(stream, "<lambda '%s' @ %p>", cstr, obj);
     }else{
-        fprintf(stream, "<macro '%s' @ %p>", name, obj);
+        fprintf(stream, "<macro '%s' @ %p>", cstr, obj);
     }
+}
+
+// -*-
+static SWZObject *_swz_lambda_create(SWZRuntime *swz){
+    SWZ_UNUSED(swz);
+    SWZLambda *lambda = calloc(1, sizeof(SWZLambda));
+    lambda->params = NULL;
+    lambda->body = NULL;
+    lambda->env = NULL;
+    lambda->name = NULL;
+    lambda->kind = SWZK_LAMBDA;
+    return (SWZObject *)lambda;
 }

@@ -388,8 +388,8 @@ struct swzlambda {
     SWZList *params;
     SWZList *body;          // code
     SWZEnv *env;            // closure
-    SWZSymbol *fbinding;    // first_binding
-    int lambda_type;
+    SWZSymbol *name;        // first_binding
+    int kind;
 };
 
 // -*-
@@ -405,8 +405,8 @@ typedef SWZObject *(*SWZMapFn)(SWZRuntime*, SWZEnv*, void*, SWZObject*);
 
 SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapf, SWZList *argv);
 
-#define SWZT_LAMBDA     0
-#define SWZT_MACRO      1
+#define SWZK_LAMBDA     0
+#define SWZK_MACRO      1
 
 void swz_init(SWZRuntime *swz);
 void swz_destroy(SWZRuntime *swz);
