@@ -736,3 +736,14 @@ static SWZType _swzlambda = {
 };
 
 SWZType *swzLambda = &_swzlambda;
+
+// -*-
+static void _swz_lambda_print(FILE *stream, SWZObject *obj){
+    SWZLambda *lambda = (SWZLambda *)obj;
+    char *name = lambda->fbinding ? lambda->fbinding->cstr : "anonymous";
+    if(lambda->lambda_type == SWZT_LAMBDA){
+        fprintf(stream, "<lambda '%s' @ %p>", name, obj);
+    }else{
+        fprintf(stream, "<macro '%s' @ %p>", name, obj);
+    }
+}
