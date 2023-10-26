@@ -2,6 +2,9 @@
 #include<stdlib.h>
 #include<string.h>
 #include<assert.h>
+#include<float.h>
+#include<limits.h>
+#include<math.h>
 #include<stdio.h>
 
 #include "swzlisp.h"
@@ -493,7 +496,7 @@ static SWZObject *_swz_integer_create(SWZLisp *swz){
 }
 
 // -*-
-static bool _swz_is_integr(SWZObject *obj){
+static bool _swz_is_integer(SWZObject *obj){
     if(!obj){
         return false;
     }
@@ -516,7 +519,18 @@ static bool _swz_is_float(SWZObject *obj){
 
 // -*-
 static bool _swz_is_number(SWZObject *obj){
-    return (_swz_is_integr(obj) || _swz_is_float(obj));
+    return (_swz_is_integer(obj) || _swz_is_float(obj));
+}
+
+// -
+static bool _swz_almostEqual(double x, double y){
+    static double eps = DBL_EPSILON;
+    double diff = fabs(x - y);
+    x = fabs(x);
+    y = fabs(y);
+    double xymax = (x > y) ? x : y;
+    bool result = (diff <= xymax*eps) ? true: false;
+    return result;
 }
 
 // -*-
@@ -524,5 +538,16 @@ static bool _swz_num_compare(SWZObject *self, SWZObject *other){
     if(self == other){
         return true;
     }
-    return false;
+    if(!_swz_is_number(self)){
+        return false;
+    }
+    if(!_swz_is_number(other)){
+        return false;
+    }
+    if(_swz_is_integer(self)){
+        SWZInteger *lhs = (SWZInteger *)self;
+        if(_swz_is_integer(other)){
+            SWZInteger *rhs = (SWZInteger *)other;
+        }
+    }
 }
