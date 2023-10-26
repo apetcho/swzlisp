@@ -804,3 +804,33 @@ static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *call
 
     return result;
 }
+
+// -*-
+static void *_swz_lambda_iter_next(Iterator *iterator){
+    SWZLambda *lambda = (SWZLambda *)iterator->data;
+    iterator->index++;
+    void *result = NULL;
+    switch (iterator->index){
+    case 1:
+        result = lambda->params;
+        break;
+    case 2:
+        result = lambda->body;
+        break;
+    case 3:
+        result = lambda->env;
+        break;
+    case 4:
+        result = lambda->name;
+        break;
+    default:
+        break;
+    }
+    return result;
+}
+
+// -*-
+static Iterator _swz_lambda_iter(SWZObject *obj){
+    //! @todo
+    return (Iterator){0};
+}
