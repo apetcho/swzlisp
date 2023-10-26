@@ -311,5 +311,14 @@ static SWZObject *_swz_list_create(SWZLisp *swz){
     return (SWZObject *)list;
 }
 
+// -*-
+bool swz_nil_p(SWZObject *obj){
+    return (
+        (obj->type == swzList) &&
+        (((SWZList*)obj)->car == NULL) &&
+        (((SWZList*)obj)->cdr == NULL)
+    );
+}
+
 // static Iterator _swz_list_iter(SWZObject *obj);
 // static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
