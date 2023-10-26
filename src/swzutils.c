@@ -746,8 +746,15 @@ static bool _htable_has_next(Iterator *iter){
 
 // -*-
 Iterator htable_iterator_keys(HTable *htable){
-    //! @todo    
-    return (Iterator){0};
+    Iterator iter = {0};
+    iter.data = htable;
+    iter.index = 0;
+    iter.stateIdx = 0;
+    iter.statePtr = NULL;
+    iter.has_next = _htable_has_next;
+    iter.next = _htable_next;
+    iter.close = iterator_close_noop;
+    return iter;
 }
 
 // -*-
