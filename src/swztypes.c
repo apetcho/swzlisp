@@ -296,7 +296,9 @@ static void _swz_list_print_helper(FILE *stream, SWZList *list){
 }
 // -*-
 static void _swz_list_print(FILE *stream, SWZObject *obj){
-    //-
+    fprintf(stream, "(");
+    _swz_list_print_helper(stream, (SWZList *)obj);
+    fprintf(stream, ")");
 }
 
 // static SWZObject *_swz_list_create(SWZLisp *swz);
