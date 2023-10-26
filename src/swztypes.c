@@ -933,7 +933,21 @@ bool swz_compare(const SWZObject *self, const SWZObject *other){
 // -*-------------*-
 // -*- SWZModule -*-
 // -*-------------*-
-// static void _swz_module_print(FILE *stream, SWZObject *obj);
-// static SWZObject *_swz_module_alloc(SWZRuntime *swz);
-// static Iterator _swz_module_iter(SWZObject *obj);
-// static bool _swz_module_compare(const SWZObject *self, const SWZObject *other);
+static void _swz_module_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_module_alloc(SWZRuntime *swz);
+static Iterator _swz_module_iter(SWZObject *obj);
+static bool _swz_module_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzmodule = {
+    SWZ_TYPE_HEADER,
+    "module",               // .name
+    _swz_module_print,      // .print()
+    _swz_module_alloc,      // .alloc()
+    _swz_simple_dealloc,    // .deallo()
+    _swz_module_iter,       // .iter()
+    _swz_eval_error,        // .eval()
+    _swz_call_error,        // .call()
+    _swz_module_compare,    // .compare()
+};
+
+SWZType *swzModule = &_swzmodule;
