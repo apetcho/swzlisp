@@ -21,8 +21,8 @@ typedef struct {
 } CharBuffer;
 
 void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity);
-CharBuffer* cbuffer_create(uint32_t capacity);
-void cbuffer_destroy(CharBuffer* cbuffer);
+CharBuffer* cbuffer_new(uint32_t capacity);
+void cbuffer_dealloc(CharBuffer* cbuffer);
 void cbuffer_delete(CharBuffer* cbuffer);
 void cbuffer_concat(CharBuffer* cbuffer, const char *cstr);
 void cbuffer_append(CharBuffer* cbuffer, char c);
@@ -44,7 +44,7 @@ typedef struct {
 } RingBuffer;
 
 void rbuffer_init(RingBuffer *rbuffer, uint32_t dsize, int init);
-void rbuffer_destroy(RingBuffer *rbuffer);
+void rbuffer_dealloc(RingBuffer *rbuffer);
 void rbuffer_push_front(RingBuffer *rbuffer, void *src);
 void rbuffer_pop_front(RingBuffer *rbuffer, void *dst);
 void rbuffer_push_back(RingBuffer *rbuffer, void *src);
@@ -92,8 +92,8 @@ typedef struct {
 } HTable;
 
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
-HTable* htable_create(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
-void htable_destroy(HTable *htable);
+HTable* htable_new(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
+void htable_dealloc(HTable *htable);
 void htable_delete(HTable *htable);
 void htable_insert(HTable *htable, void *key, void *value);
 void htable_insert_ptr(HTable *htable, void *key, void *value);
@@ -344,7 +344,7 @@ struct swztype{
     SWZ_OBJECT_HEAD;
     const char *name;
     void (*print)(FILE*, SWZObject*);
-    SWZObject *(*create)(SWZRuntime*);
+    SWZObject *(*alloc)(SWZRuntime*);
     void (*dealloc)(SWZRuntime*, void*);
     Iterator (*iter)(SWZObject*);     // iter()
     SWZObject *(*eval)(SWZRuntime*, SWZEnv*, SWZObject*);
@@ -412,7 +412,7 @@ void swz_init(SWZRuntime *swz);
 void swz_destroy(SWZRuntime *swz);
 
 void swz_dealloc(SWZRuntime *swz, SWZObject *obj);
-SWZObject *swz_new(SWZRuntime *swz, SWZType *type);
+SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
 SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 
 enum SWZError swz_symbol_to_errno(SWZRuntime *symbol);

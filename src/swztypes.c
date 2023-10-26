@@ -51,7 +51,7 @@ static bool _hash_next_index_lt_state(Iterator *iter){
 // -*- SWZType -*-
 // -*-----------*-
 static void _swz_type_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_type_create(SWZRuntime *swz);
+static SWZObject *_swz_type_alloc(SWZRuntime *swz);
 static bool _swz_type_compare(const SWZObject *self, const SWZObject *other);
 static Iterator _swz_empty_iterator(SWZObject* obj);
 
@@ -59,7 +59,7 @@ static SWZType _swzType = {
     SWZ_TYPE_HEADER,
     "type",                 // .name
     _swz_type_print,        // .print()
-    _swz_type_create,       // .create()
+    _swz_type_alloc,        // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_eval_error,        // .eval()
@@ -76,7 +76,7 @@ static void _swz_type_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_type_create(SWZRuntime *swz){
+static SWZObject *_swz_type_alloc(SWZRuntime *swz){
     SWZType *self = NULL;
     SWZ_UNUSED(swz);
     self = calloc(1, sizeof(*self));
@@ -100,7 +100,7 @@ static Iterator _swz_empty_iterator(SWZObject* obj){
 // -*- SWZEnv -*-
 // -*----------*-
 static void _swz_env_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_env_create(SWZRuntime *swz);
+static SWZObject *_swz_env_alloc(SWZRuntime *swz);
 static void _swz_env_dealloc(SWZRuntime *swz, void *arg);
 static Iterator _swz_env_iter(SWZObject *obj);
 static bool _swz_env_compare(const SWZObject *self, const SWZObject *other);
@@ -109,7 +109,7 @@ static SWZType _swzenv = {
     SWZ_TYPE_HEADER,
     "env",              // .name
     _swz_env_print,     // .print()
-    _swz_env_create,    // .create()
+    _swz_env_alloc,     // .alloc()
     _swz_env_dealloc,   // .dealloc()
     _swz_env_iter,      // .iter()
     _swz_eval_error,    // .eval()
@@ -133,7 +133,7 @@ static bool _swz_text_compare(const void *lhs, const void *rhs){
 }
 
 // -*-
-static SWZObject *_swz_env_create(SWZRuntime *swz){
+static SWZObject *_swz_env_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = calloc(1, sizeof(*env));
@@ -153,7 +153,7 @@ static void _swz_env_dealloc(SWZRuntime *swz, void *arg){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = (SWZEnv *)arg;
-    htable_destroy(&env->scope);
+    htable_dealloc(&env->scope);
     free(env);
 }
 
@@ -248,7 +248,7 @@ static bool _swz_env_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZList -*-
 // -*-----------*-
 static void _swz_list_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_list_create(SWZRuntime *swz);
+static SWZObject *_swz_list_alloc(SWZRuntime *swz);
 static SWZObject *_swz_list_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
 static Iterator _swz_list_iter(SWZObject *obj);
 static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
@@ -257,7 +257,7 @@ static SWZType _swzlist = {
     SWZ_TYPE_HEADER,
     "list",                 // .name
     _swz_list_print,        // .print()
-    _swz_list_create,       // .create()
+    _swz_list_alloc,        // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_list_iter,         // .iter()
     _swz_list_eval,         // .eval()
@@ -305,7 +305,7 @@ static void _swz_list_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_list_create(SWZRuntime *swz){
+static SWZObject *_swz_list_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZList *list = NULL;
     list = calloc(1, sizeof(*list));
@@ -388,7 +388,7 @@ static bool _swz_list_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZSymbol -*-
 // -*-------------*-
 static void _swz_txt_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_txt_create(SWZRuntime *swz);
+static SWZObject *_swz_txt_alloc(SWZRuntime *swz);
 static SWZObject *_swz_symbol_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
 static void _swz_txt_dealloc(SWZRuntime *swz, void *arg);
 static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
@@ -397,7 +397,7 @@ static SWZType _swzsymbol = {
     SWZ_TYPE_HEADER,
     "symbol",               // .name
     _swz_txt_print,         // .print()
-    _swz_txt_create,        // .create()
+    _swz_txt_alloc,         // .alloc()
     _swz_txt_dealloc,       // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_symbol_eval,       // .eval()
@@ -414,7 +414,7 @@ static void _swz_txt_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_txt_create(SWZRuntime *swz){
+static SWZObject *_swz_txt_alloc(SWZRuntime *swz){
     struct swztext *text = NULL;
     SWZ_UNUSED(swz);
     text = calloc(1, sizeof(struct swztext));
@@ -464,14 +464,14 @@ static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZInteger -*-
 // -*--------------*-
 static void _swz_integer_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_integer_create(SWZRuntime *swz);
+static SWZObject *_swz_integer_alloc(SWZRuntime *swz);
 static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzinteger = {
     SWZ_TYPE_HEADER,
     "integer",              // .name
     _swz_integer_print,     // .print()
-    _swz_integer_create,    // .create()
+    _swz_integer_alloc,     // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_eval_same,         // .eval()
@@ -488,7 +488,7 @@ static void _swz_integer_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_integer_create(SWZRuntime *swz){
+static SWZObject *_swz_integer_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZInteger *self = calloc(1, sizeof(*self));
     self->val = 0;
@@ -575,14 +575,14 @@ static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZFloat -*-
 // -*------------*-
 static void _swz_float_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_float_create(SWZRuntime *swz);
+static SWZObject *_swz_float_alloc(SWZRuntime *swz);
 static bool _swz_float_compare(const SWZObject *self, const SWZObject *other);
 
 static SWZType _swzfloat = {
     SWZ_TYPE_HEADER,
     "float",                // .name
     _swz_float_print,       // .print()
-    _swz_float_create,      // .create()
+    _swz_float_alloc,       // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_eval_same,         // .eval()
@@ -599,7 +599,7 @@ static void _swz_float_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_float_create(SWZRuntime *swz){
+static SWZObject *_swz_float_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZFloat *self = calloc(1, sizeof(*self));
     self->val = (double)0;
@@ -636,7 +636,7 @@ static SWZType _swzstring = {
     SWZ_TYPE_HEADER,
     "string",               // .name
     _swz_txt_print,         // .print()
-    _swz_txt_create,        // .create()
+    _swz_txt_alloc,         // .alloc()
     _swz_txt_dealloc,       // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_eval_same,         // .eval()
@@ -650,7 +650,7 @@ SWZType *swzString = &_swzstring;
 // -*- SWZBuiltin -*-
 // -*--------------*-
 static void _swz_builtin_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_builtin_create(SWZRuntime *swz);
+static SWZObject *_swz_builtin_alloc(SWZRuntime *swz);
 static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other);
 
@@ -658,7 +658,7 @@ static SWZType _swzbuiltin = {
     SWZ_TYPE_HEADER,
     "builtin",              // .name
     _swz_builtin_print,     // .print()
-    _swz_builtin_create,    // .create()
+    _swz_builtin_alloc,     // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_empty_iterator,    // .iter()
     _swz_eval_error,        // .eval()
@@ -675,7 +675,7 @@ static void _swz_builtin_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_builtin_create(SWZRuntime *swz){
+static SWZObject *_swz_builtin_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZBuiltin *builtin = calloc(1, sizeof(SWZBuiltin));
     builtin->fun = NULL;
@@ -718,7 +718,7 @@ static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other){
 // -*- SWZLambda -*-
 // -*-------------*-
 static void _swz_lambda_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_lambda_create(SWZRuntime *swz);
+static SWZObject *_swz_lambda_alloc(SWZRuntime *swz);
 static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 static Iterator _swz_lambda_iter(SWZObject *obj);
 static bool _swz_lambda_compare(const SWZObject *self, const SWZObject *other);
@@ -727,7 +727,7 @@ static SWZType _swzlambda = {
     SWZ_TYPE_HEADER,
     "lambda",               // .name
     _swz_lambda_print,      // .print()
-    _swz_lambda_create,     // .create()
+    _swz_lambda_alloc,      // .alloc()
     _swz_simple_dealloc,    // .dealloc()
     _swz_lambda_iter,       // .iter()
     _swz_eval_error,        // .eval()
@@ -749,7 +749,7 @@ static void _swz_lambda_print(FILE *stream, SWZObject *obj){
 }
 
 // -*-
-static SWZObject *_swz_lambda_create(SWZRuntime *swz){
+static SWZObject *_swz_lambda_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZLambda *lambda = calloc(1, sizeof(SWZLambda));
     lambda->params = NULL;
@@ -780,7 +780,7 @@ static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *call
         return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
     }
 
-    inner = (SWZEnv *)swz_new(swz, swzEnv);
+    inner = (SWZEnv *)swz_alloc(swz, swzEnv);
     inner->parent = lambda->env;
     iter1 = lambda->params;
     iter2 = argv;

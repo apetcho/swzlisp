@@ -33,7 +33,7 @@ void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity){
  * @param capacity CharBuffer capacity.
  * @return CharBuffer* 
  */
-CharBuffer* cbuffer_create(uint32_t capacity){
+CharBuffer* cbuffer_new(uint32_t capacity){
     CharBuffer *cbuffer = calloc(1, sizeof(CharBuffer));
     cbuffer_init(cbuffer, capacity);
     return cbuffer;
@@ -502,7 +502,7 @@ void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksiz
 }
 
 // -*-
-HTable* htable_create(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
+HTable* htable_new(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     HTable *htable = NULL;
     htable = calloc(1, sizeof(*htable));
     htable_init(htable, hashfn, equalfn, ksize, vsize);
