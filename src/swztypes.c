@@ -515,8 +515,14 @@ static bool _swz_is_float(SWZObject *obj){
 }
 
 // -*-
+static bool _swz_is_number(SWZObject *obj){
+    return (_swz_is_integr(obj) || _swz_is_float(obj));
+}
+
+// -*-
 static bool _swz_num_compare(SWZObject *self, SWZObject *other){
     if(self == other){
         return true;
     }
+    return false;
 }
