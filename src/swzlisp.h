@@ -150,7 +150,7 @@ typedef struct swzmodule SWZModule;
 
 extern SWZType *swzType;
 
-void swz_print(FILE *file, SWZObject *obj);
+void swz_print(FILE *stream, SWZObject *obj);
 SWZObject* swz_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
 SWZObject *swz_call(SWZLisp *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 bool swz_compare(SWZObject *self, SWZObject *other);
@@ -203,7 +203,7 @@ double swz_get_float(const SWZFloat *self);
 //! @note: extension
 bool swz_is_number(SWZLisp *swz, SWZObject *obj);
 bool swz_is_integer(SWZLisp *swz, SWZObject *obj);
-bool swz_is_float(SWZLisp swz, SWZObject *obj);
+bool swz_is_float(SWZLisp *swz, SWZObject *obj);
 
 typedef SWZObject *(*SWZFun)(SWZLisp *, SWZEnv *, SWZList *, void *);
 
@@ -233,7 +233,7 @@ bool swz_get_args(SWZLisp *swz, SWZList *list, char* fmt, ...);
 SWZModule* swz_new_module(SWZLisp *swz, SWZString *name, SWZString *filename);
 SWZEnv* swz_module_get_env(const SWZModule *module);
 void swz_register_module(SWZLisp *swz, SWZModule *module);
-SWZModule* swz_import_file(SWZLisp *swz, SWZString *name, SWZString *file);
+SWZModule* swz_import_file(SWZLisp *swz, SWZString *name, SWZString *path);
 SWZModule* swz_do_import(SWZLisp *swz, SWZSymbol *name);
 
 int swz_parse_object(SWZLisp *swz, const char* input, int index, SWZObject **output);
@@ -283,7 +283,7 @@ void swz_dump_stack(SWZLisp *swz, SWZLisp *stack, FILE *file);
     }                           \
 }while(0)
 
-void swz_eprint(SWZLisp *swz, FILE *file);
+void swz_eprint(SWZLisp *swz, FILE *stream);
 char *swz_get_error(SWZLisp *swz);
 enum SWZError swz_get_errno(SWZLisp *swz);
 void swz_clear_error(SWZLisp *swz);

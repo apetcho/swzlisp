@@ -624,7 +624,7 @@ bool swz_is_integer(SWZLisp *swz, SWZObject *obj){
 }
 
 // -*-
-bool swz_is_float(SWZLisp swz, SWZObject *obj){
+bool swz_is_float(SWZLisp *swz, SWZObject *obj){
     SWZ_UNUSED(swz);
     return _swz_is_float(obj);
 }
@@ -667,3 +667,9 @@ static SWZType _swzbuiltin = {
 };
 
 SWZType *swzBuiltin = &_swzbuiltin;
+
+// -*-
+static void _swz_builtin_print(FILE *stream, SWZObject *obj){
+    SWZBuiltin *builtin = (SWZBuiltin *)obj;
+    fprintf(stream, "<builtin function '%s' @ %p>", builtin->name, obj);
+}
