@@ -909,7 +909,22 @@ SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *
     return result;
 }
 
-// SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
+// -*-
+SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type){
+    SWZObject *obj = type->alloc(swz);
+    obj->type = type;
+    obj->next = NULL;
+    obj->mark = SWZ_GC_NOMARK;
+    if(swz->head == NULL){
+        swz->head = obj;
+        swz->tail = obj;
+    }else{
+        swz->tail->next = obj;
+        swz->tail = obj;
+    }
+    return obj;
+}
+
 // bool swz_compare(const SWZObject *self, const SWZObject *other);
 
 // -*-------------*-
