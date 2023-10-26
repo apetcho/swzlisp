@@ -503,7 +503,16 @@ static bool _swz_is_integr(SWZObject *obj){
     return true;
 }
 
-
+// -*-
+static bool _swz_is_float(SWZObject *obj){
+    if(!obj){
+        return false;
+    }
+    if(obj->type != swzFloat){
+        return false;
+    }
+    return true;
+}
 
 // -*-
 static bool _swz_num_compare(SWZObject *self, SWZObject *other){
