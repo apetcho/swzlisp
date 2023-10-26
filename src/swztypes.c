@@ -591,3 +591,9 @@ static SWZType _swzfloat = {
 };
 
 SWZType *swzFloat = &_swzfloat;
+
+// -*-
+static void _swz_float_print(FILE *stream, SWZObject *obj){
+    SWZFloat *self = (SWZFloat *)obj;
+    fprintf(stream, "%lf", self->val);
+}
