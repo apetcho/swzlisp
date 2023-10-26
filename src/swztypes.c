@@ -154,6 +154,21 @@ static void _swz_env_destroy(SWZLisp *swz, void *arg){
     free(env);
 }
 
-static void _swz_env_print(FILE *stream, SWZObject *obj);
+// -*-
+static void _swz_env_print(FILE *stream, SWZObject *obj){
+    SWZEnv *env = (SWZEnv *)obj;
+    Iterator iterator = htable_iterator_keys_ptr(&env->scope);
+    fprintf(stream, "(scope:");
+    while(iterator.has_next(&iterator)){
+        SWZObject *key = iterator.next(&iterator);
+        SWZObject *value = htable_get_ptr(&env->scope, key);
+        fprintf(stream, " ");
+        swz_print(stream, key);
+        fprintf(stream, ": ");
+        swz_print(stream, value);
+    }
+    fprintf(stream, ")");
+}
+
 static Iterator _swz_env_iter(SWZObject *obj);
 static bool _swz_env_compare(SWZObject *self, SWZObject *other);
