@@ -301,6 +301,15 @@ static void _swz_list_print(FILE *stream, SWZObject *obj){
     fprintf(stream, ")");
 }
 
-// static SWZObject *_swz_list_create(SWZLisp *swz);
+// -*-
+static SWZObject *_swz_list_create(SWZLisp *swz){
+    SWZ_UNUSED(swz);
+    SWZList *list = NULL;
+    list = calloc(1, sizeof(*list));
+    list->car = NULL;
+    list->cdr = NULL;
+    return (SWZObject *)list;
+}
+
 // static Iterator _swz_list_iter(SWZObject *obj);
 // static bool _swz_list_compare(const SWZObject *self, const SWZObject *other);
