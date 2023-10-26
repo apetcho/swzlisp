@@ -565,3 +565,8 @@ static bool _swz_num_compare(SWZObject *self, SWZObject *other){
     double y = ((SWZFloat *)other)->val;
     return _swz_almostEqual(x, y);
 }
+
+// -*-
+static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other){
+    return _swz_num_compare((SWZObject*)self, (SWZObject*)other);
+}
