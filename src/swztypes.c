@@ -436,5 +436,12 @@ static void _swz_txt_destroy(SWZLisp *swz, void *arg){
     free(text);
 }
 
-// static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
+// -*-
+static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+    SWZ_UNUSED(swz);
+    SWZSymbol *symbol = NULL;
+    symbol = (SWZSymbol *)obj;
+    return swz_env_lookup(swz, env, symbol);
+}
+
 // static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
