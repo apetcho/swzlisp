@@ -420,6 +420,21 @@ static SWZObject *_swz_txt_create(SWZLisp *swz){
     return (SWZObject *)text;
 }
 
+// -*-
+static void _swz_txt_destroy(SWZLisp *swz, void *arg){
+    struct swztext *text = (struct swztext *)arg;
+    if(text->type == swzString && swz->strcache){
+        swz_textchach_remove(swz->strcache, text);
+    }else if(text->type == swzSymbol && swz->symcache){
+        swz_textchach_remove(swz->symcache, text);
+    }
+
+    // - deal with the ownership
+    if(text->can_free){
+        free(text->cstr);
+    }
+    free(text);
+}
+
 // static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
-// static void _swz_txt_destroy(SWZLisp *swz, void *arg);
 // static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
