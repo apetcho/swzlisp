@@ -739,6 +739,12 @@ static void* _htable_next_ptr(Iterator *iter){
 }
 
 // -*-
+static bool _htable_has_next(Iterator *iter){
+    HTable *htable = iter->data;
+    return iter->index < htable->len;
+}
+
+// -*-
 Iterator htable_iterator_keys(HTable *htable){
     //! @todo    
     return (Iterator){0};
