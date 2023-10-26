@@ -24,3 +24,11 @@ static SWZObject* _swz_eval_same(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
     (void)env;
     return obj;
 }
+
+// -*-
+static SWZObject* _swz_call_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj, SWZList *list){
+    (void)env;
+    (void)obj;
+    (void)list;
+    return swz_error(swz, SWZE_CALL, "not callable!");
+}
