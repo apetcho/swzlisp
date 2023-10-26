@@ -695,3 +695,21 @@ static SWZObject *_swz_builtin_call(SWZLisp* swz, SWZEnv *env, SWZObject *callab
     }
     return builtin->fun(swz, env, args, builtin->params);
 }
+
+// -*-
+static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other){
+    if(self == other){
+        return true;
+    }
+    if(self->type != other->type || self->type != swzBuiltin){
+        return false;
+    }
+    SWZBuiltin *lhs = (SWZBuiltin *)self;
+    SWZBuiltin *rhs = (SWZBuiltin *)other;
+
+    return (
+        (lhs->fun==rhs->fun) &&
+        (lhs->params==rhs->params) &&
+        (strcmp(lhs->name, rhs->name)==0)
+    );
+}
