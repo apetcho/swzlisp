@@ -623,4 +623,8 @@ bool swz_is_integer(SWZLisp *swz, SWZObject *obj){
     return _swz_is_integer(obj);
 }
 
-bool swz_is_float(SWZLisp swz, SWZObject *obj);
+// -*-
+bool swz_is_float(SWZLisp swz, SWZObject *obj){
+    SWZ_UNUSED(swz);
+    return _swz_is_float(obj);
+}
