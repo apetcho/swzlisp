@@ -161,7 +161,7 @@ extern SWZType *swzEnv;
 SWZEnv* swz_new_default_env(SWZRuntime *swz);
 SWZEnv* swz_new_empty_env(SWZRuntime *swz);
 void swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
-void swz_env_bind(SWZRuntime *env, SWZSymbol *symbol, SWZObject *obj);
+void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj);
 SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
 SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
 

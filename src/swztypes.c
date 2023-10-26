@@ -759,3 +759,48 @@ static SWZObject *_swz_lambda_create(SWZRuntime *swz){
     lambda->kind = SWZK_LAMBDA;
     return (SWZObject *)lambda;
 }
+
+// -*-
+static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args){
+    SWZLambda *lambda = (SWZLambda *)callable;
+    SWZList *argv;
+    SWZList *iter1;
+    SWZList *iter2;
+    SWZEnv *inner;
+    SWZObject *result;
+
+    if(lambda->kind == SWZK_MACRO){
+        argv = args;
+    }else{
+        argv = swz_eval_list(swz, env, args);
+        SWZ_IS_VALID_PTR(argv);
+    }
+
+    if(swz_is_bad_list(argv)){
+        return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
+    }
+
+    inner = (SWZEnv *)swz_new(swz, swzEnv);
+    inner->parent = lambda->env;
+    iter1 = lambda->params;
+    iter2 = argv;
+    while(!swz_nil_p((SWZObject*)iter1) && !swz_nil_p((SWZObject*)iter2)){
+        swz_env_bind(inner, (SWZSymbol *)iter1->car, iter2->car);
+        iter1 = (SWZList *)iter1->cdr;
+        iter2 = (SWZList *)iter2->cdr;
+    }
+    if(!swz_nil_p((SWZObject*)iter1)){
+        return swz_error(swz, SWZE_TOO_FEW, "not enought argument to lambda call");
+    }
+
+    if(!swz_nil_p((SWZObject*)iter2)){
+        return swz_error(swz, SWZE_TOO_MANY, "too many arguments to lambda call");
+    }
+
+    result = swz_progn(swz, inner, lambda->body);
+    if(lambda->kind == SWZK_MACRO){
+        result = swz_eval(swz, env, result);
+    }
+
+    return result;
+}
