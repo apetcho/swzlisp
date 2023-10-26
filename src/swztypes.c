@@ -605,3 +605,8 @@ static SWZObject *_swz_float_create(SWZLisp *swz){
     self->val = (double)0;
     return (SWZObject *)self;
 }
+
+// -*-
+static bool _swz_float_compare(const SWZObject *self, const SWZObject *other){
+    return _swz_num_compare((SWZObject*)self, (SWZObject*)other);
+}
