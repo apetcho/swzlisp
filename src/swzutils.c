@@ -730,6 +730,15 @@ static void* _htable_next(Iterator *iter){
 }
 
 // -*-
+static void* _htable_next_ptr(Iterator *iter){
+    void **result = _htable_next(iter);
+    if(result == NULL){
+        return NULL;
+    }
+    return *result;
+}
+
+// -*-
 Iterator htable_iterator_keys(HTable *htable){
     //! @todo    
     return (Iterator){0};
