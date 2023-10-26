@@ -123,15 +123,30 @@ static uint32_t _swz_text_hash(void *arg){
 }
 
 // -*-
-static bool _swz_text_compare(void *lhs, void *rhs){
+static bool _swz_text_compare(const void *lhs, const void *rhs){
     SWZSymbol *sym1 = *(SWZSymbol **)lhs;
     SWZSymbol *sym2 = *(SWZSymbol **)rhs;
     return strcmp(sym1->cstr, sym2->cstr) == 0;
 }
 
 // -*-
+static SWZObject *_swz_env_create(SWZLisp *swz){
+    SWZ_UNUSED(swz);
+    SWZEnv *env = NULL;
+    env = calloc(1, sizeof(*env));
+    env->up = NULL;
+    htable_init(
+        &env->scope,
+        _swz_text_hash,
+        _swz_text_compare,
+        sizeof(void *),
+        sizeof(void *)
+    );
+
+    return (SWZObject *)env;
+}
+
 static void _swz_env_print(FILE *stream, SWZObject *obj);
-static SWZObject *_swz_env_create(SWZLisp *swz);
 static void _swz_env_destroy(SWZLisp *swz, void *arg);
 static Iterator _swz_env_iter(SWZObject *obj);
 static bool _swz_env_compare(SWZObject *self, SWZObject *other);
