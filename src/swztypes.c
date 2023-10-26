@@ -88,9 +88,9 @@ static bool _swz_type_compare(const SWZObject *self, const SWZObject *other){
     return self == other;
 }
 
-static Iterator _swz_simple_iterator(SWZObject* obj){
+static Iterator _swz_empty_iterator(SWZObject* obj){
     SWZ_UNUSED(obj);
-    return (Iterator){0};
+    return iterator_empty();
 }
 
 // -*----------*-
@@ -410,7 +410,16 @@ static void _swz_txt_print(FILE *stream, SWZObject *obj){
     fprintf(stream, "%s", text->cstr);
 }
 
-// static SWZObject *_swz_txt_create(SWZLisp *swz);
+// -*-
+static SWZObject *_swz_txt_create(SWZLisp *swz){
+    struct swztext *text = NULL;
+    SWZ_UNUSED(swz);
+    text = calloc(1, sizeof(struct swztext));
+    text->cstr = NULL;
+    text->can_free = 1;
+    return (SWZObject *)text;
+}
+
 // static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
 // static void _swz_txt_destroy(SWZLisp *swz, void *arg);
 // static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
