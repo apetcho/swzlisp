@@ -79,4 +79,10 @@ static SWZObject *_swz_type_create(SWZLisp *swz){
     return (SWZObject *)self;
 }
 
-//static bool _swz_type_compare(SWZObject *self, SWZObject *other);
+// -*-
+static bool _swz_type_compare(SWZObject *self, SWZObject *other){
+    if(self->type != other->type || self->type != swzType){
+        return false;
+    }
+    return self == other;
+}
