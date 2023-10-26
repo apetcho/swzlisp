@@ -34,7 +34,7 @@ static SWZObject* _swz_call_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj, SWZ
 }
 
 // -*-
-static void _simple_free(SWZLisp *swz, void *arg){
+static void _swz_simple_destroy(SWZLisp *swz, void *arg){
     (void)swz;
     free(arg);
 }
@@ -57,8 +57,8 @@ static SWZType _swzType = {
     "type",                 // .name
     _swz_type_print,        // .print()
     _swz_type_create,       // .create()
-    _simple_free,           // .destroy()
-    _swz_empty_iterator,   // .iter()
+    _swz_simple_destroy,    // .destroy()
+    _swz_empty_iterator,    // .iter()
     _swz_eval_error,        // .eval()
     _swz_call_error,        // .call()
     _swz_type_compare,      // .compare()
@@ -255,7 +255,7 @@ static SWZType _swzlist = {
     "list",                 // .name
     _swz_list_print,        // .print()
     _swz_list_create,       // .create()
-    _simple_free,           // .destroy()
+    _swz_simple_destroy,    // .destroy()
     _swz_list_iter,         // .iter()
     _swz_list_eval,         // .eval()
     _swz_call_error,        // .call()
@@ -456,3 +456,24 @@ static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other){
     struct swztext *rhs = (struct swztext *)other;
     return strcmp(lhs->cstr, rhs->cstr) == 0;
 }
+
+// -*--------------*-
+// -*- SWZInteger -*-
+// -*--------------*-
+static void _swz_integer_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_integer_create(SWZLisp *swz);
+static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzinteger = {
+    SWZ_TYPE_HEADER,
+    "integer",              // .name
+    _swz_integer_print,     // .print()
+    _swz_integer_create,    // .create()
+    _swz_simple_destroy,    // .destroy()
+    _swz_empty_iterator,    // .iter()
+    _swz_eval_same,         // .eval()
+    _swz_call_error,        // .call()
+    _swz_integer_compare,   // .compare()
+};
+
+SWZType *swzInteger = &_swzinteger;
