@@ -38,7 +38,15 @@ SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol){
     }
 }
 
-// SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
+// -*-
+SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key){
+    // -
+    SWZSymbol symbol;
+    symbol.type = swzSymbol;
+    symbol.cstr = (char*)key;
+    return swz_env_lookup(swz, env, &symbol);
+}
+
 // void swz_env_add_builtin(
 //     SWZRuntime *swz, SWZEnv *env, const char* name,
 //     SWZFun fun, void *args, int evald
