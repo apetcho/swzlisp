@@ -951,3 +951,13 @@ static SWZType _swzmodule = {
 };
 
 SWZType *swzModule = &_swzmodule;
+
+// -*-
+static SWZObject *_swz_module_alloc(SWZRuntime *swz){
+    SWZ_UNUSED(swz);
+    SWZModule* module = _my_alloc(sizeof(SWZModule));
+    module->env = NULL;
+    module->name = NULL;
+    module->path = NULL;
+    return (SWZObject*)module;
+}
