@@ -841,3 +841,24 @@ static Iterator _swz_lambda_iter(SWZObject *obj){
     iterator.has_next = _hash_next_index_lt_state;
     return iterator;
 }
+
+// -*-
+static bool _swz_lambda_compare(const SWZObject *self, const SWZObject *other){
+    if(self == other){
+        return true;
+    }
+
+    if(self->type != other->type || self->type != swzLambda){
+        return false;
+    }
+
+    SWZLambda *lhs = (SWZLambda *)self;
+    SWZLambda *rhs = (SWZLambda *)other;
+
+    return (
+        lhs->kind == rhs->kind &&
+        swz_compare((SWZObject*)lhs->params, (SWZObject*)rhs->params) &&
+        swz_compare((SWZObject*)lhs->body, (SWZObject*)rhs->body) &&
+        swz_compare((SWZObject*)lhs->env, (SWZObject*)rhs->env)
+    );
+}
