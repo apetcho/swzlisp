@@ -892,7 +892,23 @@ SWZObject* swz_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     return obj->type->eval(swz, env, obj);
 }
 
-// SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
+// -*-
+SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args){
+    SWZObject *result = NULL;
+
+    // create a new stack frame
+    swz->stack = swz_alloc_list(swz, callable, (SWZObject *)swz->stack);
+    swz->sdepth++;
+
+    // make function call;
+    result = callable->type->call(swz, env, callable, args);
+
+    // get rid of stack frame
+    swz->stack = (SWZList *)swz->stack->cdr;
+    swz->sdepth--;
+    return result;
+}
+
 // SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
 // bool swz_compare(const SWZObject *self, const SWZObject *other);
 
