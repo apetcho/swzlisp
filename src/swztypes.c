@@ -50,18 +50,18 @@ static bool _hash_next_index_lt_state(Iterator *iter){
 static void _swz_type_print(FILE *stream, SWZObject *obj);
 static SWZObject *_swz_type_create(SWZLisp *swz);
 static bool _swz_type_compare(const SWZObject *self, const SWZObject *other);
-static Iterator _swz_type_iterator(SWZObject* obj);
+static Iterator _swz_empty_iterator(SWZObject* obj);
 
 static SWZType _swzType = {
     SWZ_TYPE_HEADER,
-    "type",             // .name
-    _swz_type_print,    // .print()
-    _swz_type_create,   // .create()
-    _simple_free,       // .destroy()
-    _swz_type_iterator, // .iter()
-    _swz_eval_error,    // .eval()
-    _swz_call_error,    // .call()
-    _swz_type_compare,  // .compare()
+    "type",                 // .name
+    _swz_type_print,        // .print()
+    _swz_type_create,       // .create()
+    _simple_free,           // .destroy()
+    _swz_empty_iterator,   // .iter()
+    _swz_eval_error,        // .eval()
+    _swz_call_error,        // .call()
+    _swz_type_compare,      // .compare()
 };
 
 SWZType *swzType = &_swzType;
@@ -88,7 +88,7 @@ static bool _swz_type_compare(const SWZObject *self, const SWZObject *other){
     return self == other;
 }
 
-static Iterator _swz_type_iterator(SWZObject* obj){
+static Iterator _swz_simple_iterator(SWZObject* obj){
     SWZ_UNUSED(obj);
     return (Iterator){0};
 }
@@ -380,3 +380,26 @@ static bool _swz_list_compare(const SWZObject *self, const SWZObject *other){
         swz_compare(lhs->car, rhs->car) && swz_compare(rhs->cdr, rhs->cdr)
     );
 }
+
+// -*-------------*-
+// -*- SWZSymbol -*-
+// -*-------------*-
+static void _swz_txt_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_txt_create(SWZLisp *swz);
+static SWZObject *_swz_symbol_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
+static void _swz_txt_destroy(SWZLisp *swz, void *arg);
+static bool _swz_txt_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzsymbol = {
+    SWZ_TYPE_HEADER,
+    "symbol",               // .name
+    _swz_txt_print,         // .print()
+    _swz_txt_create,        // .create()
+    _swz_txt_destroy,       // .destroy()
+    _swz_empty_iterator,    // .iter()
+    _swz_symbol_eval,       // .eval()
+    _swz_call_error,        // .call()
+    _swz_txt_compare,       // .compare()
+};
+
+SWZType *swzSymbol = &_swzsymbol;
