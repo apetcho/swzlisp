@@ -5,7 +5,13 @@
 // -*-------------*-
 const char* const swzVersion = SWZ_VERSION_FULL;
 
-// const char* swzErrorNames;
+#define SWZE_DEF(code, id, name, desc) [code] = name,
+const char* swzErrorNames[SWZE_COUNT] = {
+    SWZ_ERRORS
+};
+#undef SWZE_DEF
+
+
 // void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj);
 // SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
 // SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);

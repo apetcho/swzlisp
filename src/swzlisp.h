@@ -268,8 +268,9 @@ SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
     SWZE_DEF(SWZE_EXIT, 11, "SWZExitError", "exit the interpreter")         \
     SWZE_DEF(SWZE_ASSERT, 12, "SWZAssertionError", "assertion error")       \
     SWZE_DEF(SWZE_VALUE, 13, "SWZValueError", "invalid argument")           \
-    SWZE_DEF(SWZE_ERRNO, 14, "", "")                                        \
-    SWZE_DEF(SWZE_MAX_ERR, 15, "", "")
+    SWZE_DEF(SWZE_ERRNO, 14, "", "")
+
+#define SWZE_COUNT  (SWZE_ERRNO + 1)
 
 enum SWZError{
 #define SWZE_DEF(err, ev, msg, desc) err = ev, 
@@ -277,7 +278,7 @@ enum SWZError{
 #undef SWZE_DEF
 };
 
-extern const char *swzErrorNames[SWZE_MAX_ERR];
+extern const char *swzErrorNames[SWZE_COUNT];
 
 SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
 void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
