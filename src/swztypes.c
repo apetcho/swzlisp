@@ -32,3 +32,9 @@ static SWZObject* _swz_call_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj, SWZ
     (void)list;
     return swz_error(swz, SWZE_CALL, "not callable!");
 }
+
+// -*-
+static void _simple_free(SWZLisp *swz, void *arg){
+    (void)swz;
+    free(arg);
+}
