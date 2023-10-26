@@ -50,6 +50,7 @@ static bool _hash_next_index_lt_state(Iterator *iter){
 static void _swz_type_print(FILE *stream, SWZObject *obj);
 static SWZObject *_swz_type_create(SWZLisp *swz);
 static bool _swz_type_compare(SWZObject *self, SWZObject *other);
+static Iterator _swz_type_iterator(SWZObject* obj);
 
 static SWZType _swzType = {
     SWZ_TYPE_HEADER,
@@ -57,7 +58,7 @@ static SWZType _swzType = {
     _swz_type_print,    // .print()
     _swz_type_create,   // .create()
     _simple_free,       // .destroy()
-    iterator_empty,     // .expand()
+    _swz_type_iterator, // .iter()
     _swz_eval_error,    // .eval()
     _swz_call_error,    // .call()
     _swz_type_compare,  // .compare()
@@ -86,3 +87,16 @@ static bool _swz_type_compare(SWZObject *self, SWZObject *other){
     }
     return self == other;
 }
+
+static Iterator _swz_type_iterator(SWZObject* obj){
+    SWZ_UNUSED(obj);
+    return (Iterator){0};
+}
+
+// -*----------*-
+// -*- SWZEnv -*-
+// -*----------*-
+static void _swz_env_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_env_create(SWZLisp *swz);
+static void _swz_env_destroy(SWZLisp *swz, void *arg);
+static Iterator _swz_env_expand(SWZObject *obj);

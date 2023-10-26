@@ -66,7 +66,7 @@ struct iterator {
 };
 
 void iterator_close_noop(Iterator* iter);
-Iterator iterator_empty();
+//Iterator iterator_empty();
 Iterator iterator_single_value(void *value);
 Iterator iterator_concat(Iterator *iter, size_t n);
 Iterator iterator_concat2(Iterator left, Iterator right);
@@ -340,7 +340,7 @@ struct swztype{
     void (*print)(FILE*, SWZObject*);
     SWZObject *(*create)(SWZLisp*);
     void (*destroy)(SWZLisp*, void*);
-    Iterator (*expand)(SWZObject*);
+    Iterator (*iter)(SWZObject*);     // iter()
     SWZObject *(*eval)(SWZLisp*, SWZEnv*, SWZObject*);
     SWZObject *(*call)(SWZLisp *, SWZEnv*, SWZObject*, SWZList*);
     bool (*compare)(SWZObject*, SWZObject*);
