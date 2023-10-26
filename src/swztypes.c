@@ -925,7 +925,10 @@ SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type){
     return obj;
 }
 
-// bool swz_compare(const SWZObject *self, const SWZObject *other);
+// -*-
+bool swz_compare(const SWZObject *self, const SWZObject *other){
+    return self->type->compare(self, other);
+}
 
 // -*-------------*-
 // -*- SWZModule -*-
