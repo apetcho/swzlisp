@@ -628,3 +628,20 @@ bool swz_is_float(SWZLisp swz, SWZObject *obj){
     SWZ_UNUSED(swz);
     return _swz_is_float(obj);
 }
+
+// -*-------------*-
+// -*- SWZString -*-
+// -*-------------*-
+static SWZType _swzstring = {
+    SWZ_TYPE_HEADER,
+    "string",               // .name
+    _swz_txt_print,         // .print()
+    _swz_txt_create,        // .create()
+    _swz_txt_destroy,       // .destroy()
+    _swz_empty_iterator,    // .iter()
+    _swz_eval_same,         // .eval()
+    _swz_call_error,        // .call()
+    _swz_txt_compare,       // .compare()
+};
+
+SWZType *swzString = &_swzstring;
