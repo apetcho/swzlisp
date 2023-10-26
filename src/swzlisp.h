@@ -152,7 +152,7 @@ extern SWZType *swzType;
 
 void swz_print(FILE *file, SWZObject *obj);
 SWZObject* swz_eval(SWZLisp *swz, SWZEnv *env, SWZObject *obj);
-SWZObject *swz_call(SWZLisp *swz, SWZEnv *env, SWZObject *callable);
+SWZObject *swz_call(SWZLisp *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 bool swz_compare(SWZObject *self, SWZObject *other);
 bool swz_is(SWZObject *obj, SWZType *type);
 
@@ -329,8 +329,8 @@ struct swzenv{
 // -
 struct swzlist{
     SWZ_OBJECT_HEAD;
-    SWZObject *left;
-    SWZObject *right;
+    SWZObject *car;
+    SWZObject *cdr;
 };
 
 // -
