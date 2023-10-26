@@ -683,7 +683,7 @@ SWZType *swzBuiltin = &_swzbuiltin;
 // -*-
 static void _swz_builtin_print(FILE *stream, SWZObject *obj){
     SWZBuiltin *builtin = (SWZBuiltin *)obj;
-    fprintf(stream, "<builtin function '%s' @ %p>", builtin->name, obj);
+    fprintf(stream, "<builtin function '%s' @ 0x%p>", builtin->name, (void*)builtin);
 }
 
 // -*-
@@ -754,9 +754,9 @@ static void _swz_lambda_print(FILE *stream, SWZObject *obj){
     SWZLambda *lambda = (SWZLambda *)obj;
     char *cstr = lambda->name ? lambda->name->cstr : "anonymous";
     if(lambda->kind == SWZK_LAMBDA){
-        fprintf(stream, "<lambda '%s' @ %p>", cstr, obj);
+        fprintf(stream, "<lambda '%s' @ 0x%p>", cstr, (void*)lambda);
     }else{
-        fprintf(stream, "<macro '%s' @ %p>", cstr, obj);
+        fprintf(stream, "<macro '%s' @ 0x%p>", cstr, (void*)lambda);
     }
 }
 
@@ -960,4 +960,13 @@ static SWZObject *_swz_module_alloc(SWZRuntime *swz){
     module->name = NULL;
     module->path = NULL;
     return (SWZObject*)module;
+}
+
+// -*-
+static void _swz_module_print(FILE *stream, SWZObject *obj){
+    SWZModule *module = (SWZModule *)obj;
+    fprintf(
+        stream, "<module '%s' from '%s' at 0x%p>",
+        module->name->cstr, module->path->cstr, (void*)module
+    );
 }
