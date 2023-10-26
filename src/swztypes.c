@@ -91,7 +91,7 @@ static void _swz_type_print(FILE *stream, SWZObject *obj){
 static SWZObject *_swz_type_alloc(SWZRuntime *swz){
     SWZType *self = NULL;
     SWZ_UNUSED(swz);
-    self = calloc(1, sizeof(*self));
+    self = _my_alloc(sizeof(SWZType));
     return (SWZObject *)self;
 }
 
@@ -148,7 +148,7 @@ static bool _swz_text_compare(const void *lhs, const void *rhs){
 static SWZObject *_swz_env_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
-    env = calloc(1, sizeof(*env));
+    env = _my_alloc(sizeof(SWZEnv));
     env->parent = NULL;
     htable_init(
         &env->scope,
@@ -320,7 +320,7 @@ static void _swz_list_print(FILE *stream, SWZObject *obj){
 static SWZObject *_swz_list_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZList *list = NULL;
-    list = calloc(1, sizeof(*list));
+    list = _my_alloc(sizeof(SWZList));
     list->car = NULL;
     list->cdr = NULL;
     return (SWZObject *)list;
@@ -429,7 +429,7 @@ static void _swz_txt_print(FILE *stream, SWZObject *obj){
 static SWZObject *_swz_txt_alloc(SWZRuntime *swz){
     struct swztext *text = NULL;
     SWZ_UNUSED(swz);
-    text = calloc(1, sizeof(struct swztext));
+    text = _my_alloc(sizeof(struct swztext));
     text->cstr = NULL;
     text->can_free = 1;
     return (SWZObject *)text;
@@ -502,7 +502,7 @@ static void _swz_integer_print(FILE *stream, SWZObject *obj){
 // -*-
 static SWZObject *_swz_integer_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
-    SWZInteger *self = calloc(1, sizeof(*self));
+    SWZInteger *self = _my_alloc(sizeof(SWZInteger));
     self->val = 0;
     return (SWZObject *)self;
 }
@@ -613,7 +613,7 @@ static void _swz_float_print(FILE *stream, SWZObject *obj){
 // -*-
 static SWZObject *_swz_float_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
-    SWZFloat *self = calloc(1, sizeof(*self));
+    SWZFloat *self = _my_alloc(sizeof(SWZFloat));
     self->val = (double)0;
     return (SWZObject *)self;
 }
@@ -689,7 +689,7 @@ static void _swz_builtin_print(FILE *stream, SWZObject *obj){
 // -*-
 static SWZObject *_swz_builtin_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
-    SWZBuiltin *builtin = calloc(1, sizeof(SWZBuiltin));
+    SWZBuiltin *builtin = _my_alloc(sizeof(SWZBuiltin));
     builtin->fun = NULL;
     builtin->name = NULL;
     builtin->evald = 0;
@@ -763,7 +763,7 @@ static void _swz_lambda_print(FILE *stream, SWZObject *obj){
 // -*-
 static SWZObject *_swz_lambda_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
-    SWZLambda *lambda = calloc(1, sizeof(SWZLambda));
+    SWZLambda *lambda = _my_alloc(sizeof(SWZLambda));
     lambda->params = NULL;
     lambda->body = NULL;
     lambda->env = NULL;
