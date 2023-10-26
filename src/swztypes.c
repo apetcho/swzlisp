@@ -570,3 +570,24 @@ static bool _swz_num_compare(SWZObject *self, SWZObject *other){
 static bool _swz_integer_compare(const SWZObject *self, const SWZObject *other){
     return _swz_num_compare((SWZObject*)self, (SWZObject*)other);
 }
+
+// -*------------*-
+// -*- SWZFloat -*-
+// -*------------*-
+static void _swz_float_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_float_create(SWZLisp *swz);
+static bool _swz_float_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzfloat = {
+    SWZ_TYPE_HEADER,
+    "float",                // .name
+    _swz_float_print,       // .print()
+    _swz_float_create,      // .create()
+    _swz_simple_destroy,    // .destroy()
+    _swz_empty_iterator,    // .iter()
+    _swz_eval_same,         // .eval()
+    _swz_call_error,        // .call()
+    _swz_float_compare,     // .compare()
+};
+
+SWZType *swzFloat = &_swzfloat;
