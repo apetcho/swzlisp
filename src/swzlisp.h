@@ -395,8 +395,8 @@ struct swzlambda {
 struct swzmodule {
     SWZ_OBJECT_HEAD;
     SWZEnv *env;            // contents
-    SWZString *name;
-    SWZString *filename;    // file-full-path
+    SWZString *name;        // <should be SWZSymbol instead>
+    SWZString *filename;    // <should be SWZSymbol instead>:: file-full-path
 };
 
 // -

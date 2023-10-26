@@ -645,3 +645,25 @@ static SWZType _swzstring = {
 };
 
 SWZType *swzString = &_swzstring;
+
+// -*--------------*-
+// -*- SWZBuiltin -*-
+// -*--------------*-
+static void _swz_builtin_print(FILE *stream, SWZObject *obj);
+static SWZObject *_swz_builtin_create(SWZLisp *swz);
+static SWZObject *_swz_builtin_call(SWZLisp* swz, SWZEnv *env, SWZObject *callable, SWZList *args);
+static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other);
+
+static SWZType _swzbuiltin = {
+    SWZ_TYPE_HEADER,
+    "builtin",              // .name
+    _swz_builtin_print,     // .print()
+    _swz_builtin_create,    // .create()
+    _swz_simple_destroy,    // .destroy()
+    _swz_empty_iterator,    // .iter()
+    _swz_eval_error,        // .eval()
+    _swz_builtin_call,      // .call()
+    _swz_builtin_compare,   // .compare()
+};
+
+SWZType *swzBuiltin = &_swzbuiltin;
