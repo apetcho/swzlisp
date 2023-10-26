@@ -14,6 +14,18 @@
     NULL,                   \
     'w'
 
+
+// -*-
+void* _my_alloc(size_t size){
+    void *result = malloc(size);
+    if(result == NULL){
+        fprintf(stderr, "Error: memory allocation failure\n");
+        abort();
+    }
+    memset(result, 0, size);
+    return result;
+}
+
 // -*-
 static SWZObject* _swz_eval_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     (void)env;
