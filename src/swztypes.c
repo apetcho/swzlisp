@@ -483,3 +483,11 @@ static void _swz_integer_print(FILE *stream, SWZObject *obj){
     SWZInteger *self = (SWZInteger *)obj;
     fprintf(stream, "%ld", self->val);
 }
+
+// -*-
+static SWZObject *_swz_integer_create(SWZLisp *swz){
+    SWZ_UNUSED(swz);
+    SWZInteger *self = calloc(1, sizeof(*self));
+    self->val = 0;
+    return (SWZObject *)self;
+}
