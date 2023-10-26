@@ -976,3 +976,8 @@ static Iterator _swz_module_iter(SWZObject *obj){
     SWZModule *module = (SWZModule *)obj;
     return iterator_from_args(3, module->name, module->path, module->env);
 }
+
+// -*-
+static bool _swz_module_compare(const SWZObject *self, const SWZObject *other){
+    return self == other;
+}
