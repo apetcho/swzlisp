@@ -17,3 +17,10 @@ static SWZObject* _swz_eval_error(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
     (void)obj;
     return swz_error(swz, SWZE_EVAL, "cannot evaluate this object");
 }
+
+// -*-
+static SWZObject* _swz_eval_same(SWZLisp *swz, SWZEnv *env, SWZObject *obj){
+    (void)swz;
+    (void)env;
+    return obj;
+}
