@@ -345,7 +345,7 @@ struct swztype{
     const char *name;
     void (*print)(FILE*, SWZObject*);
     SWZObject *(*create)(SWZRuntime*);
-    void (*destroy)(SWZRuntime*, void*);
+    void (*dealloc)(SWZRuntime*, void*);
     Iterator (*iter)(SWZObject*);     // iter()
     SWZObject *(*eval)(SWZRuntime*, SWZEnv*, SWZObject*);
     SWZObject *(*call)(SWZRuntime *, SWZEnv*, SWZObject*, SWZList*);
@@ -411,7 +411,7 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapf, SWZLis
 void swz_init(SWZRuntime *swz);
 void swz_destroy(SWZRuntime *swz);
 
-void swz_free(SWZRuntime *swz, SWZObject *obj);
+void swz_dealloc(SWZRuntime *swz, SWZObject *obj);
 SWZObject *swz_new(SWZRuntime *swz, SWZType *type);
 SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 
