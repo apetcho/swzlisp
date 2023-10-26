@@ -123,6 +123,13 @@ static uint32_t _swz_text_hash(void *arg){
 }
 
 // -*-
+static bool _swz_text_compare(void *lhs, void *rhs){
+    SWZSymbol *sym1 = *(SWZSymbol **)lhs;
+    SWZSymbol *sym2 = *(SWZSymbol **)rhs;
+    return strcmp(sym1->cstr, sym2->cstr) == 0;
+}
+
+// -*-
 static void _swz_env_print(FILE *stream, SWZObject *obj);
 static SWZObject *_swz_env_create(SWZLisp *swz);
 static void _swz_env_destroy(SWZLisp *swz, void *arg);
