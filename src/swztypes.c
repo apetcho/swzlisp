@@ -882,6 +882,11 @@ void swz_print(FILE *stream, SWZObject *obj){
     obj->type->print(stream, obj);
 }
 
+// -*-
+void swz_dealloc(SWZRuntime *swz, SWZObject *obj){
+    obj->type->dealloc(swz, obj);
+}
+
 // SWZObject* swz_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
 // SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
 // SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
