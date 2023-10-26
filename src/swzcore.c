@@ -11,7 +11,7 @@ const char* swzErrorNames[SWZE_COUNT] = {
 };
 #undef SWZE_DEF
 
-
+// -*-
 void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj){
     htable_insert_ptr(&env->scope, symbol, obj);
 
@@ -24,7 +24,20 @@ void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj){
     }
 }
 
-// SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
+// -*-
+SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol){
+    SWZObject *obj = htable_get_ptr(&env->scope, symbol);
+    if(!obj){
+        if(env->parent){
+            return swz_env_lookup(swz, env->parent, symbol);
+        }else{
+            return swz_error(swz, SWZE_NOT_FOUND, "symbol not found in scope");
+        }
+    }else{
+        return obj;
+    }
+}
+
 // SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
 // void swz_env_add_builtin(
 //     SWZRuntime *swz, SWZEnv *env, const char* name,
