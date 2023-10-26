@@ -146,7 +146,14 @@ static SWZObject *_swz_env_create(SWZLisp *swz){
     return (SWZObject *)env;
 }
 
+static void _swz_env_destroy(SWZLisp *swz, void *arg){
+    SWZ_UNUSED(swz);
+    SWZEnv *env = NULL;
+    env = (SWZEnv *)arg;
+    htable_destroy(&env->scope);
+    free(env);
+}
+
 static void _swz_env_print(FILE *stream, SWZObject *obj);
-static void _swz_env_destroy(SWZLisp *swz, void *arg);
 static Iterator _swz_env_iter(SWZObject *obj);
 static bool _swz_env_compare(SWZObject *self, SWZObject *other);
