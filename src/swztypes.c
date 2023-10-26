@@ -878,4 +878,19 @@ static bool _swz_lambda_compare(const SWZObject *self, const SWZObject *other){
 // -*------------------*-
 // -*- shortcuts APIs -*-
 // -*------------------*-
-// void swz_print(FILE *stream, SWZObject *obj);
+void swz_print(FILE *stream, SWZObject *obj){
+    obj->type->print(stream, obj);
+}
+
+// SWZObject* swz_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
+// SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args);
+// SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
+// bool swz_compare(const SWZObject *self, const SWZObject *other);
+
+// -*-------------*-
+// -*- SWZModule -*-
+// -*-------------*-
+// static void _swz_module_print(FILE *stream, SWZObject *obj);
+// static SWZObject *_swz_module_alloc(SWZRuntime *swz);
+// static Iterator _swz_module_iter(SWZObject *obj);
+// static bool _swz_module_compare(const SWZObject *self, const SWZObject *other);
