@@ -597,3 +597,11 @@ static void _swz_float_print(FILE *stream, SWZObject *obj){
     SWZFloat *self = (SWZFloat *)obj;
     fprintf(stream, "%lf", self->val);
 }
+
+// -*-
+static SWZObject *_swz_float_create(SWZLisp *swz){
+    SWZ_UNUSED(swz);
+    SWZFloat *self = calloc(1, sizeof(*self));
+    self->val = (double)0;
+    return (SWZObject *)self;
+}
