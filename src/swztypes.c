@@ -38,3 +38,8 @@ static void _simple_free(SWZLisp *swz, void *arg){
     (void)swz;
     free(arg);
 }
+
+// -*-
+static bool _hash_next_index_lt_state(Iterator *iter){
+    return iter->index < iter->stateIdx;
+}
