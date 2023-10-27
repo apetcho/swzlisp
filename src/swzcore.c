@@ -523,7 +523,11 @@ void swz_textchach_remove(HTable *cache, struct swztext *text){
     }
 }
 
-// static HTable* _swz_alloc_textcache(void);
+// -*-
+static HTable* _swz_alloc_textcache(void){
+    return htable_new(swz_text_hash, swz_text_compare, sizeof(Text *), 0);
+}
+
 // static char* _my_strdup(char *cstr);
 // static struct swztext* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTaböe *cache, char *cstr, int flags);
 // SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
