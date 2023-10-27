@@ -332,8 +332,12 @@ void swz_list_set_car(SWZList *list, SWZObject *car){
     list->car = car;
 }
 
+// -*-
+void swz_list_set_cdr(SWZList *list, SWZObject *cdr){
+    list->cdr = cdr;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
-// void swz_list_set_cdr(SWZList *list, SWZObject *cdr);
 // void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item);
 // SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 // long swz_get_integer(const SWZInteger *self);
