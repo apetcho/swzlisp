@@ -281,7 +281,16 @@ SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *env, int argc, char *
     return swz_call(swz, env, mainfn, args);
 }
 
-// SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *args, int evald);
+// -*-
+SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald){
+    SWZBuiltin *builtin = (SWZBuiltin *)swz_alloc(swz, swzBuiltin);
+    builtin->fun = fun;
+    builtin->name = name;
+    builtin->params = params;
+    builtin->evald = evald;
+    return builtin;
+}
+
 // SWZObject *swz_alloc_nil(SWZRuntime *swz);
 // char* swz_get_string(const SWZString *self); // get
 // char* swz_get_symbol(const SWZSymbol *self); //

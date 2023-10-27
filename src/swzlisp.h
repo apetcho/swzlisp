@@ -212,10 +212,10 @@ bool swz_is_float(SWZRuntime *swz, SWZObject *obj);
 
 typedef SWZObject *(*SWZFun)(SWZRuntime *, SWZEnv *, SWZList *, void *);
 
-SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *args, int evald);
+SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald);
 void swz_env_add_builtin(
     SWZRuntime *swz, SWZEnv *env, const char* name,
-    SWZFun fun, void *args, int evald
+    SWZFun fun, void *params, int evald
 );
 SWZList *swz_eval_list(SWZRuntime *swz, SWZEnv *env, SWZList *list);
 SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list);
