@@ -564,7 +564,11 @@ static Text* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTable *cache, char
     return str;
 }
 
-// SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
+// -*-
+SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags){
+    return (SWZString *)_swz_alloc_text(swz, swzString, swz->strcache, cstr, flags);
+}
+
 // SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, char *cstr, int flags);
 // void swzlisp_enable_string_cache(SWZRuntime *swz);
 // void swzlisp_enable_symbol_cache(SWZRuntime *swz);
