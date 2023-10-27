@@ -319,7 +319,7 @@ struct swzruntime{
     SWZObject *tail;
     RingBuffer rbuffer;
     SWZObject *nil;
-    void *user;
+    void *ctx;              // <user>
     char *error;
     enum SWZError errnum;
     uint32_t errline;
