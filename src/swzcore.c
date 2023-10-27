@@ -149,7 +149,42 @@ static SWZType* _swz_get_type(char c){
     return result;
 }
 
-// bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
+// -*-
+bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...){
+    SWZObject **ref;
+    SWZType *type;
+
+    va_list args;
+    va_start(args, fmt);
+    while(!swz_nil_p((SWZObject*)list) && *fmt != '\0'){
+        ref = va_arg(args, SWZObject **);
+        if(*fmt == 'R'){ // 'R' -> rest of arguments
+            *ref = (SWZObject *)list;
+            return true;
+        }
+        type = _swz_get_type(*fmt);
+        if(type != NULL && type != list->car->type){
+            swz->error = "incorrect argument type";
+            swz->errnum = SWZE_TYPE;
+            return false;
+        }
+        *ref = list->car;
+        list = (SWZList *)list->cdr;
+        fmt += 1;
+    }
+    if(*fmt != '\0'){
+        swz->error = "not enough arguments";
+        swz->errnum = SWZE_TOO_FEW;
+        return false;
+    }else if(!swz_nil_p((SWZObject*)list)){
+        swz->error = "too many arguments";
+        swz->errnum = SWZE_TOO_MANY;
+        return false;
+    }
+
+    return true;
+}
+
 // SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
 // SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
 // SWZRuntime swzlisp_new(void);
