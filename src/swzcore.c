@@ -185,7 +185,27 @@ bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...){
     return true;
 }
 
-// SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
+// -*-
+SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag){
+    if(n==0){
+        return (SWZList *)swz_alloc_nil(swz);
+    }
+    SWZList *result = NULL;
+    SWZList *lst = NULL;
+    SWZString *str = NULL;
+
+    result = (SWZList *)swz_alloc(swz, swzList);
+    lst = result;
+    for (size_t i = 0; i < n; i++){
+        str = swz_alloc_string(swz, list[i], flag);
+        lst->car = (SWZObject *)str;
+        lst->cdr = swz_alloc(swz, swzList);
+        lst = (SWZList *)lst->cdr;
+    }
+    lst->cdr = swz_alloc_nil(swz);
+    return result;
+}
+
 // SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
 // SWZRuntime swzlisp_new(void);
 // void swzlisp_set_ctx(SWZRuntime *swz, void *ctx);
