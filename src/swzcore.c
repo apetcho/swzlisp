@@ -350,9 +350,16 @@ void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject 
     }
 }
 
+// -*-
+SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num){
+    SWZInteger *number = (SWZInteger *)swz_alloc(swz, swzInteger);
+    number->val = num;
+    return number;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
+
 // long swz_get_integer(const SWZInteger *self);
 // void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
 // SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
