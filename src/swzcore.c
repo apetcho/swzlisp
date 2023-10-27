@@ -109,7 +109,11 @@ SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym){
     return list;
 }
 
-// SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
+// -*-
+SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj){
+    return swz_quote_with(swz, obj, "quote");
+}
+
 // static SWZType* _swz_get_type(char c);
 // bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 // SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
