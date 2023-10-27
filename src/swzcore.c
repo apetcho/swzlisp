@@ -237,7 +237,11 @@ void swzlisp_set_ctx(SWZRuntime *swz, void *ctx){
     swz->ctx = ctx;
 }
 
-// void *swzlisp_get_ctx(SWZRuntime *swz);
+// -*-
+void *swzlisp_get_ctx(SWZRuntime *swz){
+    return swz->ctx;
+}
+
 // void swzlisp_destroy(SWZRuntime *swz);
 // bool swz_is(SWZObject *obj, SWZType *type);
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
