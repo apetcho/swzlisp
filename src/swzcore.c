@@ -509,7 +509,11 @@ static Text *_swz_textcache_lookup(HTable *cache, char *cstr) {
     return htable_get_key_ptr(cache, &text);
 }
 
-// static void _swz_textcache_save(HTable *cache, struct swztext *text);
+// -*-
+static void _swz_textcache_save(HTable *cache, struct swztext *text){
+    htable_insert_ptr(cache, text, NULL);
+}
+
 // void swz_textchach_remove(HTable *cache, struct swztext *text);
 // static HTable* _swz_alloc_textcache(void);
 // static char* _my_strdup(char *cstr);
