@@ -394,9 +394,16 @@ enum SWZError swz_get_errno(SWZRuntime *swz){
     return swz->errnum;
 }
 
+// -*-
+void swz_clear_error(SWZRuntime *swz){
+    swz->error = NULL;
+    swz->errstack = NULL;
+    swz->errline = 0;
+    swz->errnum = 0;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// void swz_clear_error(SWZRuntime *swz);
 // void swz_eprint(SWZRuntime *swz, FILE *stream);
 // enum SWZError swz_symbol_to_errno(SWZRuntime *symbol);
 // int swz_is_bad_list(SWZList *list);
