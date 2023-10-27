@@ -357,10 +357,14 @@ SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num){
     return number;
 }
 
+// -*-
+long swz_get_integer(const SWZInteger *self){
+    return self->val;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
 
-// long swz_get_integer(const SWZInteger *self);
 // void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
 // SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
 // char *swz_get_error(SWZRuntime *swz);
