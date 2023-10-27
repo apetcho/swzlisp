@@ -528,7 +528,15 @@ static HTable* _swz_alloc_textcache(void){
     return htable_new(swz_text_hash, swz_text_compare, sizeof(Text *), 0);
 }
 
-// static char* _my_strdup(char *cstr);
+// -*-
+static char* _my_strdup(char *cstr){
+    size_t len = strlen(cstr);
+    char *str = _my_alloc(len + 1);
+    strncpy(str, cstr, len);
+    str[0] = '\0';
+    return str;
+}
+
 // static struct swztext* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTaböe *cache, char *cstr, int flags);
 // SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
 // SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, char *cstr, int flags);
