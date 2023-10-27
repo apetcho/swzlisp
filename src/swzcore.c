@@ -448,9 +448,22 @@ bool swz_is_bad_list(SWZList *list){
     return list->type != swzList;
 }
 
+// -*-
+bool swz_is_bad_list_of_lists(SWZList *list){
+    if(list->type != swzList){
+        return true;
+    }
+    SWZ_FOREACH(list){
+        if(swz_is_bad_list((SWZList*)list->car)){
+            return true;
+        }
+    }
+
+    return list->type != swzList;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// int swz_is_bad_list_of_lists(SWZList *list);
 // SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapfn, SWZList *args);
 // bool swz_truthy(SWZObject *obj);
 
