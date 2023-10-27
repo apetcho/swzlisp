@@ -114,7 +114,41 @@ SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj){
     return swz_quote_with(swz, obj, "quote");
 }
 
-// static SWZType* _swz_get_type(char c);
+// -*-
+static SWZType* _swz_get_type(char c){
+    SWZType *result = NULL;
+    switch (c){
+    case 'd':
+        result = swzInteger;
+        break;
+    case 'f':
+        result = swzFloat;
+        break;
+    case 'l':
+        result = swzList;
+        break;
+    case 's':
+        result = swzSymbol;
+        break;
+    case 'S':
+        result = swzString;
+        break;
+    case 'o':
+        result = swzEnv;
+        break;
+    case 'b':
+        result = swzBuiltin;
+        break;
+    case 't':
+        result = swzType;
+        break;
+    default:
+        break;
+    }
+
+    return result;
+}
+
 // bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 // SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
 // SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
