@@ -247,7 +247,7 @@ SWZObject* swz_parse_progn_f(SWZRuntime *swz, FILE *file);
 SWZObject* swz_load_file(SWZRuntime *swz, SWZEnv *env, FILE *input);
 //! @todo: this function will be removed, because we don't want to process
 // a main procedure in any specific way.
-SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *emv, int argc, char *argv);
+SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *env, int argc, char **argv);
 
 void swz_mark(SWZRuntime *swz, SWZObject *obj);
 void swz_sweek(SWZRuntime *swz);

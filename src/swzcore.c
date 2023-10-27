@@ -265,7 +265,22 @@ SWZEnv* swz_alloc_default_env(SWZRuntime *swz){
     return env;
 }
 
-// SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *emv, int argc, char *argv);
+// -*-
+SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *env, int argc, char **argv){
+    SWZList *args = NULL;
+    SWZObject *mainfn = swz_env_lookup(
+        swz, env, swz_alloc_symbol(swz, "main", 0)
+    );
+    if(mainfn==NULL){
+        swz_clear_error(swz);
+        return swz_alloc_nil(swz);
+    }
+    args = swz_list_of_strings(swz, argv, argc, 0);
+    args = swz_quote(swz, (SWZObject *)args);
+    args = swz_list_singleton(swz, (SWZObject *)args);
+    return swz_call(swz, env, mainfn, args);
+}
+
 // SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *args, int evald);
 // SWZObject *swz_alloc_nil(SWZRuntime *swz);
 // char* swz_get_string(const SWZString *self); // get
