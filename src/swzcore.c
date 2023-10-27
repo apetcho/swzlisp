@@ -299,7 +299,11 @@ SWZObject *swz_alloc_nil(SWZRuntime *swz){
     return swz->nil;
 }
 
-// char* swz_get_string(const SWZString *self); // get
+// -*-
+char* swz_get_string(const SWZString *self){
+    return self->cstr;
+}
+
 // char* swz_get_symbol(const SWZSymbol *self); //
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 // SWZObject *swz_list_get_car(const SWZList *list);
