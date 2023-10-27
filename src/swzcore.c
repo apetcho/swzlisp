@@ -246,7 +246,7 @@ void *swzlisp_get_ctx(SWZRuntime *swz){
 
 // -*-
 void swzlisp_delete(SWZRuntime *swz){
-    swzlisp_destroy(swz);
+    swzlisp_dealloc(swz);
     free(swz);
 }
 
@@ -621,7 +621,20 @@ void swzlisp_init(SWZRuntime *swz){
     // ... + other std-modules
 }
 
-// void swz_destroy(SWZRuntime *swz);
+// -*-
+void swzlisp_dealloc(SWZRuntime *swz){
+    swz->has_marked = 0; // ensure we sweep all
+    swz_sweep(swz);
+    rbuffer_dealloc(&swz->rbuffer);
+    swz_dealloc(swz, swz->nil);
+    if(swz->symcache){
+        htable_delete(swz->symcache);
+    }
+    if(swz->strcache){
+        htable_delete(swz->strcache);
+    }
+}
+
 // void swz_mark(SWZRuntime *swz, SWZObject *obj);
 // static void _swz_mark_basics(SWZRuntime *swz);
 // void swz_sweek(SWZRuntime *swz);

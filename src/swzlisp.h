@@ -250,7 +250,7 @@ SWZObject* swz_load_file(SWZRuntime *swz, SWZEnv *env, FILE *input);
 SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *env, int argc, char **argv);
 
 void swz_mark(SWZRuntime *swz, SWZObject *obj);
-void swz_sweek(SWZRuntime *swz);
+void swz_sweep(SWZRuntime *swz);
 
 SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
 
@@ -318,6 +318,7 @@ struct swzruntime{
     SWZObject *head;
     SWZObject *tail;
     RingBuffer rbuffer;
+    int has_marked;
     SWZObject *nil;
     void *ctx;              // <user>
     char *error;
@@ -415,7 +416,7 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZ
 #define SWZK_MACRO      1
 
 void swzlisp_init(SWZRuntime *swz);
-void swzlisp_destroy(SWZRuntime *swz);
+void swzlisp_dealloc(SWZRuntime *swz);
 
 void swz_dealloc(SWZRuntime *swz, SWZObject *obj);
 SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
