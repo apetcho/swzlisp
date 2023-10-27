@@ -421,7 +421,7 @@ void swz_dealloc(SWZRuntime *swz, SWZObject *obj);
 SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
 SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 
-enum SWZError swz_symbol_to_errno(SWZRuntime *symbol);
+enum SWZError swz_symbol_to_errno(SWZSymbol *symbol);
 
 int swz_is_bad_list(SWZList *list);
 int swz_is_bad_list_of_lists(SWZList *list);

@@ -429,9 +429,18 @@ void swz_eprint(SWZRuntime *swz, FILE *stream){
     }
 }
 
+// -*-
+enum SWZError swz_symbol_to_errno(SWZSymbol *symbol){
+    for (int i = 0; i < SWZE_COUNT; i++){
+        if(strcmp(symbol->cstr, swzErrorNames[i])==0){
+            return (enum SWZError)i;
+        }
+    }
+    return SWZE_COUNT;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// enum SWZError swz_symbol_to_errno(SWZRuntime *symbol);
 // int swz_is_bad_list(SWZList *list);
 // int swz_is_bad_list_of_lists(SWZList *list);
 // SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapfn, SWZList *args);
