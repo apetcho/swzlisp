@@ -579,7 +579,11 @@ void swzlisp_enable_string_cache(SWZRuntime *swz){
     swz->strcache = _swz_alloc_textcache();
 }
 
-// void swzlisp_enable_symbol_cache(SWZRuntime *swz);
+// -*-
+void swzlisp_enable_symbol_cache(SWZRuntime *swz){
+    swz->symcache = _swz_alloc_textcache();
+}
+
 // void swzlisp_disable_string_cache(SWZRuntime *swz);
 // void swzlisp_disable_symbol_cache(SWZRuntime *swz);
 
