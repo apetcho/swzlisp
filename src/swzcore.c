@@ -322,8 +322,12 @@ SWZObject *swz_list_get_car(const SWZList *list){
     return list->car;
 }
 
+// -*-
+SWZObject *swz_list_get_cdr(const SWZList *list){
+    return list->cdr;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
-// SWZObject *swz_list_get_cdr(const SWZList *list);
 // void swz_list_set_car(SWZRuntime *list, SWZObject *car);
 // void swz_list_set_cdr(SWZList *list, SWZObject *cdr);
 // void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item);
