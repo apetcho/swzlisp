@@ -494,9 +494,13 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZ
     return head;
 }
 
+// -*-
+bool swz_truthy(SWZObject *obj){
+    return swz_is_number(NULL, obj) && !swz_compare(obj, (SWZObject*)swz_alloc_float(0));
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// bool swz_truthy(SWZObject *obj);
 
 // -*---------------*-
 // -*- caching API -*-
