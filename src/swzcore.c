@@ -304,7 +304,11 @@ char* swz_get_string(const SWZString *self){
     return self->cstr;
 }
 
-// char* swz_get_symbol(const SWZSymbol *self); //
+// -*-
+char* swz_get_symbol(const SWZSymbol *self){
+    return self->cstr;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 // SWZObject *swz_list_get_car(const SWZList *list);
 // SWZObject *swz_list_get_cdr(const SWZList *list);
