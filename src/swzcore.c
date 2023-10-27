@@ -362,10 +362,22 @@ long swz_get_integer(const SWZInteger *self){
     return self->val;
 }
 
+// -*-
+void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream){
+    if(!stack){
+        stack = swz->stack;
+    }
+
+    fprintf(stream, "Stack trace (most recent call first):\n");
+    SWZ_FOREACH(stack){
+        fprintf(stream, " ");
+        swz_print(stream, stack->car);
+        fprintf(stream, "\n");
+    }
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-
-// void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
 // SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
 // char *swz_get_error(SWZRuntime *swz);
 // enum SWZError swz_get_errno(SWZRuntime *swz);
