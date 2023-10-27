@@ -376,9 +376,16 @@ void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream){
     }
 }
 
+// -*-
+SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg){
+    swz->error = (char*)errmsg;
+    swz->errnum = errnum;
+    swz->errstack = swz->stack;
+    return NULL;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
 // char *swz_get_error(SWZRuntime *swz);
 // enum SWZError swz_get_errno(SWZRuntime *swz);
 // void swz_clear_error(SWZRuntime *swz);
