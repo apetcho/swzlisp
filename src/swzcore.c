@@ -68,7 +68,22 @@ SWZList *swz_eval_list(SWZRuntime *swz, SWZEnv *env, SWZList *list){
     return swz_map(swz, env, NULL, _swz_mapper_eval, list);
 }
 
-// SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list);
+// -*-
+SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list){
+    if(swz_nil_p((SWZObject*)list)){
+        return swz_alloc_nil(swz);
+    }
+    SWZObject *obj = NULL;
+    while(1){
+        obj = swz_eval(swz, env, list->car);
+        if(swz_nil_p(list->cdr)){
+            return obj;
+        }else{
+            list = (SWZList *)list->cdr;
+        }
+    }
+}
+
 // uint32_t swz_list_length(const SWZList *list);
 // SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 // SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
