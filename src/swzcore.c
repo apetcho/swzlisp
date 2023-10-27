@@ -655,5 +655,13 @@ void swz_mark(SWZRuntime *swz, SWZObject *obj){
     }
 }
 
-// static void _swz_mark_basics(SWZRuntime *swz);
+// -*-
+static void _swz_mark_basics(SWZRuntime *swz){
+    if(swz->errstack){
+        swz_mark(swz, (SWZObject *)swz->errstack);
+    }
+    swz_mark(swz, (SWZObject *)swz->stack);
+    swz_mark(swz, (SWZObject *)swz->modules);
+}
+
 // void swz_sweek(SWZRuntime *swz);
