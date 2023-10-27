@@ -499,13 +499,16 @@ bool swz_truthy(SWZObject *obj){
     return swz_is_number(NULL, obj) && !swz_compare(obj, (SWZObject*)swz_alloc_float(0));
 }
 
-// SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
-
-
 // -*---------------*-
 // -*- caching API -*-
 // -*---------------*-
-// static struct swztext* _swz_textcache_lookup(HTable *cache, char *cstr);
+typedef struct swztext Text;
+static Text *_swz_textcache_lookup(HTable *cache, char *cstr) {
+    Text text;
+    text.cstr = cstr;
+    return htable_get_key_ptr(cache, &text);
+}
+
 // static void _swz_textcache_save(HTable *cache, struct swztext *text);
 // void swz_textchach_remove(HTable *cache, struct swztext *text);
 // static HTable* _swz_alloc_textcache(void);
