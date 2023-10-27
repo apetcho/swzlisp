@@ -253,7 +253,11 @@ bool swz_is(SWZObject *obj, SWZType *type){
     return obj->type == type;
 }
 
-// SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
+// -*-
+SWZEnv* swz_alloc_empty_env(SWZRuntime *swz){
+    return (SWZEnv *)swz_alloc(swz, swzEnv);
+}
+
 // SWZEnv* swz_alloc_default_env(SWZRuntime *swz);
 // SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *emv, int argc, char *argv);
 // SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *args, int evald);
