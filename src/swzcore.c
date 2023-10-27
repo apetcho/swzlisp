@@ -623,7 +623,7 @@ void swzlisp_init(SWZRuntime *swz){
 
 // -*-
 void swzlisp_dealloc(SWZRuntime *swz){
-    swz->has_marked = 0; // ensure we sweep all
+    swz->marked = false;    // ensure we sweep all
     swz_sweep(swz);
     rbuffer_dealloc(&swz->rbuffer);
     swz_dealloc(swz, swz->nil);
@@ -635,6 +635,25 @@ void swzlisp_dealloc(SWZRuntime *swz){
     }
 }
 
-// void swz_mark(SWZRuntime *swz, SWZObject *obj);
+// -*-
+void swz_mark(SWZRuntime *swz, SWZObject *obj){
+    rbuffer_push_back(&swz->rbuffer, &obj);
+    swz->marked = true;
+    while(swz->rbuffer.count > 0){
+        Iterator iterator;
+        rbuffer_pop_front(&swz->rbuffer, &obj);
+        obj->mark = SWZ_GC_MARKED;
+        iterator = obj->type->iter(obj);
+        while(iterator.has_next(&iterator)){
+            obj = iterator.next(&iterator);
+            if(obj->mark == SWZ_GC_NOMARK){
+                obj->mark = SWZ_GC_QUEUED;
+                rbuffer_push_back(&swz->rbuffer, &obj);
+            }
+        }
+        iterator.close(&iterator);
+    }
+}
+
 // static void _swz_mark_basics(SWZRuntime *swz);
 // void swz_sweek(SWZRuntime *swz);

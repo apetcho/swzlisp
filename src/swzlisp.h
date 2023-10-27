@@ -318,7 +318,7 @@ struct swzruntime{
     SWZObject *head;
     SWZObject *tail;
     RingBuffer rbuffer;
-    int has_marked;
+    bool marked;
     SWZObject *nil;
     void *ctx;              // <user>
     char *error;
