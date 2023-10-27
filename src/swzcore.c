@@ -337,8 +337,21 @@ void swz_list_set_cdr(SWZList *list, SWZObject *cdr){
     list->cdr = cdr;
 }
 
+// -*-
+void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item){
+    if(swz_nil_p((SWZObject*)*head)){
+        *head = swz_alloc_list(swz, item, (SWZObject *)*head);
+        *tail = *head;
+    }else{
+        (*tail)->cdr = (SWZObject *)swz_alloc_list(
+            swz, item, swz_alloc_nil(swz)
+        );
+        *tail = (SWZList *)(*tail)->cdr;
+    }
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
-// void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item);
+
 // SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 // long swz_get_integer(const SWZInteger *self);
 // void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
