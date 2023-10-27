@@ -176,7 +176,7 @@ SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
 SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
 uint32_t swz_list_length(const SWZList *list);
 SWZObject *swz_list_get_car(const SWZList *list);
-void swz_list_set_car(SWZRuntime *list, SWZObject *car);
+void swz_list_set_car(SWZList *list, SWZObject *car);
 SWZObject *swz_list_get_cdr(const SWZList *list);
 void swz_list_set_cdr(SWZList *list, SWZObject *cdr);
 void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item);
