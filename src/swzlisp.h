@@ -423,8 +423,8 @@ SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 
 enum SWZError swz_symbol_to_errno(SWZSymbol *symbol);
 
-int swz_is_bad_list(SWZList *list);
-int swz_is_bad_list_of_lists(SWZList *list);
+bool swz_is_bad_list(SWZList *list);
+bool swz_is_bad_list_of_lists(SWZList *list);
 
 uint32_t swz_text_hash(void *text);
 bool swz_text_compare(const void *left, const void* right);
