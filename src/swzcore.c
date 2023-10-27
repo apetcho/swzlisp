@@ -1,5 +1,16 @@
 #include "swzlisp.h"
+#include<stdlib.h>
+#include<string.h>
 
+void* _my_alloc(size_t size){
+    void *result = malloc(size);
+    if(result == NULL){
+        fprintf(stderr, "Error: memory allocation failure\n");
+        abort();
+    }
+    memset(result, 0, size);
+    return result;
+}
 // -*-------------*-
 // -*- utilities -*-
 // -*-------------*-
@@ -214,7 +225,13 @@ SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry){
     return singleton;
 }
 
-// SWZRuntime swzlisp_new(void);
+// -*-
+SWZRuntime* swzlisp_new(void){
+    SWZRuntime *swz = _my_alloc(sizeof(SWZRuntime));
+    swzlisp_init(swz);
+    return swz;
+}
+
 // void swzlisp_set_ctx(SWZRuntime *swz, void *ctx);
 // void *swzlisp_get_ctx(SWZRuntime *swz);
 // void swzlisp_destroy(SWZRuntime *swz);

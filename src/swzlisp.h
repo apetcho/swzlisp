@@ -130,7 +130,7 @@ Iterator htable_iterator_values_ptr(HTable *htable);
 //! @todo: docstring
 // -*- core -*-
 typedef struct swzruntime SWZRuntime;   // interpreter
-SWZRuntime swzlisp_new(void);
+SWZRuntime* swzlisp_new(void);
 void swzlisp_set_ctx(SWZRuntime *swz, void *ctx);
 void *swzlisp_get_ctx(SWZRuntime *swz);
 void swzlisp_destroy(SWZRuntime *swz);
@@ -414,8 +414,8 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapfn, SWZLi
 #define SWZK_LAMBDA     0
 #define SWZK_MACRO      1
 
-void swz_init(SWZRuntime *swz);
-void swz_destroy(SWZRuntime *swz);
+void swzlisp_init(SWZRuntime *swz);
+void swzlisp_destroy(SWZRuntime *swz);
 
 void swz_dealloc(SWZRuntime *swz, SWZObject *obj);
 SWZObject *swz_alloc(SWZRuntime *swz, SWZType *type);
