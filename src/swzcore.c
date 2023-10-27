@@ -57,7 +57,12 @@ void swz_env_add_builtin(
     swz_env_bind(env, symbol, (SWZObject *)builtin);
 }
 
-// static _swz_mapper_eval(SWZRuntime *swz, SWZEnv *env, void *user, SWZObject *input);
+// -*-
+static SWZObject* _swz_mapper_eval(SWZRuntime *swz, SWZEnv *env, void *params, SWZObject *args){
+    SWZ_UNUSED(params);
+    return swz_eval(swz, env, args);
+}
+
 // SWZList *swz_eval_list(SWZRuntime *swz, SWZEnv *env, SWZList *list);
 // SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list);
 // uint32_t swz_list_length(const SWZList *list);
