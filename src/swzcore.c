@@ -599,7 +599,28 @@ void swzlisp_disable_symbol_cache(SWZRuntime *swz){
 // -*----------------*-
 // -*- GC utilities -*-
 // -*----------------*-
-// void swz_init(SWZRuntime *swz);
+// -*-
+void swzlisp_init(SWZRuntime *swz){
+    swz->nil = swzList->alloc(swz);
+    swz->nil->mark = 0;
+    swz->nil->type = swzList;
+    swz->nil->next = NULL;
+    swz->head = swz->nil;
+    swz->tail = swz->nil;
+    swz->ctx = NULL;
+    rbuffer_init(&swz->rbuffer, sizeof(SWZObject *), 16);
+    swz->error = NULL;
+    swz->errline = 0;
+    swz->errstack = NULL;
+    swz->stack = (SWZList *)swz->nil;
+    swz->sdepth = 0;
+    swz->symcache = NULL;
+    swz->strcache = NULL;
+    swz->modules = swz_alloc_empty_env(swz);
+    swz_register_module(swz, swz_create_module(swz, "os"));
+    // ... + other std-modules
+}
+
 // void swz_destroy(SWZRuntime *swz);
 // void swz_mark(SWZRuntime *swz, SWZObject *obj);
 // static void _swz_mark_basics(SWZRuntime *swz);
