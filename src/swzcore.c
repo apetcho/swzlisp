@@ -291,7 +291,14 @@ SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, voi
     return builtin;
 }
 
-// SWZObject *swz_alloc_nil(SWZRuntime *swz);
+// -*-
+SWZObject *swz_alloc_nil(SWZRuntime *swz){
+    if(swz->nil == NULL){
+        swz->nil = swz_alloc(swz, swzList);
+    }
+    return swz->nil;
+}
+
 // char* swz_get_string(const SWZString *self); // get
 // char* swz_get_symbol(const SWZSymbol *self); //
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
