@@ -590,7 +590,11 @@ void swzlisp_disable_string_cache(SWZRuntime *swz){
     swz->strcache = NULL;
 }
 
-// void swzlisp_disable_symbol_cache(SWZRuntime *swz);
+// -*-
+void swzlisp_disable_symbol_cache(SWZRuntime *swz){
+    htable_delete(swz->symcache);
+    swz->symcache = NULL;
+}
 
 // -*----------------*-
 // -*- GC utilities -*-
