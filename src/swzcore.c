@@ -462,9 +462,40 @@ bool swz_is_bad_list_of_lists(SWZList *list){
     return list->type != swzList;
 }
 
+// -*-
+SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZList *args){
+    SWZList *head = NULL;
+    SWZList *node = NULL;
+
+    if(swz_nil_p((SWZObject*)args)){
+        return args;
+    }
+
+    SWZ_FOREACH(args){
+        if(!head){
+            head = (SWZList *)swz_alloc(swz, swzList);
+            node = head;
+        }else{
+            node->cdr = swz_alloc(swz, swzList);
+            node = (SWZList *)node->cdr;
+        }
+        node->car = mapfn(swz, env, params, args->car);
+        SWZ_IS_VALID_PTR(node->car);
+    }
+
+    if(args->type != swzList){
+        // badly behaved cons cell in list
+        return (SWZList *)swz_error(swz, SWZE_SYNTAY, "unexpected cons cell in list.");
+    }
+    if(node==NULL){
+        abort();
+    }
+    node->cdr = swz_alloc_nil(swz);
+    return head;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapfn, SWZList *args);
 // bool swz_truthy(SWZObject *obj);
 
 // -*---------------*-

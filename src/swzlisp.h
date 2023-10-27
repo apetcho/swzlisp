@@ -409,7 +409,7 @@ struct swzmodule {
 // -
 typedef SWZObject *(*SWZMapFn)(SWZRuntime*, SWZEnv*, void*, SWZObject*);
 
-SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *user, SWZMapFn mapfn, SWZList *args);
+SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZList *args);
 
 #define SWZK_LAMBDA     0
 #define SWZK_MACRO      1
