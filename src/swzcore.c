@@ -688,6 +688,9 @@ void swz_sweep(SWZRuntime *swz){
         }
     }
 
+    if(obj == NULL){
+        abort();
+    }
     obj->mark = SWZ_GC_NOMARK;
     swz->tail = obj;
     swz->marked = false;
