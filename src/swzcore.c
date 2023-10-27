@@ -537,7 +537,33 @@ static char* _my_strdup(char *cstr){
     return str;
 }
 
-// static struct swztext* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTaböe *cache, char *cstr, int flags);
+// -*-
+static Text* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTable *cache, char *cstr, int flags){
+    Text *str = NULL;
+    if(cache){
+        str = _swz_textcache_lookup(cache, cstr);
+        if(str){
+            // -
+            if((flags & SWZFLAG_OWN) && !(flags & SWZFLAG_COPY)){
+                free(cstr);
+            }
+            return str;
+        }
+    }
+    // -
+    str = (Text *)swz_alloc(swz, type);
+    if(flags & SWZFLAG_COPY){
+        cstr = _my_strdup(cstr);
+    }
+    str->cstr = cstr;
+    str->can_free = flags & SWZFLAG_OWN;
+    if(cache){
+        // -
+        _swz_textcache_save(cache, str);
+    }
+    return str;
+}
+
 // SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
 // SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, char *cstr, int flags);
 // void swzlisp_enable_string_cache(SWZRuntime *swz);
