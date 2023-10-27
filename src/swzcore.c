@@ -206,7 +206,14 @@ SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag){
     return result;
 }
 
-// SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
+// -*-
+SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry){
+    SWZList *singleton = (SWZList *)swz_alloc(swz, swzList);
+    singleton->car = entry;
+    singleton->cdr = swz_alloc_nil(swz);
+    return singleton;
+}
+
 // SWZRuntime swzlisp_new(void);
 // void swzlisp_set_ctx(SWZRuntime *swz, void *ctx);
 // void *swzlisp_get_ctx(SWZRuntime *swz);
