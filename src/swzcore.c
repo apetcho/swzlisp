@@ -384,9 +384,13 @@ SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg){
     return NULL;
 }
 
+// -*-
+char *swz_get_error(SWZRuntime *swz){
+    return swz->error;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// char *swz_get_error(SWZRuntime *swz);
 // enum SWZError swz_get_errno(SWZRuntime *swz);
 // void swz_clear_error(SWZRuntime *swz);
 // void swz_eprint(SWZRuntime *swz, FILE *stream);
