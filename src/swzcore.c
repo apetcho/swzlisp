@@ -664,4 +664,31 @@ static void _swz_mark_basics(SWZRuntime *swz){
     swz_mark(swz, (SWZObject *)swz->modules);
 }
 
-// void swz_sweek(SWZRuntime *swz);
+// -*-
+void swz_sweep(SWZRuntime *swz){
+    SWZObject *obj = swz->head;
+
+    // -
+    if(swz->marked){
+        _swz_mark_basics(swz);
+    }else{
+        swz_clear_error(swz);
+        swz->stack = (SWZList *)swz->nil;
+        swz->sdepth = 0;
+    }
+
+    while(obj){
+        if(obj->next->mark != SWZ_GC_MARKED){
+            SWZObject *tmp = obj->next->next;
+            swz_dealloc(swz, obj->next);
+            obj->next = tmp;
+        }else{
+            obj->mark = SWZ_GC_NOMARK;
+            obj = obj->next;
+        }
+    }
+
+    obj->mark = SWZ_GC_NOMARK;
+    swz->tail = obj;
+    swz->marked = false;
+}
