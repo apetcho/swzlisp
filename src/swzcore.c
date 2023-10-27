@@ -93,7 +93,22 @@ uint32_t swz_list_length(const SWZList *list){
     return len;
 }
 
-// SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
+// -*-
+SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym){
+    SWZList *seq = NULL;
+    SWZList *list = NULL;
+    SWZSymbol *symbol = NULL;
+
+    list = (SWZList *)swz_alloc(swz, swzList);
+    symbol = swz_alloc_symbol(swz, sym, 0);
+    list->car = (SWZObject *)symbol;
+    seq = (SWZList *)swz_alloc(swz, swzList);
+    seq->cdr = swz_alloc_nil(swz);
+    list->cdr = (SWZObject *)seq;
+    seq->car = obj;
+    return list;
+}
+
 // SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
 // static SWZType* _swz_get_type(char c);
 // bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
