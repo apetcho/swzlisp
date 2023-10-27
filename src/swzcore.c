@@ -1,6 +1,8 @@
 #include "swzlisp.h"
 #include<stdlib.h>
 #include<string.h>
+#include<errno.h>
+
 
 void* _my_alloc(size_t size){
     void *result = malloc(size);
@@ -402,9 +404,33 @@ void swz_clear_error(SWZRuntime *swz){
     swz->errnum = 0;
 }
 
+// -*-
+void swz_eprint(SWZRuntime *swz, FILE *stream){
+    if(swz->error){
+        fprintf(stderr, "FATAL: swz_eprint() expects error, found none\n");
+        return;
+    }
+    if(swz->errline){
+        fprintf(stream, "at line: %d: ", (int)swz->errline);
+    }
+    char *errmsg = NULL;
+    if (swz->errnum == SWZE_ERRNO){
+        errmsg = strerror(errno);
+        fprintf(
+            stream, "Error %s: %s\nSystem error: %s\n",
+            swzErrorNames[swz->errnum], swz->error, errmsg
+        );
+    }else{
+        fprintf(stream, "Error %s: %s\n", swzErrorNames[swz->errnum], swz->error);
+    }
+
+    if(swz->errstack){
+        swz_dump_stack(swz, swz->errstack, stream);
+    }
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 
-// void swz_eprint(SWZRuntime *swz, FILE *stream);
 // enum SWZError swz_symbol_to_errno(SWZRuntime *symbol);
 // int swz_is_bad_list(SWZList *list);
 // int swz_is_bad_list_of_lists(SWZList *list);
