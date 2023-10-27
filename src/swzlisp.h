@@ -171,7 +171,7 @@ SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
 SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
 
 extern SWZType *swzList;
-SWZList* swz_alloc_list(SWZRuntime *swz, SWZObject *left, SWZObject *right);
+SWZList* swz_alloc_list(SWZRuntime *swz, SWZObject *car, SWZObject *cdr);
 SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
 SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
 uint32_t swz_list_length(const SWZList *list);

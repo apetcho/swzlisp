@@ -309,6 +309,14 @@ char* swz_get_symbol(const SWZSymbol *self){
     return self->cstr;
 }
 
+// -*-
+SWZList* swz_alloc_list(SWZRuntime *swz, SWZObject *car, SWZObject *cdr){
+    SWZList *list = (SWZList *)swz_alloc(swz, swzList);
+    list->car = car;
+    list->cdr = cdr;
+    return list;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 // SWZObject *swz_list_get_car(const SWZList *list);
 // SWZObject *swz_list_get_cdr(const SWZList *list);
