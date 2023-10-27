@@ -514,7 +514,15 @@ static void _swz_textcache_save(HTable *cache, struct swztext *text){
     htable_insert_ptr(cache, text, NULL);
 }
 
-// void swz_textchach_remove(HTable *cache, struct swztext *text);
+// -*-
+void swz_textchach_remove(HTable *cache, struct swztext *text){
+    Text *existing = NULL;
+    existing = htable_get_key_ptr(cache, text);
+    if(existing == text){
+        htable_remove_ptr(cache, text);
+    }
+}
+
 // static HTable* _swz_alloc_textcache(void);
 // static char* _my_strdup(char *cstr);
 // static struct swztext* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTaböe *cache, char *cstr, int flags);
