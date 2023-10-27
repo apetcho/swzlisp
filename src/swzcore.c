@@ -248,7 +248,11 @@ void swzlisp_delete(SWZRuntime *swz){
     free(swz);
 }
 
-// bool swz_is(SWZObject *obj, SWZType *type);
+// -*-
+bool swz_is(SWZObject *obj, SWZType *type){
+    return obj->type == type;
+}
+
 // SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
 // SWZEnv* swz_alloc_default_env(SWZRuntime *swz);
 // SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *emv, int argc, char *argv);
