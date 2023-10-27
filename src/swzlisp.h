@@ -133,7 +133,7 @@ typedef struct swzruntime SWZRuntime;   // interpreter
 SWZRuntime* swzlisp_new(void);
 void swzlisp_set_ctx(SWZRuntime *swz, void *ctx);
 void *swzlisp_get_ctx(SWZRuntime *swz);
-void swzlisp_destroy(SWZRuntime *swz);
+void swzlisp_delete(SWZRuntime *swz);
 void swzlisp_enable_string_cache(SWZRuntime *swz);
 void swzlisp_enable_symbol_cache(SWZRuntime *swz);
 void swzlisp_disable_string_cache(SWZRuntime *swz);
