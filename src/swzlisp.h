@@ -308,7 +308,7 @@ extern const char *const swzVersion;
     char mark
 
 #define SWZ_FOREACH(list) \
-    for (; list->type == swzList && !swz_nil_p((SWZObject *) list); list=(SWZList*)list->right)
+    for (; list->type == swzList && !swz_nil_p((SWZObject *) list); list=(SWZList*)list->cdr)
 
 struct swzobject{
     SWZ_OBJECT_HEAD;

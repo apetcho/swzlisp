@@ -84,7 +84,15 @@ SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list){
     }
 }
 
-// uint32_t swz_list_length(const SWZList *list);
+// -*-
+uint32_t swz_list_length(const SWZList *list){
+    uint32_t len = 0;
+    SWZ_FOREACH(list){
+        len++;
+    }
+    return len;
+}
+
 // SWZList *swz_quote_with(SWZRuntime *swz, SWZObject *obj, char* sym);
 // SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
 // static SWZType* _swz_get_type(char c);
