@@ -197,7 +197,7 @@ extern SWZType *swzModule;
 
 SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
 char* swz_get_string(const SWZString *self); // get
-SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, char *cstr, int flags);
+SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, const char *cstr, int flags);
 char* swz_get_symbol(const SWZSymbol *self); //
 SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 long swz_get_integer(const SWZInteger *self);

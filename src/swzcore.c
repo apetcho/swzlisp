@@ -47,10 +47,16 @@ SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key){
     return swz_env_lookup(swz, env, &symbol);
 }
 
-// void swz_env_add_builtin(
-//     SWZRuntime *swz, SWZEnv *env, const char* name,
-//     SWZFun fun, void *args, int evald
-// );
+// -*-
+void swz_env_add_builtin(
+    SWZRuntime *swz, SWZEnv *env, const char* name,
+    SWZFun fun, void *args, int evald
+){
+    SWZSymbol *symbol = swz_alloc_symbol(swz, name, 0);
+    SWZBuiltin *builtin = swz_alloc_builtin(swz, name, fun, args, evald);
+    swz_env_bind(env, symbol, (SWZObject *)builtin);
+}
+
 // static _swz_mapper_eval(SWZRuntime *swz, SWZEnv *env, void *user, SWZObject *input);
 // SWZList *swz_eval_list(SWZRuntime *swz, SWZEnv *env, SWZList *list);
 // SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list);
