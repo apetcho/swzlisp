@@ -617,7 +617,8 @@ void swzlisp_init(SWZRuntime *swz){
     swz->symcache = NULL;
     swz->strcache = NULL;
     swz->modules = swz_alloc_empty_env(swz);
-    swz_register_module(swz, swz_create_module(swz, "os"));
+    // load stdlib
+    swz_register_module(swz, swz_create_module(swz)); //, "os"));
     // ... + other std-modules
 }
 
@@ -719,11 +720,23 @@ static SWZObject* _os_getenv(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *
 }
 
 // -*-
-// void swz_save_module(SWZRuntime *swz, InitModuleFn save_module_fn);
+// SWZModule* _os_module_init(SWZRuntime* swz, SWZModule* osmodule){
+//     SWZModule *module = swz_alloc_module(
+//         swz, swz_alloc_string(swz, "os", 0),
+//         swz_alloc_string(swz, __FILE__, 0)
+//     );
+//     swz_env_add_builtin(swz, osmodule->env, "getenv", _os_getenv, NULL, 1);
+//     return module;
+// }
+
 // -*-
-SWZModule* _os_module_init(SWZRuntime* swz, SWZModule* osmodule){
-    swz_env_add_builtin(swz, osmodule->env, "getenv", _os_getenv, NULL, 1);
-    return osmodule;
+SWZModule* swz_create_module(SWZRuntime *swz){
+    SWZModule *module = swz_alloc_module(
+        swz, swz_alloc_string(swz, "os", 0),
+        swz_alloc_string(swz, __FILE__, 0)
+    );
+    swz_env_add_builtin(swz, module->env, "getenv", _os_getenv, NULL, 1);
+    return module;
 }
 
 // -*==============*-
@@ -734,13 +747,13 @@ SWZModule* _os_module_init(SWZRuntime* swz, SWZModule* osmodule){
 
 
 // -*-
-SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename){
-    SWZModule *module = swz_alloc_module(
-        swz, swz_alloc_string(swz, (char*)modulename, 0),
-        swz_alloc_string(swz, __FILE__, 0)
-    );
-    return module;
-}
+// SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename){
+//     SWZModule *module = swz_alloc_module(
+//         swz, swz_alloc_string(swz, (char*)modulename, 0),
+//         swz_alloc_string(swz, __FILE__, 0)
+//     );
+//     return module;
+// }
 
 // void swz_register_module(SWZRuntime *swz, SWZModule *module);
 // SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name);
