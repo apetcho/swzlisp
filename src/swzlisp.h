@@ -237,8 +237,10 @@ bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 
 SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *filename);
 SWZEnv* swz_module_get_env(const SWZModule *module);
+typedef SWZModule *(*InitModuleFn)(SWZRuntime*);
 void swz_register_module(SWZRuntime *swz, SWZModule *module);
-SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
+void swz_save_module(SWZRuntime *swz, InitModuleFn save_module_fn);
+SWZModule *swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
 SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
 
 int swz_parse_object(SWZRuntime *swz, const char* input, int index, SWZObject **output);
@@ -434,7 +436,7 @@ void swz_textchach_remove(HTable *cache, struct swztext *text);
 bool swz_truthy(SWZObject *obj);
 
 //! @note: changed the signature
-SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename);
+SWZModule *swz_create_module(SWZRuntime *swz, const char *modulename);
 SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name);
 
 #endif

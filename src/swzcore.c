@@ -717,7 +717,14 @@ static SWZObject* _os_getenv(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *
         return swz_alloc_nil(swz);
     }
 }
-// SWZModule* _os_module_init(SWZModule* osmodule);
+
+// -*-
+// void swz_save_module(SWZRuntime *swz, InitModuleFn save_module_fn);
+// -*-
+SWZModule* _os_module_init(SWZRuntime* swz, SWZModule* osmodule){
+    swz_env_add_builtin(swz, osmodule->env, "getenv", _os_getenv, NULL, 1);
+    return osmodule;
+}
 
 // -*==============*-
 // -*- sys_module -*-
@@ -726,7 +733,15 @@ static SWZObject* _os_getenv(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *
 // SWZModule* _sys_module_init(SWZModule* osmodule);
 
 
-// SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename);
+// -*-
+SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename){
+    SWZModule *module = swz_alloc_module(
+        swz, swz_alloc_string(swz, (char*)modulename, 0),
+        swz_alloc_string(swz, __FILE__, 0)
+    );
+    return module;
+}
+
 // void swz_register_module(SWZRuntime *swz, SWZModule *module);
 // SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name);
 
