@@ -695,3 +695,42 @@ void swz_sweep(SWZRuntime *swz){
     swz->tail = obj;
     swz->marked = false;
 }
+
+// -*--------------------------------------------------------------*-
+// -*- SWZModule utilities and stdlib modules                     -*-
+// -*--------------------------------------------------------------*-
+// -*=============*-
+// -*- os_module -*-
+// -*=============*-
+static SWZObject* _os_getenv(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZString *str;
+    char *cstr;
+    if(!swz_get_args(swz, args, "S", &str)){
+        return NULL;
+    }
+    cstr = getenv(str->cstr);
+    if(cstr){
+        return (SWZObject *)swz_alloc_string(swz, cstr, SWZFLAG_COPY | SWZFLAG_OWN);
+    }else{
+        return swz_alloc_nil(swz);
+    }
+}
+// SWZModule* _os_module_init(SWZModule* osmodule);
+
+// -*==============*-
+// -*- sys_module -*-
+// -*==============*-
+// static SWZObject* _sys_usname(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params);
+// SWZModule* _sys_module_init(SWZModule* osmodule);
+
+
+// SWZModule* swz_create_module(SWZRuntime *swz, const char* modulename);
+// void swz_register_module(SWZRuntime *swz, SWZModule *module);
+// SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name);
+
+// SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *filename);
+// SWZEnv* swz_module_get_env(const SWZModule *module);
+// SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
+// SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
