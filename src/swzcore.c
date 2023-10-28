@@ -784,5 +784,29 @@ SWZEnv* swz_module_get_env(const SWZModule *module){
     return module->env;
 }
 
-// SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
+// -*-
+SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path){
+    FILE *stream;
+    SWZEnv *builtins = swz_alloc_default_env(swz);
+    SWZEnv *module_env = swz_alloc_empty_env(swz);
+    SWZModule *module;
+    SWZObject *obj = NULL;
+    module_env->parent = builtins;
+    stream = fopen(path->cstr, "r");
+    if(stream){
+        return (SWZModule *)swz_error(swz, SWZE_ERRNO, "error opening file for import");
+    }
+
+    obj = swz_load_file(swz, module_env, stream);
+    SWZ_IS_VALID_PTR(obj);
+
+    module = (SWZModule *)swz_alloc(swz, swzModule);
+    module->env = module_env;
+    module->name = name;
+    module->path = path;
+    swz_register_module(swz, module);
+    return module;
+}
+
+// -*-
 // SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
