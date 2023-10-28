@@ -739,6 +739,11 @@ SWZModule* swz_create_module(SWZRuntime *swz){
     return module;
 }
 
+void swz_register_module(SWZRuntime *swz, SWZModule *module){
+    // -
+    swz_env_bind(swz->modules, (SWZSymbol *)module->name, (SWZObject *)module);
+}
+
 // -*==============*-
 // -*- sys_module -*-
 // -*==============*-
