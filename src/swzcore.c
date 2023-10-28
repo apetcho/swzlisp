@@ -760,8 +760,15 @@ void swz_register_module(SWZRuntime *swz, SWZModule *module){
 //     return module;
 // }
 
-// void swz_register_module(SWZRuntime *swz, SWZModule *module);
-// SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name);
+// -*-
+SWZModule *swz_lookup_module(SWZRuntime *swz, SWZSymbol *name){
+    SWZModule *module = (SWZModule *)swz_env_lookup(swz, swz->modules, name);
+    if(!module){
+        swz_clear_error(swz);
+    }
+
+    return module;
+}
 
 // SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *filename);
 // SWZEnv* swz_module_get_env(const SWZModule *module);
