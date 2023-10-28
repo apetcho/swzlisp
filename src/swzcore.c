@@ -809,4 +809,21 @@ SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path){
 }
 
 // -*-
-// SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
+SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name){
+    SWZModule *module = NULL;
+    SWZString *modulename = NULL;
+    SWZString *modulepath = NULL;
+    char *filename;
+    module = swz_lookup_module(swz, name);
+    if(module){
+        return module;
+    }
+
+    size_t len = strlen(name->cstr);
+    len += 1 /*null*/ + 7 /* ./.lisp*/;
+    filename = _my_alloc(len);
+    sprintf(filename, "./%s.lisp", name->cstr);
+    modulepath = swz_alloc_string(swz, filename, SWZFLAG_OWN);
+    modulename = swz_alloc_symbol(swz, name->cstr, SWZFLAG_OWN | SWZFLAG_COPY);
+    return swz_import_file(swz, modulename, modulepath);
+}
