@@ -778,6 +778,11 @@ SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *path){
     module->env = swz_alloc_empty_env(swz);
     return module;
 }
-// SWZEnv* swz_module_get_env(const SWZModule *module);
+
+// -*-
+SWZEnv* swz_module_get_env(const SWZModule *module){
+    return module->env;
+}
+
 // SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
 // SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);

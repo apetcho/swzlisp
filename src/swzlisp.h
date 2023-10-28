@@ -236,6 +236,7 @@ Arguments formats:
 bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 
 SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *path);
+//! @todo: change swz_module_get_env() -> swz_module_env()
 SWZEnv* swz_module_get_env(const SWZModule *module);
 //typedef SWZModule *(*InitModuleFn)(SWZRuntime*);
 void swz_register_module(SWZRuntime *swz, SWZModule *module);
