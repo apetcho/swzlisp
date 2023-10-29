@@ -839,7 +839,7 @@ static SWZObject* _swz_builtin_eval(SWZRuntime *swz, SWZEnv *env, SWZList *args,
 
 // _swz_builtin_car(...)
 static SWZObject* _swz_builtin_car(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
-    SWZList *self;
+    SWZList *self = NULL;
     SWZ_UNUSED(params);
     SWZ_UNUSED(env);
     if(!swz_get_args(swz, args, "l", &self)){
@@ -853,7 +853,7 @@ static SWZObject* _swz_builtin_car(SWZRuntime *swz, SWZEnv *env, SWZList *args, 
 
 // _swz_builtin_cdr(...)
 static SWZObject* _swz_builtin_cdr(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
-    SWZList *self;
+    SWZList *self = NULL;
     SWZ_UNUSED(params);
     SWZ_UNUSED(env);
     if(!swz_get_args(swz, args, "l", &self)){
@@ -870,7 +870,7 @@ static SWZObject* _swz_builtin_quote(SWZRuntime *swz, SWZEnv *env, SWZList *args
     SWZ_UNUSED(params);
     SWZ_UNUSED(env);
 
-    SWZObject *self;
+    SWZObject *self = NULL;
     if(!swz_get_args(swz, args, "*", &self)){
         return NULL;
     }
@@ -878,6 +878,22 @@ static SWZObject* _swz_builtin_quote(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_builtin_cons(...)
+static SWZObject* _swz_builtin_cons(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZObject *car = NULL;
+    SWZObject *cdr = NULL;
+    SWZList *result = NULL;
+
+    if(!swz_get_args(swz, args, "**", &car, &cdr)){
+        return NULL;
+    }
+    result = (SWZList *)swz_alloc(swz, swzList);
+    result->car = car;
+    result->cdr = (SWZObject *)cdr;
+    return (SWZObject *)result;
+}
+
 // _swz_builtin_lambda(...)
 // _swz_builtin_macro(...)
 // _swz_builtin_define(...)
