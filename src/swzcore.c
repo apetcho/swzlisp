@@ -866,6 +866,17 @@ static SWZObject* _swz_builtin_cdr(SWZRuntime *swz, SWZEnv *env, SWZList *args, 
 }
 
 // _swz_builtin_quote(...)
+static SWZObject* _swz_builtin_quote(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+
+    SWZObject *self;
+    if(!swz_get_args(swz, args, "*", &self)){
+        return NULL;
+    }
+    return args->car;
+}
+
 // _swz_builtin_cons(...)
 // _swz_builtin_lambda(...)
 // _swz_builtin_macro(...)
