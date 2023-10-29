@@ -1073,7 +1073,7 @@ static SWZObject *_swz_builtin_multiply(SWZRuntime *swz, SWZEnv *env, SWZList *a
 
     SWZ_FOREACH(args){
         if(!swz_is_number(swz, args->car)){
-            return swz_error(swz, SWZE_TYPE, "expect numbers for multiplication");
+            return swz_error(swz, SWZE_TYPE, "expected numbers for multiplication");
         }
         narg++;
         if(swz_is_integer(swz, args->car)){
@@ -1096,6 +1096,71 @@ static SWZObject *_swz_builtin_multiply(SWZRuntime *swz, SWZEnv *env, SWZList *a
 }
 
 // _swz_builtin_divide(...)
+static SWZObject* _swz_builtin_divide(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+
+    size_t len = swz_list_length(args);
+    if(len < 1){
+        return swz_error(swz, SWZE_TOO_FEW, "expected at least one arg");
+    }
+    SWZList *ptr = args;
+    size_t icnt = 0;
+    SWZ_FOREACH(ptr){
+        if(swz_is_integer(swz, ptr->car)){
+            icnt++;
+        }
+    }
+    struct {
+        bool as_int;
+        union{
+            long inum;
+            double fnum;
+        };
+    } acc;
+    if(len == icnt){
+        acc.as_int = true;
+        acc.inum = 0;
+    }else{
+        acc.as_int = false;
+        acc.fnum = 0.0;
+    }
+    if(!swz_is_number(swz, args->car)){
+        return swz_error(swz, SWZE_TYPE, "expected a number");
+    }
+    if(acc.as_int){
+        acc.inum = ((SWZInteger *)args->car)->val;
+    }else{
+        acc.fnum = ((SWZFloat *)args->car)->val;
+    }
+    args = (SWZList *)args->cdr;
+    SWZFloat *zero = (SWZFloat *)swz_alloc(swz, swzFloat);
+    zero->val = 0;
+    SWZ_FOREACH(args){
+        if(!swz_is_number(swz, args->car)){
+            return swz_error(swz, SWZE_TYPE, "expected a number");
+        }
+
+        if(swz_compare(args->car, (SWZObject*)zero)){
+            return swz_error(swz, SWZE_ERROR, "divide by zero");
+        }
+        if(acc.as_int){
+            acc.inum /= ((SWZInteger *)args->car)->val;
+        }else{
+             acc.fnum /= ((SWZFloat *)args->car)->val;
+        }
+    }
+    swz_dealloc(swz, (SWZObject*)zero);
+    if(acc.as_int){
+        SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+        result->val = acc.inum;
+        return (SWZObject *)result;
+    }
+    SWZFloat *result = (SWZFloat *)swz_alloc(swz, swzFloat);
+    result->val = acc.fnum;
+    return (SWZObject *)result;
+}
+
 // #CMP_EQ
 // #CMP_NE
 // #CMP_LT
