@@ -961,6 +961,41 @@ static SWZObject* _swz_builtin_define(SWZRuntime *swz, SWZEnv *env, SWZList *arg
 }
 
 // _swz_builtin_plus(...)
+static SWZObject* _swz_builtin_plus(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    double acc = 0;
+    union {
+        SWZInteger *ival;
+        SWZFloat *fval;
+    } num;
+    //bool as_int = false;
+    size_t narg = 0;
+    size_t icnt = 0;
+    SWZ_FOREACH(args){
+        if(!swz_is_number(swz, args->car)){
+            return swz_error(swz, SWZE_TYPE, "expect integers for addition");
+        }
+        narg++;
+        if (args->car->type == swzInteger){
+            icnt++;
+            num.ival = (SWZInteger *)args->car;
+            acc += (double)num.ival->val;
+        }else{
+            num.fval = (SWZFloat *)args->car;
+            acc += num.fval->val;
+        }
+    }
+    if(icnt == narg){
+        SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+        result->val = (long)acc;
+        return (SWZObject *)result;
+    }
+    SWZFloat *result = (SWZFloat *)swz_alloc(swz, swzFloat);
+    result->val = acc;
+    return (SWZObject *)result;
+}
+
 // _swz_builtin_minus(...)
 // _swz_builtin_multiply(...)
 // _swz_builtin_divide(...)
