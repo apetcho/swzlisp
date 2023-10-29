@@ -947,6 +947,19 @@ static SWZObject* _swz_builtin_macro(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_builtin_define(...)
+static SWZObject* _swz_builtin_define(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZSymbol *symbol = NULL;
+    SWZObject *expr = NULL;
+    if(!swz_get_args(swz, args, "s*", &symbol, &expr)){
+        return NULL;
+    }
+    expr = swz_eval(swz, env, expr);
+    SWZ_IS_VALID_PTR(expr);
+    swz_env_bind(env, symbol, expr);
+    return expr;
+}
+
 // _swz_builtin_plus(...)
 // _swz_builtin_minus(...)
 // _swz_builtin_multiply(...)
