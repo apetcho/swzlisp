@@ -373,6 +373,17 @@ struct swztext{
     char *cstr;
 };
 
+//! @note: integer and float should be combined as follow:
+/* -- Probably, we'll use this privately in the parser.
+struct swznumber{
+    SWZ_OBJECT_HEAD;
+    bool isInt;
+    union{
+        long ival;
+        double fval;
+    };
+};
+*/
 // -
 struct swzinteger{
     SWZ_OBJECT_HEAD;

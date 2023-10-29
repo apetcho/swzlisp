@@ -1134,14 +1134,15 @@ static SWZObject* _swz_builtin_divide(SWZRuntime *swz, SWZEnv *env, SWZList *arg
         acc.fnum = ((SWZFloat *)args->car)->val;
     }
     args = (SWZList *)args->cdr;
-    SWZFloat *zero = (SWZFloat *)swz_alloc(swz, swzFloat);
-    zero->val = 0;
+    SWZFloat zero; // = (SWZFloat *)swz_alloc(swz, swzFloat);
+    zero.val = 0;
+    zero.type = swzFloat;
     SWZ_FOREACH(args){
         if(!swz_is_number(swz, args->car)){
             return swz_error(swz, SWZE_TYPE, "expected a number");
         }
 
-        if(swz_compare(args->car, (SWZObject*)zero)){
+        if(swz_compare(args->car, (SWZObject*)&zero)){
             return swz_error(swz, SWZE_ERROR, "divide by zero");
         }
         if(acc.as_int){
@@ -1150,7 +1151,7 @@ static SWZObject* _swz_builtin_divide(SWZRuntime *swz, SWZEnv *env, SWZList *arg
              acc.fnum /= ((SWZFloat *)args->car)->val;
         }
     }
-    swz_dealloc(swz, (SWZObject*)zero);
+    // swz_dealloc(swz, (SWZObject*)zero);
     if(acc.as_int){
         SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
         result->val = acc.inum;
@@ -1161,13 +1162,63 @@ static SWZObject* _swz_builtin_divide(SWZRuntime *swz, SWZEnv *env, SWZList *arg
     return (SWZObject *)result;
 }
 
-// #CMP_EQ
-// #CMP_NE
-// #CMP_LT
-// #CMP_LE
-// #CMP_GT
-// #CMP_GE
+#define SWZ_CMP_EQ  (void*)1
+#define SWZ_CMP_NE  (void*)2
+#define SWZ_CMP_LT  (void*)3
+#define SWZ_CMP_LE  (void*)4
+#define SWZ_CMP_GT  (void*)5
+#define SWZ_CMP_GE  (void*)6
+
 // _swz_builtin_cmp(...)
+static SWZObject* _swz_builtin_cmp(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *op){
+    SWZFloat lhs, rhs;
+    lhs.type = swzFloat;
+    rhs.type = swzFloat;
+    SWZList *ptr = args;
+    if(swz_list_length(ptr) < 2){
+        return swz_error(swz, SWZE_TOO_FEW, "not enough arguments. Expected two arguments");
+    }
+    if(swz_list_length(ptr) > 2){
+        return swz_error(swz, SWZE_TOO_MANY, "too many arguments. Expected two arguments.");
+    }
+    SWZ_FOREACH(ptr){
+        if(!swz_is_number(swz, ptr->car)){
+            return swz_error(swz, SWZE_TYPE, "expected numbers.");
+        }
+    }
+    SWZObject *x = ptr->car;
+    ptr = (SWZList*)ptr->cdr;
+    SWZObject *y = ptr->car;
+    lhs.val = (
+        swz_is_integer(swz, x) ?
+        (double)((SWZInteger *)x)->val :
+        ((SWZFloat *)x)->val
+    );
+    rhs.val = (
+        swz_is_integer(swz, y) ?
+        (double)((SWZInteger*)y)->val :
+        ((SWZFloat*)y)->val
+    );
+    bool rv;
+    if(op == SWZ_CMP_EQ){
+        rv = swz_compare((SWZObject *)&lhs, (SWZObject *)&rhs);
+    }else if(op == SWZ_CMP_NE){
+        rv = (lhs.val != rhs.val);
+    }else if(op == SWZ_CMP_LT){
+        rv = (lhs.val < rhs.val);
+    }else if(op == SWZ_CMP_LE){
+        rv = (lhs.val <= rhs.val);
+    }else if(op == SWZ_CMP_GT){
+        rv = (lhs.val > rhs.val);
+    }else if(op == SWZ_CMP_GE){
+        rv = (lhs.val >= rhs.val);
+    }
+
+    SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+    result->val = rv ? 1 : 0;
+    return (SWZObject *)result;
+}
+
 // _swz_builtin_if(...)
 // _swz_builtin_nullp(...)
 // _swz_get_quoted_left_items(...)
