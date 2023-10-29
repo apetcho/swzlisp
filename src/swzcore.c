@@ -974,7 +974,7 @@ static SWZObject* _swz_builtin_plus(SWZRuntime *swz, SWZEnv *env, SWZList *args,
     size_t icnt = 0;
     SWZ_FOREACH(args){
         if(!swz_is_number(swz, args->car)){
-            return swz_error(swz, SWZE_TYPE, "expect integers for addition");
+            return swz_error(swz, SWZE_TYPE, "expect numbers for addition");
         }
         narg++;
         if (args->car->type == swzInteger){
@@ -997,6 +997,72 @@ static SWZObject* _swz_builtin_plus(SWZRuntime *swz, SWZEnv *env, SWZList *args,
 }
 
 // _swz_builtin_minus(...)
+static SWZObject* _swz_builtin_minus(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    union{
+        SWZInteger *ival;
+        SWZFloat *fval;
+    } num;
+    double acc = 0;
+    size_t narg = 0;
+    size_t icnt = 0;
+
+    size_t len = swz_list_length(args);
+    if(len < 1){
+        return swz_error(swz, SWZE_TOO_FEW, "expected at least one arg");
+    }else if(len == 1){
+        if(!swz_is_number(swz, args->car)){
+            return swz_error(swz, SWZE_TYPE, "expected number for negation");
+        }
+        if(swz_is_integer(swz, args->car)){
+            SWZInteger *self = (SWZInteger *)args->car;
+            self->val = -self->val;
+            return (SWZObject *)self;
+        }
+        SWZFloat *self = (SWZFloat *)args->car;
+        self->val = -self->val;
+        return (SWZObject *)self;
+    }else{
+        if(!swz_is_number(swz, args->car)){
+            return swz_error(swz, SWZE_TYPE, "expected numbers");
+        }
+        narg++;
+        if (swz_is_integer(swz, args->car)){
+            icnt++;
+            num.ival = (SWZInteger *)args->car;
+            acc = num.ival->val;
+        }else{
+            num.fval = (SWZFloat *)args->car;
+            acc = num.fval->val;
+        }
+        args = (SWZList *)args->cdr;
+        SWZ_FOREACH(args){
+            if(!swz_is_number(swz, args->car)){
+                return swz_error(swz, SWZE_TYPE, "expected numbers");
+            }
+            narg++;
+            if (swz_is_integer(swz, args->car)){
+                icnt++;
+                num.ival = (SWZInteger *)args->car;
+                acc -= num.ival->val;
+            }else{
+                num.fval = (SWZFloat *)args->car;
+                acc -= num.fval->val;
+            }
+        }
+    }
+    // -
+    if(narg == icnt){
+        SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+        result->val = (long)acc;
+        return (SWZObject *)result;
+    }
+    SWZFloat *result = (SWZFloat *)swz_alloc(swz, swzFloat);
+    result->val = acc;
+    return (SWZObject*)result;
+}
+
 // _swz_builtin_multiply(...)
 // _swz_builtin_divide(...)
 // #CMP_EQ
