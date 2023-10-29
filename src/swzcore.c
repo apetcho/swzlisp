@@ -1064,6 +1064,37 @@ static SWZObject* _swz_builtin_minus(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_builtin_multiply(...)
+static SWZObject *_swz_builtin_multiply(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    double acc = 1;
+    size_t narg = 0;
+    size_t icnt = 0;
+
+    SWZ_FOREACH(args){
+        if(!swz_is_number(swz, args->car)){
+            return swz_error(swz, SWZE_TYPE, "expect numbers for multiplication");
+        }
+        narg++;
+        if(swz_is_integer(swz, args->car)){
+            icnt++;
+            SWZInteger *num = (SWZInteger *)args->car;
+            acc *= num->val;
+        }else{
+            SWZFloat *num = (SWZFloat *)args->car;
+            acc *= num->val;
+        }
+    }
+    if(narg == icnt){
+        SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+        result->val = (long)acc;
+        return (SWZObject*)result;
+    }
+    SWZFloat *result = (SWZFloat*)swz_alloc(swz, swzFloat);
+    result->val = acc;
+    return (SWZObject *)result;
+}
+
 // _swz_builtin_divide(...)
 // #CMP_EQ
 // #CMP_NE
