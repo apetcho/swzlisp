@@ -1252,6 +1252,31 @@ static SWZObject* _swz_builtin_nullp(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_get_quoted_left_items(...)
+static SWZList* _swz_get_quoted_left_items(SWZRuntime *swz, SWZList *list_of_lists){
+    SWZList *lhs = NULL;
+    SWZList *result = NULL;
+    SWZList *self = NULL;
+    SWZ_FOREACH(list_of_lists){
+        if(lhs == NULL){
+            lhs = (SWZList *)swz_alloc(swz, swzList);
+            result = lhs;
+        }else{
+            lhs->cdr = swz_alloc(swz, swzList);
+            lhs = (SWZList *)lhs->cdr;
+        }
+        if(swz_nil_p(list_of_lists->car)){
+            return NULL;
+        }
+        self = (SWZList *)list_of_lists->car;
+        lhs->car = (SWZObject *)swz_quote(swz, self->car);
+    }
+    if(lhs==NULL){// show never occur.
+        abort();
+    }
+    lhs->cdr = swz_alloc_nil(swz);
+    return result;
+}
+
 // _swz_advance_lists(...)
 // _swz_builtin_map(...)
 // _swz_new_pair_list(...)
