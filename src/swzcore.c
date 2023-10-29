@@ -827,3 +827,56 @@ SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name){
     modulename = swz_alloc_symbol(swz, name->cstr, SWZFLAG_OWN | SWZFLAG_COPY);
     return swz_import_file(swz, modulename, modulepath);
 }
+
+// -*------------*-
+// -*- BUILTINS -*-
+// -*------------*-
+// _swz_builtin_eval(...)
+static SWZObject* _swz_builtin_eval(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    return swz_eval(swz, env, args->car);
+}
+
+// _swz_builtin_car(...)
+// _swz_builtin_cdr(...)
+// _swz_builtin_quote(...)
+// _swz_builtin_cons(...)
+// _swz_builtin_lambda(...)
+// _swz_builtin_macro(...)
+// _swz_builtin_define(...)
+// _swz_builtin_plus(...)
+// _swz_builtin_minus(...)
+// _swz_builtin_multiply(...)
+// _swz_builtin_divide(...)
+// #CMP_EQ
+// #CMP_NE
+// #CMP_LT
+// #CMP_LE
+// #CMP_GT
+// #CMP_GE
+// _swz_builtin_cmp(...)
+// _swz_builtin_if(...)
+// _swz_builtin_nullp(...)
+// _swz_get_quoted_left_items(...)
+// _swz_advance_lists(...)
+// _swz_builtin_map(...)
+// _swz_new_pair_list(...)
+// _swz_builtin_reduce(...)
+// _swz_builtin_print(...)
+// _swz_builtin_dump_stack(...)
+// _swz_builtin_progn(...)
+// _swz_builtin_unquote(...)
+// _swz_quasiquote(...)
+// _swz_builtin_quasiquote(...)
+// _swz_builtin_eq(...)
+// _swz_builtin_equal(...)
+// _swz_builtin_assert(...)
+// _swz_builtin_assert_error(...)
+// _swz_builtin_cond(...)
+// _swz_builtin_list(...)
+// _swz_builtin_let(...)
+// _swz_builtin_import(...)
+// _swz_builtin_getattr(...)
+// ... math function???
+// -*-
+// swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
