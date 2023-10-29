@@ -852,6 +852,19 @@ static SWZObject* _swz_builtin_car(SWZRuntime *swz, SWZEnv *env, SWZList *args, 
 }
 
 // _swz_builtin_cdr(...)
+static SWZObject* _swz_builtin_cdr(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZList *self;
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    if(!swz_get_args(swz, args, "l", &self)){
+        return NULL;
+    }
+    if(swz_nil_p((SWZObject*)self)){
+        return swz_error(swz, SWZE_ERROR, "cdr of nil list");
+    }
+    return self->cdr;
+}
+
 // _swz_builtin_quote(...)
 // _swz_builtin_cons(...)
 // _swz_builtin_lambda(...)
