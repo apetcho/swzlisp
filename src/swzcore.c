@@ -1220,6 +1220,23 @@ static SWZObject* _swz_builtin_cmp(SWZRuntime *swz, SWZEnv *env, SWZList *args, 
 }
 
 // _swz_builtin_if(...)
+static SWZObject *_swz_builtin_if(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZObject *cond = NULL;
+    SWZObject *yes = NULL;
+    SWZObject *no = NULL;
+    if(!swz_get_args(swz, args, "***", &cond, &yes, &no)){
+        return NULL;
+    }
+    cond = swz_eval(swz, env, cond);
+    SWZ_IS_VALID_PTR(cond);
+    if(swz_truthy(cond)){
+        return swz_eval(swz, env, yes);
+    }else{
+        return swz_eval(swz, env, no);
+    }
+}
+
 // _swz_builtin_nullp(...)
 // _swz_get_quoted_left_items(...)
 // _swz_advance_lists(...)
