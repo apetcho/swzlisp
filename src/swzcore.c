@@ -1238,6 +1238,19 @@ static SWZObject *_swz_builtin_if(SWZRuntime *swz, SWZEnv *env, SWZList *args, v
 }
 
 // _swz_builtin_nullp(...)
+static SWZObject* _swz_builtin_nullp(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZObject *self = NULL;
+    if(!swz_get_args(swz, args, "*", &self)){
+        return NULL;
+    }
+    SWZInteger *result = (SWZInteger *)swz_alloc(swz, swzInteger);
+    result->val = (long)swz_nil_p(self);
+
+    return (SWZObject *)result;
+}
+
 // _swz_get_quoted_left_items(...)
 // _swz_advance_lists(...)
 // _swz_builtin_map(...)
