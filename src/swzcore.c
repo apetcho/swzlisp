@@ -895,6 +895,31 @@ static SWZObject* _swz_builtin_cons(SWZRuntime *swz, SWZEnv *env, SWZList *args,
 }
 
 // _swz_builtin_lambda(...)
+static SWZObject* _swz_builtin_lambda(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZList *argnames = NULL;
+    SWZList *body = NULL;
+    SWZList *self = NULL;
+    SWZLambda *lambda = NULL;
+
+    if(!swz_get_args(swz, args, "lR", &argnames, &body)){
+        return NULL;
+    }
+    self = argnames;
+    SWZ_FOREACH(self){
+        if(self->car->type != swzSymbol){
+            return swz_error(swz, SWZE_TYPE, "argument names must be symbols");
+        }
+    }
+    lambda = (SWZLambda*)swz_alloc(swz, swzLambda);
+    lambda->params = argnames;
+    lambda->body = body;
+    lambda->env = env;
+    lambda->kind = SWZK_LAMBDA;
+    return (SWZObject *)lambda;
+}
+
 // _swz_builtin_macro(...)
 // _swz_builtin_define(...)
 // _swz_builtin_plus(...)
