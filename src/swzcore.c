@@ -1618,6 +1618,21 @@ static SWZObject* _swz_builtin_let(SWZRuntime *swz, SWZEnv *env, SWZList *args, 
 }
 
 // _swz_builtin_import(...)
+static SWZObject* _swz_builtin_import(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+
+    SWZSymbol *symbol = NULL;
+    SWZModule *module = NULL;
+    if(!swz_get_args(swz, args, "s", &symbol)){
+        return NULL;
+    }
+
+    module = swz_do_import(swz, symbol);
+    SWZ_IS_VALID_PTR(module);
+    swz_env_bind(env, symbol, (SWZObject *)module);
+    return (SWZObject *)module;
+}
+
 // _swz_builtin_getattr(...)
 // ... math function???
 // -*-
