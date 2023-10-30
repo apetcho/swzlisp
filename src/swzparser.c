@@ -331,6 +331,15 @@ static Result _swz_parse_helper(SWZRuntime *swz, char *src, int idx){
 }
 
 // _set_error_lineno(...)
+static void _set_error_lineno(SWZRuntime *swz, char *src, int idx){
+    swz->errline = 1;
+    for (int i = 0; i < idx; i++){
+        if(src[i]=='\n'){
+            swz->errline++;
+        }
+    }
+}
+
 // _read_file(...)
 // swz_parse_obj(...)
 // swz_parse_progn(...)
