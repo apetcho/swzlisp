@@ -1400,6 +1400,14 @@ static SWZObject* _swz_builtin_print(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_builtin_dump_stack(...)
+static SWZObject* _swz_builtin_dump_stack(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(env);
+    SWZ_UNUSED(args);
+    SWZ_UNUSED(params);
+    swz_dump_stack(swz, NULL, stderr);
+    return swz_alloc_nil(swz);
+}
+
 // _swz_builtin_progn(...)
 // _swz_builtin_unquote(...)
 // _swz_quasiquote(...)
