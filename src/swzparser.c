@@ -14,8 +14,19 @@ typedef struct {
 } Result;
 
 // #RESULT_ERR(obj, idx, err)
+#define SWZ_RESULT_ERR(obj, idx, err)   do {    \
+    Result _result;                             \
+    _result.ok = (SWZObject *)(obj);            \
+    _result.index = (idx);                      \
+    _result.err = (err);                        \
+    return _result;                             \
+} while (0)
+
 // #RESULT_OK(obj, idx)
-// #COMMENT
+#define SWZ_RESULT_OK(obj, idx) SWZ_RESULT_ERR(obj, idx, 0)
+
+#define SWZ_COMMENT     ';'
+
 // _swz_parse_obj_[internal|helper](...)
 // _swz_parse_[integer|number](...)
 // _skip_space_and_comments(...)
