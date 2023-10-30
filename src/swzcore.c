@@ -1468,10 +1468,25 @@ static SWZObject* _swz_builtin_eq(SWZRuntime *swz, SWZEnv *env, SWZList *args, v
         return NULL;
     }
 
+    // swz_alloc_number()
     return (SWZObject *)swz_alloc_integer(swz, lhs == rhs);
 }
 
 // _swz_builtin_equal(...)
+static SWZObject* _swz_builtin_equal(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZObject *lhs = NULL;
+    SWZObject *rhs = NULL;
+
+    if(!swz_get_args(swz, args, "**", &lhs, &rhs)){
+        return NULL;
+    }
+
+    // swz_alloc_number()
+    return (SWZObject *)swz_alloc_integer(swz, swz_compare(lhs, rhs));
+}
+
 // _swz_builtin_assert(...)
 // _swz_builtin_assert_error(...)
 // _swz_builtin_cond(...)
