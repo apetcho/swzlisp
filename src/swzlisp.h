@@ -246,7 +246,7 @@ void swz_register_module(SWZRuntime *swz, SWZModule *module);
 SWZModule *swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
 SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
 
-int swz_parse_object(SWZRuntime *swz, const char* input, int index, SWZObject **output);
+int swz_parse(SWZRuntime *swz, const char* input, int index, SWZObject **output);
 SWZObject* swz_parse_progn(SWZRuntime *swz, const char *input);
 SWZObject* swz_parse_progn_f(SWZRuntime *swz, FILE *file);
 SWZObject* swz_load_file(SWZRuntime *swz, SWZEnv *env, FILE *input);
@@ -262,7 +262,7 @@ SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
 #define SWZ_ERRORS                                                          \
     SWZE_DEF(SWZE_ERROR, 1, "SWZError", "a catch-all")                      \
     SWZE_DEF(SWZE_EOF, 2, "SWZEof", "end of file while parsing")            \
-    SWZE_DEF(SWZE_SYNTAY, 3, "SWZSyntaxError", "syntax error")              \
+    SWZE_DEF(SWZE_SYNTAX, 3, "SWZSyntaxError", "syntax error")              \
     SWZE_DEF(SWZE_FILE, 4, "SWZFileError", "error reading file")            \
     SWZE_DEF(SWZE_TOO_MANY, 5, "SWZTooManyArgsError", "too many arguments")  \
     SWZE_DEF(SWZE_TOO_FEW, 6, "SWZNotEnoughArgsError", "not enough arguments")\

@@ -485,7 +485,7 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZ
 
     if(args->type != swzList){
         // badly behaved cons cell in list
-        return (SWZList *)swz_error(swz, SWZE_SYNTAY, "unexpected cons cell in list.");
+        return (SWZList *)swz_error(swz, SWZE_SYNTAX, "unexpected cons cell in list.");
     }
     if(node==NULL){
         abort();
@@ -1547,17 +1547,17 @@ static SWZObject* _swz_builtin_cond(SWZRuntime *swz, SWZEnv *env, SWZList *args,
     SWZObject *value = NULL;
 
     if(swz_nil_p((SWZObject*)args)){
-        return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+        return swz_error(swz, SWZE_SYNTAX, "bad syntax for `cond'");
     }
 
     SWZ_FOREACH(args){
         if(args->car->type != swzList){
-            return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+            return swz_error(swz, SWZE_SYNTAX, "bad syntax for `cond'");
         }
         clause = (SWZList *)args->car;
 
         if(swz_is_bad_list(clause) || swz_list_length(clause) != 2){
-            return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+            return swz_error(swz, SWZE_SYNTAX, "bad syntax for `cond'");
         }
 
         expr = clause->car;
