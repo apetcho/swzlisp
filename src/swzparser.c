@@ -306,6 +306,30 @@ static Result _swz_parse_quote(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_obj_[internal|helper](...)
+static Result _swz_parse_helper(SWZRuntime *swz, char *src, int idx){
+    idx = _skip_space_and_comments(src, idx);
+    switch(src[idx]){
+    case '"':
+        return _swz_parse_string(swz, src, idx);
+    case '\0':
+        SWZ_RESULT_OK(NULL, idx);
+    case ')':
+        SWZ_RESULT_OK(swz_alloc_nil(swz), idx + 1);
+    case '(':
+        return _swz_parse_list_or_sexpr(swz, src, idx + 1);
+    case '`':
+    case ',':
+    case '\'':
+        return _swz_parse_quote(swz, src, idx);
+    default:
+        if(isdigit(src[idx])){
+            return _swz_parse_number(swz, src, idx);
+        }else{
+            return _swz_parse_symbol(swz, src, idx);
+        }
+    }
+}
+
 // _set_error_lineno(...)
 // _read_file(...)
 // swz_parse_obj(...)
