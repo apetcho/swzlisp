@@ -1338,7 +1338,18 @@ static SWZObject* _swz_builtin_map(SWZRuntime *swz, SWZEnv *env, SWZList *form, 
     self->cdr = swz_alloc_nil(swz);
     return (SWZObject *)result;
 }
+
 // _swz_new_pair_list(...)
+static SWZList* _swz_alloc_pair_list(SWZRuntime *swz, SWZObject* first, SWZObject *second){
+    SWZList *xnode = (SWZList *)swz_alloc(swz, swzList);
+    SWZList *ynode = (SWZList *)swz_alloc(swz, swzList);
+    xnode->car = first;
+    xnode->cdr = (SWZObject *)ynode;
+    ynode->car = second;
+    ynode->cdr = swz_alloc_nil(swz);
+    return xnode;
+}
+
 // _swz_builtin_reduce(...)
 // _swz_builtin_print(...)
 // _swz_builtin_dump_stack(...)
