@@ -58,6 +58,21 @@ static Result _swz_parse_number(SWZRuntime *swz, char *src, int idx){
 }
 
 // _skip_space_and_comments(...)
+static int _skip_space_and_comments(char *src, int idx){
+    for(;;){
+        while(isspace(src[idx])){
+            idx++;
+        }
+        if(src[idx] && src[idx] == SWZ_COMMENT){
+            while(src[idx] && src[idx] != '\n'){
+                idx++;
+            }
+        }else{
+            return idx;
+        }
+    }
+}
+
 // _swz_escape(...)
 // _swz_parse_string(...)
 // _swz_parse_list_or_sexpr(...)
