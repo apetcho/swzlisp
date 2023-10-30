@@ -279,6 +279,32 @@ static Result _swz_parse_symbol(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_quote(...)
+static Result _swz_parse_quote(SWZRuntime *swz, char *src, int idx){
+    char *quote;
+    Result result = _swz_parse_helper(swz, src, idx + 1);
+    if(result.err){
+        return result;
+    }else if(!result.ok){
+        SWZ_RESULT_ERR(NULL, result.index, 1);
+    }
+    switch(src[idx]){
+    case '\'':
+        quote = "quote";
+        break;
+    case '`':
+        quote = "quasiquote";
+        break;
+    case ',':
+        quote = "unquote";
+        break;
+    default:
+        // abort();
+        assert(0);
+    }
+    result.ok = (SWZObject *)swz_quote_with(swz, result.ok, quote);
+    return result;
+}
+
 // _swz_parse_obj_[internal|helper](...)
 // _set_error_lineno(...)
 // _read_file(...)
