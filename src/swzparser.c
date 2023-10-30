@@ -1,4 +1,18 @@
+#include<stdlib.h>
+#include<stddef.h>
+#include<string.h>
+#include<ctype.h>
+#include<assert.h>
+
+#include "swzlisp.h"
+
 // typedef struct {...} Result;
+typedef struct {
+    SWZObject *ok;
+    int index;
+    enum SWZError err;
+} Result;
+
 // #RESULT_ERR(obj, idx, err)
 // #RESULT_OK(obj, idx)
 // #COMMENT
