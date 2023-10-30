@@ -1503,6 +1503,41 @@ static SWZObject* _swz_builtin_assert(SWZRuntime *swz, SWZEnv *env, SWZList *arg
 }
 
 // _swz_builtin_assert_error(...)
+static SWZObject* _swz_builtin_assert_error(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZObject *self = NULL;
+    SWZObject *expr = NULL;
+    SWZSymbol *symbol;
+    enum SWZError errnum;
+
+    if(!swz_get_args(swz, args, "**", &self, &expr)){
+        return NULL;
+    }
+    symbol = (SWZSymbol *)swz_eval(swz, env, self);
+    SWZ_IS_VALID_PTR(symbol);
+    if(symbol->type != swzSymbol){
+        return swz_error(swz, SWZE_TYPE, "error type must be symbol");
+    }
+    errnum = swz_symbol_to_errno(symbol);
+    //! @attention: SWZE_COUNT (i.e SWZE_MAX_ERROR) should be included in SWZError enums
+    if(errnum == SWZE_COUNT){
+        return swz_error(swz, SWZE_VALUE, "unrecognized error type");
+    }
+
+    swz_eval(swz, env, expr);
+    if(errnum == swz_get_errno(swz)){
+        swz_clear_error(swz);
+        return (SWZObject *)symbol;
+    }else{
+        fprintf(stderr, "AssertionError: expected %s\n", swzErrorNames[errnum]);
+        fprintf(stderr, "This was the actual error encountered: ");
+        swz_eprint(swz, stderr);
+        fprintf(stderr, "\nBelow should be the assertion error stack trace.\n");
+        swz_clear_error(swz);
+        return swz_error(swz, SWZE_ASSERT, "assertion error");
+    }
+}
+
 // _swz_builtin_cond(...)
 // _swz_builtin_list(...)
 // _swz_builtin_let(...)
