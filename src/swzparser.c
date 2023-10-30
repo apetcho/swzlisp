@@ -247,6 +247,37 @@ static SWZObject* _split_symbol(SWZRuntime *swz, char *src, int ndot, int remain
 }
 
 // _swz_parse_symbol(...)
+static Result _swz_parse_symbol(SWZRuntime *swz, char *src, int idx){
+    int i = 0;
+    int ndot = 0;
+    char *cpy;
+    SWZSymbol *symbol = NULL;
+    while(src[idx+i] && !isspace(src[idx+i]) && src[idx+i] != ')' && src[idx+i] != '\'' && src[idx+i] != SWZ_COMMENT){
+        if(src[idx+i] == '.'){
+            ndot++;
+        }
+        i++;
+    }
+    if(!src[idx]){
+        swz->error = "unexpected eof while parsing symbol";
+        SWZ_RESULT_ERR(NULL, idx, SWZE_EOF);
+    }
+    if(ndot){
+        if(src[idx] == '.' || src[idx+i-1]=='.'){
+            swz->error = "unexpected '.' at beginning or end of symbol";
+            SWZ_RESULT_ERR(NULL, idx, SWZE_SYNTAX);
+        }
+        SWZ_RESULT_OK(_split_symbol(swz, src + idx, ndot, i), idx + i);
+    }
+
+    cpy = malloc(i + 1);
+    strncpy(cpy, src + idx, i);
+    // -
+    symbol = swz_alloc_symbol(swz, cpy, SWZFLAG_OWN);
+    free(cpy);
+    SWZ_RESULT_OK(symbol, idx + i);
+}
+
 // _swz_parse_quote(...)
 // _swz_parse_obj_[internal|helper](...)
 // _set_error_lineno(...)
