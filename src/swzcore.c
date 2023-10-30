@@ -1634,6 +1634,20 @@ static SWZObject* _swz_builtin_import(SWZRuntime *swz, SWZEnv *env, SWZList *arg
 }
 
 // _swz_builtin_getattr(...)
+static SWZObject* _swz_builtin_getattr(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+
+    SWZModule *module;
+    SWZSymbol *symbol;
+
+    if(!swz_get_args(swz, args, "*s", &module, &symbol)){
+        return NULL;
+    }
+
+    return swz_env_lookup(swz, module->env, symbol);
+}
+
 // ... math function???
 // -*-
 // swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
