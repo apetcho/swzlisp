@@ -1426,6 +1426,25 @@ static SWZObject* _swz_builtin_unquote(SWZRuntime *swz, SWZEnv *env, SWZList *ar
 }
 
 // _swz_quasiquote(...)
+static SWZObject* _swz_quasiquote(SWZRuntime *swz, SWZEnv *env, void *params, SWZObject *obj){
+    SWZ_UNUSED(params);
+    SWZList *self;
+    SWZSymbol *symbol;
+
+    if(obj->type != swzList || swz_nil_p(obj)){
+        return obj;
+    }
+    self = (SWZList *)obj;
+    if(self->car->type == swzSymbol){
+        symbol = (SWZSymbol *)self->car;
+        if(strcmp(symbol->cstr, "unquote") == 0){
+            return swz_eval(swz, env, obj);
+        }
+    }
+
+    return (SWZObject *)swz_map(swz, env, NULL, _swz_quasiquote, self);
+}
+
 // _swz_builtin_quasiquote(...)
 // _swz_builtin_eq(...)
 // _swz_builtin_equal(...)
