@@ -1,3 +1,4 @@
+#include<stdbool.h>
 #include<stdlib.h>
 #include<stddef.h>
 #include<string.h>
@@ -126,6 +127,69 @@ static Result _swz_parse_string(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_list_or_sexpr(...)
+static Result _swz_parse_list_or_sexpr(SWZRuntime *swz, char *src, int idx){
+    Result result;
+    SWZList *self, *obj;
+    idx = _skip_space_and_comments(src, idx);
+    if(!src[idx]){
+        swz->error = "unexpected eof while parsing list";
+        SWZ_RESULT_ERR(NULL, idx, SWZE_EOF);
+    }else if(src[idx] == ')'){
+        SWZ_RESULT_OK(swz_alloc_nil(swz), idx + 1);
+    }
+
+    result = _swz_parse_helper(swz, src, idx);
+    if(result.err){
+        return result;
+    }else if(!result.ok){
+        SWZ_RESULT_ERR(NULL, result.index, 1);
+    }
+    idx = result.index;
+    self = (SWZList *)swz_alloc(swz, swzList);
+    self->car = result.ok;
+    obj = self;
+
+    while(true){
+        idx = _skip_space_and_comments(src, idx);
+        if(!src[idx]){
+            swz->error = "unexpected eof while parsing list";
+            SWZ_RESULT_ERR(NULL, idx, SWZE_EOF);
+        }else if(src[idx] == '.'){
+            idx++;
+            result = _swz_parse_helper(swz, src, idx);
+            if(result.err){
+                return result;
+            }else if(!result.ok){
+                SWZ_RESULT_ERR(NULL, result.index, 1);
+            }
+            idx = result.index;
+            obj->cdr = result.ok;
+            // -
+            idx = _skip_space_and_comments(src, idx);
+            if(src[idx] != ')'){
+                swz->error = "bad s-expression form";
+                SWZ_RESULT_ERR(NULL, idx, SWZE_SYNTAX);
+            }
+            idx++;
+            SWZ_RESULT_OK(self, idx);
+        }else if(src[idx] == ')'){
+            idx++;
+            obj->cdr = swz_alloc_nil(swz);
+            SWZ_RESULT_OK(self, idx);
+        }else{
+            result = _swz_parse_helper(swz, src, idx);
+            if(result.err){
+                return result;
+            }else if(!result.ok){
+                SWZ_RESULT_ERR(NULL, result.index, 1);
+            }
+            obj->cdr = swz_alloc(swz, swzList);
+            obj = (SWZList *)result.ok;
+            idx = result.index;
+        }
+    }
+}
+
 // _split_symbol(...)
 // _swz_parse_symbol(...)
 // _swz_parse_quote(...)
