@@ -1415,6 +1415,16 @@ static SWZObject* _swz_builtin_progn(SWZRuntime *swz, SWZEnv *env, SWZList *args
 }
 
 // _swz_builtin_unquote(...)
+static SWZObject* _swz_builtin_unquote(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZObject *self = NULL;
+    if(!swz_get_args(swz, args, "*", &self)){
+        return NULL;
+    }
+    return swz_eval(swz, env, self);
+}
+
 // _swz_quasiquote(...)
 // _swz_builtin_quasiquote(...)
 // _swz_builtin_eq(...)
