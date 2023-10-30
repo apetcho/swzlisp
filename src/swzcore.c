@@ -1389,6 +1389,16 @@ static SWZObject* _swz_builtin_reduce(SWZRuntime *swz, SWZEnv *env, SWZList *for
 }
 
 // _swz_builtin_print(...)
+static SWZObject* _swz_builtin_print(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZ_FOREACH(args){
+        swz_print(stdout, args->car);
+    }
+    printf("\n");
+    return swz_alloc_nil(swz);
+}
+
 // _swz_builtin_dump_stack(...)
 // _swz_builtin_progn(...)
 // _swz_builtin_unquote(...)
