@@ -1582,6 +1582,41 @@ static SWZObject* _swz_builtin_list(SWZRuntime *swz, SWZEnv *env, SWZList *args,
 }
 
 // _swz_builtin_let(...)
+static SWZObject* _swz_builtin_let(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+
+    SWZList *bindings = NULL;
+    SWZList *expr = NULL;
+    SWZList *self = NULL;
+    SWZSymbol *symbol;
+    SWZObject *obj = NULL;
+    SWZEnv *ctx = NULL;
+
+    if(!swz_get_args(swz, args, "lR", &bindings, &expr)){
+        return NULL;
+    }
+
+    ctx = swz_alloc_empty_env(swz);
+    ctx->parent = env;
+
+    self = bindings;
+    SWZ_FOREACH(self){
+        if(!swz_is(self->car, swzList)){
+            return swz_error(swz, SWZE_TYPE, "expected binding list");
+        }
+        if(!swz_get_args(swz, (SWZList *)self->car, "s*", &symbol, &obj)){
+            return NULL;
+        }
+        obj = swz_eval(swz, ctx, obj);
+        if(!obj){
+            return NULL;
+        }
+        swz_env_bind(ctx, symbol, obj);
+    }
+
+    return swz_progn(swz, ctx, expr);
+}
+
 // _swz_builtin_import(...)
 // _swz_builtin_getattr(...)
 // ... math function???
