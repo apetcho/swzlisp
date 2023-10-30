@@ -96,6 +96,35 @@ static char _swz_escape(char c){
 }
 
 // _swz_parse_string(...)
+static Result _swz_parse_string(SWZRuntime *swz, char *src, int idx){
+    int i;
+    CharBuffer cbuffer;
+    SWZString *str;
+
+    i = idx + 1;
+    cbuffer_init(&cbuffer, 16);
+    while(src[i] && src[i] != '"'){
+        if(src[i] == '\\'){
+            cbuffer_append(&cbuffer, _swz_escape(src[++i]));
+        }else{
+            cbuffer_append(&cbuffer, src[i]);
+        }
+        i++;
+    }
+
+    if(!src[i]){
+        cbuffer_dealloc(&cbuffer);
+        swz->error = "unexpected eof while parsing string";
+        SWZ_RESULT_ERR(NULL, i, SWZE_SYNTAX);
+    }
+    cbuffer_trim(&cbuffer);
+    str = (SWZString *)swz_alloc(swz, swzString);
+    str->cstr = cbuffer.buffer;
+    str->can_free = 1;
+    i++;
+    SWZ_RESULT_OK(str, i);
+}
+
 // _swz_parse_list_or_sexpr(...)
 // _split_symbol(...)
 // _swz_parse_symbol(...)
