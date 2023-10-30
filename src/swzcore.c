@@ -1648,6 +1648,43 @@ static SWZObject* _swz_builtin_getattr(SWZRuntime *swz, SWZEnv *env, SWZList *ar
     return swz_env_lookup(swz, module->env, symbol);
 }
 
-// ... math function???
 // -*-
-// swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
+//! @note: a better name could be "swz_init_prelude()"
+void swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env){
+    swz_env_add_builtin(swz, env, "eval", _swz_builtin_eval, NULL, 1);
+    swz_env_add_builtin(swz, env, "car", _swz_builtin_car, NULL, 1);
+    swz_env_add_builtin(swz, env, "cdr", _swz_builtin_cdr, NULL, 1);
+    swz_env_add_builtin(swz, env, "quote", _swz_builtin_quote, NULL, 0);
+    swz_env_add_builtin(swz, env, "cons", _swz_builtin_cons, NULL, 1);
+    swz_env_add_builtin(swz, env, "lambda", _swz_builtin_lambda, NULL, 0);
+    swz_env_add_builtin(swz, env, "macro", _swz_builtin_macro, NULL, 0);
+    swz_env_add_builtin(swz, env, "define", _swz_builtin_define, NULL, 0);
+    swz_env_add_builtin(swz, env, "+", _swz_builtin_plus, NULL, 1);
+    swz_env_add_builtin(swz, env, "-", _swz_builtin_minus, NULL, 1);
+    swz_env_add_builtin(swz, env, "*", _swz_builtin_multiply, NULL, 1);
+    swz_env_add_builtin(swz, env, "/", _swz_builtin_divide, NULL, 1);
+    swz_env_add_builtin(swz, env, "=", _swz_builtin_cmp, SWZ_CMP_EQ, 1);
+    swz_env_add_builtin(swz, env, "!=", _swz_builtin_cmp, SWZ_CMP_NE, 1);
+    swz_env_add_builtin(swz, env, ">", _swz_builtin_cmp, SWZ_CMP_GT, 1);
+    swz_env_add_builtin(swz, env, "<", _swz_builtin_cmp, SWZ_CMP_LT, 1);
+    swz_env_add_builtin(swz, env, ">=", _swz_builtin_cmp, SWZ_CMP_GE, 1);
+    swz_env_add_builtin(swz, env, "<=", _swz_builtin_cmp, SWZ_CMP_LE, 1);
+    swz_env_add_builtin(swz, env, "if", _swz_builtin_if, NULL, 0);
+    swz_env_add_builtin(swz, env, "null?", _swz_builtin_nullp, NULL, 1);
+    swz_env_add_builtin(swz, env, "map", _swz_builtin_map, NULL, 1);
+    swz_env_add_builtin(swz, env, "reduce", _swz_builtin_reduce, NULL, 1);
+    swz_env_add_builtin(swz, env, "print", _swz_builtin_print, NULL, 1);
+    swz_env_add_builtin(swz, env, "dump-stack", _swz_builtin_dump_stack, NULL, 1);
+    swz_env_add_builtin(swz, env, "progn", _swz_builtin_progn, NULL, 0);
+    swz_env_add_builtin(swz, env, "unquote", _swz_builtin_unquote, NULL, 0);
+    swz_env_add_builtin(swz, env, "quasiquote", _swz_builtin_quasiquote, NULL, 0);
+    swz_env_add_builtin(swz, env, "eq?", _swz_builtin_eq, NULL, 1);
+    swz_env_add_builtin(swz, env, "equal?", _swz_builtin_equal, NULL, 1);
+    swz_env_add_builtin(swz, env, "assert", _swz_builtin_assert, NULL, 1);
+    swz_env_add_builtin(swz, env, "assert-error", _swz_builtin_eval, NULL, 0);
+    swz_env_add_builtin(swz, env, "cond", _swz_builtin_cond, NULL, 0);
+    swz_env_add_builtin(swz, env, "list", _swz_builtin_list, NULL, 1);
+    swz_env_add_builtin(swz, env, "let", _swz_builtin_let, NULL, 0);
+    swz_env_add_builtin(swz, env, "import", _swz_builtin_import, NULL, 0);
+    swz_env_add_builtin(swz, env, "getattr", _swz_builtin_eval, NULL, 1);
+}
