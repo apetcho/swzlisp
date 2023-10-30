@@ -1446,6 +1446,18 @@ static SWZObject* _swz_quasiquote(SWZRuntime *swz, SWZEnv *env, void *params, SW
 }
 
 // _swz_builtin_quasiquote(...)
+static SWZObject* _swz_builtin_quasiquote(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZ_UNUSED(env);
+    SWZObject *self = NULL;
+
+    if(!swz_get_args(swz, args, "*", &self)){
+        return NULL;
+    }
+
+    return _swz_quasiquote(swz, env, NULL, self);
+}
+
 // _swz_builtin_eq(...)
 // _swz_builtin_equal(...)
 // _swz_builtin_assert(...)
