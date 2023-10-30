@@ -74,6 +74,27 @@ static int _skip_space_and_comments(char *src, int idx){
 }
 
 // _swz_escape(...)
+static char _swz_escape(char c){
+    switch(c){
+    case 'a':
+        return '\a';
+    case 'b':
+        return '\b';
+    case 'f':
+        return '\f';
+    case 'n':
+        return '\n';
+    case 'r':
+        return '\r';
+    case 't':
+        return '\t';
+    case 'v':
+        return '\v';
+    default:
+        return c;
+    }
+}
+
 // _swz_parse_string(...)
 // _swz_parse_list_or_sexpr(...)
 // _split_symbol(...)
