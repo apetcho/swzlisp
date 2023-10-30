@@ -1539,6 +1539,40 @@ static SWZObject* _swz_builtin_assert_error(SWZRuntime *swz, SWZEnv *env, SWZLis
 }
 
 // _swz_builtin_cond(...)
+static SWZObject* _swz_builtin_cond(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(params);
+    SWZList *clause = NULL;
+    SWZList *node = NULL;
+    SWZObject *expr = NULL;
+    SWZObject *value = NULL;
+
+    if(swz_nil_p((SWZObject*)args)){
+        return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+    }
+
+    SWZ_FOREACH(args){
+        if(args->car->type != swzList){
+            return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+        }
+        clause = (SWZList *)args->car;
+
+        if(swz_is_bad_list(clause) || swz_list_length(clause) != 2){
+            return swz_error(swz, SWZE_SYNTAY, "bad syntax for `cond'");
+        }
+
+        expr = clause->car;
+        node = (SWZList *)clause->cdr;
+        value = node->car;
+
+        expr = swz_eval(swz, env, expr);
+        if(swz_truthy(expr)){
+            return swz_eval(swz, env, value);
+        }
+    }
+
+    return swz_alloc_nil(swz);
+}
+
 // _swz_builtin_list(...)
 // _swz_builtin_let(...)
 // _swz_builtin_import(...)
