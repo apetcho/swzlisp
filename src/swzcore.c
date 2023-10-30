@@ -1351,6 +1351,43 @@ static SWZList* _swz_alloc_pair_list(SWZRuntime *swz, SWZObject* first, SWZObjec
 }
 
 // _swz_builtin_reduce(...)
+static SWZObject* _swz_builtin_reduce(SWZRuntime *swz, SWZEnv *env, SWZList *form, void *params){
+    SWZ_UNUSED(params);
+    SWZList *self = NULL;
+    SWZObject *callable = NULL;
+    SWZObject *acc = NULL;
+    size_t len = 0;
+
+    len = swz_list_length(form);
+    if(len == 2){
+        if(!swz_get_args(swz, form, "*l", &callable, &self)){
+            return NULL;
+        }
+        if(swz_list_length(self) < 2){
+            return swz_error(swz, SWZE_VALUE, "reduce: list must have at least 2 entries");
+        }
+        acc = self->car;
+        self = (SWZList *)self->cdr;
+    }else if(len == 3){
+        if(!swz_get_args(swz, form, "**l", &callable, &acc, &self)){
+            return NULL;
+        }
+        if(swz_list_length(self) < 1){
+            return swz_error(swz, SWZE_VALUE, "reduce: list must have at last 1 entry");
+        }
+    }else if(len <= 2){
+        return swz_error(swz, SWZE_TOO_FEW, "reduce: 2 or 3 arguments required");
+    }else{
+        return swz_error(swz, SWZE_TOO_MANY, "reduce: 2 or 3 arguments required");
+    }
+
+    SWZ_FOREACH(self){
+        acc = swz_call(swz, env, callable, _swz_alloc_pair_list(swz, acc, self->car));
+        SWZ_IS_VALID_PTR(acc);
+    }
+    return acc;
+}
+
 // _swz_builtin_print(...)
 // _swz_builtin_dump_stack(...)
 // _swz_builtin_progn(...)
