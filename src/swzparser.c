@@ -191,6 +191,61 @@ static Result _swz_parse_list_or_sexpr(SWZRuntime *swz, char *src, int idx){
 }
 
 // _split_symbol(...)
+static SWZObject* _split_symbol(SWZRuntime *swz, char *src, int ndot, int remain){
+    char *delim;
+    char *token;
+    int i, len;
+    SWZObject *prev = NULL;
+    SWZSymbol *symbol;
+    SWZList *self;
+
+    SWZSymbol *getattr = swz_alloc_symbol(swz, "getattr", 0);
+
+    // -
+    delim = strchr(src, '.');
+    len = (delim - src);
+    token = malloc(len + 1);
+    strncpy(token, src, len);
+    token[len] = '\0';
+    symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
+    free(token);
+    prev = (SWZObject *)symbol;
+    src = delim + 1;
+    remain += len + 1;
+
+    // -
+    for (i = 0; i < ndot; i++){
+        // -
+        if(i < ndot - 1){
+            delim = strchr(src, '.');
+            len = (int)(delim - src);
+        }else{
+            len = remain;
+        }
+        token = malloc(len + 1);
+        strncpy(token, src, len);
+        token[len] = '\0';
+        symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
+        free(token);
+
+        // -
+        self = swz_alloc_list(
+            swz, (SWZObject*)getattr,
+            (SWZObject*)swz_alloc_list(swz, prev,
+                (SWZObject*)swz_alloc_list(swz,
+                    (SWZObject*)swz_quote_with(swz, (SWZObject*)symbol, "quote"),
+                    swz_alloc_nil(swz)
+                )
+            )
+        );
+        prev = (SWZObject*)self;
+        src = delim + 1;
+        remain -= len + 1;
+    }
+
+    return prev;
+}
+
 // _swz_parse_symbol(...)
 // _swz_parse_quote(...)
 // _swz_parse_obj_[internal|helper](...)
