@@ -1574,6 +1574,13 @@ static SWZObject* _swz_builtin_cond(SWZRuntime *swz, SWZEnv *env, SWZList *args,
 }
 
 // _swz_builtin_list(...)
+static SWZObject* _swz_builtin_list(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *params){
+    SWZ_UNUSED(swz);
+    SWZ_UNUSED(env);
+    SWZ_UNUSED(params);
+    return (SWZObject *)args;
+}
+
 // _swz_builtin_let(...)
 // _swz_builtin_import(...)
 // _swz_builtin_getattr(...)
