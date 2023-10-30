@@ -1304,6 +1304,40 @@ static SWZList* _swz_advance_lists(SWZRuntime *swz, SWZList *list_of_lists){
 }
 
 // _swz_builtin_map(...)
+static SWZObject* _swz_builtin_map(SWZRuntime *swz, SWZEnv *env, SWZList *form, void *params){
+    SWZ_UNUSED(params);
+    SWZObject *fun;
+    SWZList *self = NULL;
+    SWZList *result = NULL;
+    SWZList *args;
+
+    fun = form->car;
+    if(swz_nil_p(form->cdr)){
+        return swz_error(swz, SWZE_TOO_FEW, "need at least two arguments");
+    }
+    form = (SWZList *)form->cdr;
+    if(swz_is_bad_list_of_lists(form)){
+        return swz_error(swz, SWZE_VALUE, "arguments after callable must be list");
+    }
+
+    while((args = _swz_get_quoted_left_items(swz, form)) != NULL){
+        if(self == NULL){
+            self = (SWZList *)swz_alloc(swz, swzList);
+            result = self;
+        }else{
+            self->cdr = swz_alloc(swz, swzList);
+            self = (SWZList *)self->cdr;
+        }
+        self->car = swz_call(swz, env, fun, args);
+        SWZ_IS_VALID_PTR(self->car);
+        form = _swz_advance_lists(swz, form);
+    }
+    if(self==NULL){
+        abort();
+    }
+    self->cdr = swz_alloc_nil(swz);
+    return (SWZObject *)result;
+}
 // _swz_new_pair_list(...)
 // _swz_builtin_reduce(...)
 // _swz_builtin_print(...)
