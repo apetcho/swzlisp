@@ -340,7 +340,6 @@ static void _set_error_lineno(SWZRuntime *swz, const char *src, int idx){
     }
 }
 
-// _read_file(...)
 // swz_parse(...)
 int swz_parse(SWZRuntime *swz, const char *src, int idx, SWZObject **outobj){
     int bytes;
@@ -377,6 +376,28 @@ SWZObject* swz_parse_progn(SWZRuntime *swz, const char *src){
             prev->cdr = (SWZObject *)swz_alloc_list(swz, expr, NULL);
             prev = (SWZList *)prev->cdr;
         }
+    }
+}
+
+// _read_file(...)
+static char* _read_file(FILE *stream){
+    size_t buflen = 1024;
+    size_t len = 0;
+    char *buffer = malloc(buflen);
+    while(!feof(stream) && !ferror(stream)){
+        len += fread(buffer + len, sizeof(char), buflen - len, stream);
+        if(len >= buflen){
+            buflen *= 2;
+            buffer = realloc(buffer, buflen);
+        }
+    }
+
+    if(feof(stream)){
+        buffer[len] = '\0';
+        return buffer;
+    }else{
+        free(buffer);
+        return NULL;
     }
 }
 
