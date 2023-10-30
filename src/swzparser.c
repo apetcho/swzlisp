@@ -29,6 +29,17 @@ typedef struct {
 
 #define SWZ_COMMENT     ';'
 
+
+// -*-
+void* _my_alloc(size_t size){
+    void *result = malloc(size);
+    if(result == NULL){
+        fprintf(stderr, "Error: memory allocation failure\n");
+        abort();
+    }
+    memset(result, 0, size);
+    return result;
+}
 // _swz_parse_obj_[internal|helper](...)
 static Result _swz_parse_helper(SWZRuntime *swz, const char *src, int idx);
 
@@ -204,7 +215,7 @@ static SWZObject* _split_symbol(SWZRuntime *swz, const char *src, int ndot, int 
     // -
     delim = strchr(src, '.');
     len = (delim - src);
-    token = malloc(len + 1);
+    token = _my_alloc(len + 1);
     strncpy(token, src, len);
     token[len] = '\0';
     symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
@@ -222,7 +233,7 @@ static SWZObject* _split_symbol(SWZRuntime *swz, const char *src, int ndot, int 
         }else{
             len = remain;
         }
-        token = malloc(len + 1);
+        token = _my_alloc(len + 1);
         strncpy(token, src, len);
         token[len] = '\0';
         symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
@@ -270,7 +281,7 @@ static Result _swz_parse_symbol(SWZRuntime *swz, const char *src, int idx){
         SWZ_RESULT_OK(_split_symbol(swz, src + idx, ndot, i), idx + i);
     }
 
-    cpy = malloc(i + 1);
+    cpy = _my_alloc(i + 1);
     strncpy(cpy, src + idx, i);
     // -
     symbol = swz_alloc_symbol(swz, cpy, SWZFLAG_OWN);
@@ -383,7 +394,7 @@ SWZObject* swz_parse_progn(SWZRuntime *swz, const char *src){
 static char* _read_file(FILE *stream){
     size_t buflen = 1024;
     size_t len = 0;
-    char *buffer = malloc(buflen);
+    char *buffer = _my_alloc(buflen);
     while(!feof(stream) && !ferror(stream)){
         len += fread(buffer + len, sizeof(char), buflen - len, stream);
         if(len >= buflen){
@@ -402,4 +413,20 @@ static char* _read_file(FILE *stream){
 }
 
 // swz_parse_progn_f()
+SWZObject* swz_parse_progn_f(SWZRuntime *swz, FILE *stream){
+    SWZObject *result = NULL;
+    char *src; // = "";
+
+    src = _read_file(stream);
+    if(!src){
+        swz->error = "error reading from input file";
+        swz->errnum = SWZE_FILE;
+        return NULL;
+    }
+
+    result = swz_parse_progn(swz, src);
+    free(src);
+    return result;
+}
+
 // swz_load_file(...)
