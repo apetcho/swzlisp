@@ -356,5 +356,29 @@ int swz_parse(SWZRuntime *swz, const char *src, int idx, SWZObject **outobj){
 }
 
 // swz_parse_progn(...)
+SWZObject* swz_parse_progn(SWZRuntime *swz, const char *src){
+    SWZList *result = NULL;
+    SWZList *prev = NULL;
+    SWZObject *expr = NULL;
+    int bytes, idx = 0;
+
+    result = (SWZList *)swz_alloc(swz, swzList);
+    result->car = (SWZObject *)swz_alloc_symbol(swz, "progn", 0);
+    prev = result;
+    for(;;){
+        bytes = swz_parse(swz, src, idx, &expr);
+        idx += bytes;
+        if(bytes < 0){
+            return NULL; // parse error
+        }else if(!expr){
+            prev->cdr = swz_alloc_nil(swz);
+            return (SWZObject *)result;
+        }else{
+            prev->cdr = (SWZObject *)swz_alloc_list(swz, expr, NULL);
+            prev = (SWZList *)prev->cdr;
+        }
+    }
+}
+
 // swz_parse_progn_f()
 // swz_load_file(...)
