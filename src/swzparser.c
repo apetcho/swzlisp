@@ -30,10 +30,10 @@ typedef struct {
 #define SWZ_COMMENT     ';'
 
 // _swz_parse_obj_[internal|helper](...)
-static Result _swz_parse_helper(SWZRuntime *swz, char *src, int idx);
+static Result _swz_parse_helper(SWZRuntime *swz, const char *src, int idx);
 
 // _swz_parse_[integer|number](...)
-static Result _swz_parse_number(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_number(SWZRuntime *swz, const char *src, int idx){
     int n, rc;
     double num;
     rc = sscanf(src + idx, "%lg%n", &num, &n);
@@ -59,7 +59,7 @@ static Result _swz_parse_number(SWZRuntime *swz, char *src, int idx){
 }
 
 // _skip_space_and_comments(...)
-static int _skip_space_and_comments(char *src, int idx){
+static int _skip_space_and_comments(const char *src, int idx){
     for(;;){
         while(isspace(src[idx])){
             idx++;
@@ -97,7 +97,7 @@ static char _swz_escape(char c){
 }
 
 // _swz_parse_string(...)
-static Result _swz_parse_string(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_string(SWZRuntime *swz, const char *src, int idx){
     int i;
     CharBuffer cbuffer;
     SWZString *str;
@@ -127,7 +127,7 @@ static Result _swz_parse_string(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_list_or_sexpr(...)
-static Result _swz_parse_list_or_sexpr(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_list_or_sexpr(SWZRuntime *swz, const char *src, int idx){
     Result result;
     SWZList *self, *obj;
     idx = _skip_space_and_comments(src, idx);
@@ -191,7 +191,7 @@ static Result _swz_parse_list_or_sexpr(SWZRuntime *swz, char *src, int idx){
 }
 
 // _split_symbol(...)
-static SWZObject* _split_symbol(SWZRuntime *swz, char *src, int ndot, int remain){
+static SWZObject* _split_symbol(SWZRuntime *swz, const char *src, int ndot, int remain){
     char *delim;
     char *token;
     int i, len;
@@ -247,7 +247,7 @@ static SWZObject* _split_symbol(SWZRuntime *swz, char *src, int ndot, int remain
 }
 
 // _swz_parse_symbol(...)
-static Result _swz_parse_symbol(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_symbol(SWZRuntime *swz, const char *src, int idx){
     int i = 0;
     int ndot = 0;
     char *cpy;
@@ -279,7 +279,7 @@ static Result _swz_parse_symbol(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_quote(...)
-static Result _swz_parse_quote(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_quote(SWZRuntime *swz, const char *src, int idx){
     char *quote;
     Result result = _swz_parse_helper(swz, src, idx + 1);
     if(result.err){
@@ -306,7 +306,7 @@ static Result _swz_parse_quote(SWZRuntime *swz, char *src, int idx){
 }
 
 // _swz_parse_obj_[internal|helper](...)
-static Result _swz_parse_helper(SWZRuntime *swz, char *src, int idx){
+static Result _swz_parse_helper(SWZRuntime *swz, const char *src, int idx){
     idx = _skip_space_and_comments(src, idx);
     switch(src[idx]){
     case '"':
@@ -331,7 +331,7 @@ static Result _swz_parse_helper(SWZRuntime *swz, char *src, int idx){
 }
 
 // _set_error_lineno(...)
-static void _set_error_lineno(SWZRuntime *swz, char *src, int idx){
+static void _set_error_lineno(SWZRuntime *swz, const char *src, int idx){
     swz->errline = 1;
     for (int i = 0; i < idx; i++){
         if(src[i]=='\n'){
@@ -341,7 +341,20 @@ static void _set_error_lineno(SWZRuntime *swz, char *src, int idx){
 }
 
 // _read_file(...)
-// swz_parse_obj(...)
+// swz_parse(...)
+int swz_parse(SWZRuntime *swz, const char *src, int idx, SWZObject **outobj){
+    int bytes;
+    Result result = _swz_parse_helper(swz, src, idx);
+    bytes = result.index - idx;
+    if(result.err){
+        swz->errnum = result.err;
+        _set_error_lineno(swz, src, result.index);
+        bytes = -1;
+    }
+    *outobj = result.ok;
+    return bytes;
+}
+
 // swz_parse_progn(...)
 // swz_parse_progn_f()
 // swz_load_file(...)
