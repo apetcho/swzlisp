@@ -1278,6 +1278,31 @@ static SWZList* _swz_get_quoted_left_items(SWZRuntime *swz, SWZList *list_of_lis
 }
 
 // _swz_advance_lists(...)
+static SWZList* _swz_advance_lists(SWZRuntime *swz, SWZList *list_of_lists){
+    SWZList *rhs = NULL;
+    SWZList *result = NULL;
+    SWZList *self = NULL;
+
+    SWZ_FOREACH(list_of_lists){
+        if(rhs == NULL){
+            rhs = (SWZList *)swz_alloc(swz, swzList);
+            result = rhs;
+        }else{
+            rhs->cdr = swz_alloc(swz, swzList);
+            rhs = (SWZList *)rhs->cdr;
+        }
+
+        //
+        self = (SWZList *)list_of_lists->car;
+        rhs->car = self->cdr;
+    }
+    if(rhs == NULL){
+        abort();
+    }
+    rhs->cdr = swz_alloc_nil(swz);
+    return result;
+}
+
 // _swz_builtin_map(...)
 // _swz_new_pair_list(...)
 // _swz_builtin_reduce(...)
