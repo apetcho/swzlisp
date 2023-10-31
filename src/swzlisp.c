@@ -180,9 +180,50 @@ static int _swz_repl_run(void){
 }
 
 // -*-
-int _swz_file_run(char *filename, int argc, char **argv, int repl){
-    //! @todo
-    return 0;
+static int _swz_file_run(char *filename, int argc, char **argv, int repl){
+    FILE *stream = NULL;
+    SWZRuntime *swz = NULL;
+    SWZEnv *env = NULL;
+    SWZObject *self = NULL;
+    int rc = 0;
+
+    stream = fopen(filename, "r");
+    if(!stream){
+        perror("open");
+        return 1;
+    }
+
+    swz = swzlisp_new();
+    if(!_disableSymcache){
+        swzlisp_enable_symbol_cache(swz);
+    }
+    if(!_disbaleStrcache){
+        swzlisp_enable_string_cache(swz);
+    }
+    env = swz_alloc_default_env(swz);
+
+    if(!swz_load_file(swz, env, stream)){
+        fclose(stream);
+        swz_eprint(swz, stderr);
+        swzlisp_delete(swz);
+        return -1;
+    }
+    fclose(stream);
+
+    if(repl){
+        _swz_repl_run_with_runtime(swz, env);
+        swzlisp_delete(swz);
+        return 0;
+    }
+    self = swz_run_main_if_exists(swz, env, argc, argv);
+    if(!self){
+        swz_eprint(swz, stderr);
+        rc = 1;
+    }else if(swz_is(self, swzInteger)){
+        rc = swz_get_integer((SWZInteger *)self);
+    }
+    swzlisp_delete(swz);
+    return rc;
 }
 
 // -*-
