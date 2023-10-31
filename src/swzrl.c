@@ -427,6 +427,11 @@ static void _swzrl_abuffer_append(AppendBuffer *abuffer, const char *cstr, size_
     abuffer->len += len;
 }
 
+// -*-
+static void _swzrl_abuffer_destroy(AppendBuffer *abuffer){
+    free(abuffer->buffer);
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
