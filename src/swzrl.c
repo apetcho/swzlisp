@@ -988,9 +988,12 @@ char *swzrl_edit_feed(SWZRLState *swzrl){
 
 // -*-
 void swzrl_edit_stop(SWZRLState *swzrl){
-    //! @todo
+    if(!isatty(swzrl->ifd)){
+        return;
+    }
+    _swzrl_disable_raw_mode(swzrl->ifd);
+    printf("\n");
 }
-
 
 // -*-
 static void _swzrl_refresh_line(SWZRLState *swzrl){
