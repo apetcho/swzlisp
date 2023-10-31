@@ -14,7 +14,7 @@ typedef struct {
     int ifd;
     int ofd;
     char *buffer;
-    size_t buflen;
+    int buflen;
     const char *prompt;
     size_t plen;
     size_t pos;

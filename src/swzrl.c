@@ -774,10 +774,43 @@ static void _swzrl_edit_move_end(SWZRLState *swzrl){
 }
 
 int swzrl_edit_start(
-    SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
+    SWZRLState *swzrl, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
 ){
-    //! @todo
+    swzrl->in_completion = 0;
+    swzrl->ifd = ifd != -1 ? ifd : STDIN_FILENO;
+    swzrl->ofd = ofd != -1 ? ofd : STDOUT_FILENO;
+    swzrl->buffer = buf;
+    swzrl->buflen = buflen;
+    swzrl->prompt = prompt;
+    swzrl->plen = strlen(prompt);
+    swzrl->oldPos = swzrl->pos = 0;
+    swzrl->len = 0;
+    swzrl->cols = _swzrl_get_columns(ifd, ofd);
+    swzrl->oldRows = 0;
+    swzrl->historyIdx = 0;
+
+    // - buffer starts empty.
+    swzrl->buffer[0] = '\0';
+    swzrl->buflen--;
+    // - if stdin is not a tty, stop here with the initialization. We will
+    // - actually just read a line from standard input in blocking mode
+    // later, in swzrl_edit_feed().
+    if(!isatty(swzrl->ifd)){
+        return 0;
+    }
+
+    // enter raw mode
+    if(_swzrl_enable_raw_mode(swzrl->ifd) == -1){
+        return -1;
+    }
+    // - the latest history entry is always our current buffer, that 
+    // - initially is just an empty string.
+    swzrl_history_add("");
+
+    if(write(swzrl->ofd, prompt, swzrl->plen)==-1){
+        return -1;
+    }
     return 0;
 }
 
