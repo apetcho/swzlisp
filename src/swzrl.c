@@ -738,6 +738,17 @@ static void _swzrl_edit_delete(SWZRLState *swzrl){
 }
 
 // -*-
+static void _swzrl_edit_backspace(SWZRLState *swzrl){
+    if(swzrl->pos > 0 && swzrl->len > 0){
+        memmove(swzrl->buffer + swzrl->pos - 1, swzrl->buffer + swzrl->pos, swzrl->len - swzrl->pos);
+        swzrl->pos--;
+        swzrl->len--;
+        swzrl->buffer[swzrl->len] = '\0';
+        _swzrl_refresh_line(swzrl);
+    }
+}
+
+// -*-
 static void _swzrl_edit_move_end(SWZRLState *swzrl){
     if(swzrl->pos != swzrl->len){
         swzrl->pos = swzrl->len;
