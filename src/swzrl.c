@@ -403,17 +403,28 @@ void swzrl_add_completion(SWZRLCompletions* completions, const char *cstr){
     completions->buffer[completions->len++] = cpy;
 }
 
-// -*-
-void swzrl_print_keycodes(void){
-    //! @todo
-}
+// -*----------------*-
+// -*- Line Editing -*-
+// -*----------------*-
+typedef struct {
+    char *buffer;
+    size_t len;
+} AppendBuffer;
 
+static void _swzrl_abuffer_init(AppendBuffer *abuffer){
+    abuffer->buffer = NULL;
+    abuffer->len = 0;
+}
 
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
 extern char *swzRLEditorMore;
 
+// -*-
+void swzrl_print_keycodes(void){
+    //! @todo
+}
 
 // -*--------------------*-
 // -*- Non blocking API -*-
