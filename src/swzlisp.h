@@ -2,6 +2,8 @@
 #define SWZLISP_H
 
 #include<stdbool.h>
+#include<stdlib.h>
+#include<string.h>
 #include<stddef.h>
 #include<stdarg.h>
 #include<stdint.h>
@@ -14,6 +16,18 @@
 #define SWZ_VERSION_PATCH   "0"
 #define SWZ_VERSION_FULL    \
     SWZ_VERSION_MAJOR "." SWZ_VERSION_MINOR "." SWZ_VERSION_PATCH
+
+
+//
+static void* _my_alloc(size_t size){
+    void *result = malloc(size);
+    if(result == NULL){
+        fprintf(stderr, "Error: memory allocation failure\n");
+        abort();
+    }
+    memset(result, 0, size);
+    return result;
+}
 
 // -*------------------------------------------------------------*-
 // -*- CharBuffer                                               -*-
@@ -202,7 +216,7 @@ char* swz_get_symbol(const SWZSymbol *self); //
 SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 long swz_get_integer(const SWZInteger *self);
 //! @note: extension
-SWZFloat *swz_alloc_float(double num);
+SWZFloat *swz_alloc_float(SWZRuntime *swz, double num);
 double swz_get_float(const SWZFloat *self);
 
 //! @note: extension

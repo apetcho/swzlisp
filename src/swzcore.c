@@ -3,16 +3,6 @@
 #include<string.h>
 #include<errno.h>
 
-
-void* _my_alloc(size_t size){
-    void *result = malloc(size);
-    if(result == NULL){
-        fprintf(stderr, "Error: memory allocation failure\n");
-        abort();
-    }
-    memset(result, 0, size);
-    return result;
-}
 // -*-------------*-
 // -*- utilities -*-
 // -*-------------*-
@@ -364,6 +354,17 @@ long swz_get_integer(const SWZInteger *self){
     return self->val;
 }
 
+SWZFloat *swz_alloc_float(SWZRuntime *swz, double num){
+    SWZFloat *number = (SWZFloat *)swz_alloc(swz, swzFloat);
+    number->val = num;
+    return number;
+}
+
+
+double swz_get_float(const SWZFloat *self){
+    return self->val;
+}
+
 // -*-
 void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream){
     if(!stack){
@@ -496,7 +497,10 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZ
 
 // -*-
 bool swz_truthy(SWZObject *obj){
-    return swz_is_number(NULL, obj) && !swz_compare(obj, (SWZObject*)swz_alloc_float(0));
+    SWZFloat zero;
+    zero.type = swzFloat;
+    zero.val = 0;
+    return swz_is_number(NULL, obj) && !swz_compare(obj, (SWZObject *)&zero);
 }
 
 // -*---------------*-

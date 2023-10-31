@@ -16,17 +16,6 @@
 
 
 // -*-
-void* _my_alloc(size_t size){
-    void *result = malloc(size);
-    if(result == NULL){
-        fprintf(stderr, "Error: memory allocation failure\n");
-        abort();
-    }
-    memset(result, 0, size);
-    return result;
-}
-
-// -*-
 static SWZObject* _swz_eval_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     (void)env;
     (void)obj;
@@ -132,13 +121,13 @@ static SWZType _swzenv = {
 SWZType *swzEnv = &_swzenv;
 
 // -*-
-static uint32_t _swz_text_hash(void *arg){
+uint32_t swz_text_hash(void *arg){
     struct swztext **text = (struct swztext **)arg;
     return htable_string_hash(&(*text)->cstr);
 }
 
 // -*-
-static bool _swz_text_compare(const void *lhs, const void *rhs){
+bool swz_text_compare(const void *lhs, const void *rhs){
     SWZSymbol *sym1 = *(SWZSymbol **)lhs;
     SWZSymbol *sym2 = *(SWZSymbol **)rhs;
     return strcmp(sym1->cstr, sym2->cstr) == 0;
@@ -152,8 +141,8 @@ static SWZObject *_swz_env_alloc(SWZRuntime *swz){
     env->parent = NULL;
     htable_init(
         &env->scope,
-        _swz_text_hash,
-        _swz_text_compare,
+        swz_text_hash,
+        swz_text_compare,
         sizeof(void *),
         sizeof(void *)
     );
@@ -288,7 +277,7 @@ static SWZObject *_swz_list_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
         return swz_error(swz, SWZE_CALL, "Cannot call empty list");
     }
     if(list->cdr->type != swzList){
-        return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
+        return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
     callable = swz_eval(swz, env, list->car);
     return swz_call(swz, env, callable, (SWZList *)list->cdr);
@@ -703,7 +692,7 @@ static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *cal
         args = swz_eval_list(swz, env, args);
         SWZ_IS_VALID_PTR(args);
     }else if (swz_is_bad_list(args)){
-        return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
+        return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
     return builtin->fun(swz, env, args, builtin->params);
 }
@@ -789,7 +778,7 @@ static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *call
     }
 
     if(swz_is_bad_list(argv)){
-        return swz_error(swz, SWZE_SYNTAY, "unexpected cons cell");
+        return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
 
     inner = (SWZEnv *)swz_alloc(swz, swzEnv);

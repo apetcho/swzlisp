@@ -44,7 +44,7 @@ CharBuffer* cbuffer_new(uint32_t capacity){
  * 
  * @param cbuffer 
  */
-void cbuffer_destroy(CharBuffer* cbuffer){
+void cbuffer_dealloc(CharBuffer* cbuffer){
     free(cbuffer->buffer);
     cbuffer->buffer = NULL;
 }
@@ -55,7 +55,7 @@ void cbuffer_destroy(CharBuffer* cbuffer){
  * @param cbuffer 
  */
 void cbuffer_delete(CharBuffer* cbuffer){
-    cbuffer_destroy(cbuffer);
+    cbuffer_dealloc(cbuffer);
     free(cbuffer);
 }
 
@@ -137,7 +137,7 @@ void rbuffer_init(RingBuffer *rbuffer, uint32_t dsize, int init){
 }
 
 // -*-
-void rbuffer_destroy(RingBuffer *rbuffer){
+void rbuffer_dealloc(RingBuffer *rbuffer){
     free(rbuffer->buffer);
 }
 
@@ -510,7 +510,7 @@ HTable* htable_new(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vs
 }
 
 // -*-
-void htable_destroy(HTable *htable){
+void htable_dealloc(HTable *htable){
     free(htable->table);
 }
 
@@ -519,7 +519,7 @@ void htable_delete(HTable *htable){
     if(!htable){
         return;
     }
-    htable_destroy(htable);
+    htable_dealloc(htable);
     free(htable);
     htable = NULL;
 }

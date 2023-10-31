@@ -17,17 +17,6 @@ extern char **environ;
 
 
 // -*-
-void* _my_alloc(size_t size){
-    void *result = malloc(size);
-    if(result == NULL){
-        fprintf(stderr, "Error: memory allocation failure\n");
-        abort();
-    }
-    memset(result, 0, size);
-    return result;
-}
-
-// -*-
 static SWZObject* _swz_repl_parse_single_input(SWZRuntime *swz, EditLine *eline, History *hist){
     char *input = NULL;
     char *line = NULL;

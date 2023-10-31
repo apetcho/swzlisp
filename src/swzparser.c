@@ -29,17 +29,6 @@ typedef struct {
 
 #define SWZ_COMMENT     ';'
 
-
-// -*-
-void* _my_alloc(size_t size){
-    void *result = malloc(size);
-    if(result == NULL){
-        fprintf(stderr, "Error: memory allocation failure\n");
-        abort();
-    }
-    memset(result, 0, size);
-    return result;
-}
 // _swz_parse_obj_[internal|helper](...)
 static Result _swz_parse_helper(SWZRuntime *swz, const char *src, int idx);
 
