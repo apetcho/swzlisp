@@ -518,6 +518,101 @@ static void _swzrl_refresh_single_line(SWZRLState *swzrl, int flags){
     _swzrl_abuffer_destroy(&abuffer);
 }
 
+// -*-
+static void _swzrl_refresh_multiline(SWZRLState *swzrl, int flags){
+    char seq[64];
+    size_t plen = strlen(swzrl->prompt);
+    /* rows used by current buffer */
+    size_t rows = (plen + swzrl->len + swzrl->cols - 1) / swzrl->cols;
+    /* cursor relative row */
+    size_t rpos = (plen + swzrl->oldPos + swzrl->cols) / swzrl->cols;
+    /* rpos after refresh */
+    size_t rpos2;
+    /* column position, zero-based */
+    size_t col;
+    size_t oldRows = swzrl->oldRows;
+    int fd = swzrl->ofd;
+    AppendBuffer abuffer;
+
+    swzrl->oldRows = rows;
+    _swzrl_abuffer_init(&abuffer);
+    if(flags & SWZRL_REFRESH_CLEAN){
+        if(oldRows - rpos > 0){
+            // lndebug(...)
+            snprintf(seq, sizeof(seq), "\x1b[%dB", oldRows - rpos);
+            _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+        }
+        // - now for every row clear it, go up.
+        for (size_t j = 0; j < oldRows - 1; j++){
+            // lndebug(...)
+            snprintf(seq, sizeof(seq), "\r\x1b[0K\x1b[1A");
+            _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+        }
+    }
+    if(flags & SWZRL_REFRESH_ALL){
+        // - clean the top line.
+        // lndebug()
+        snprintf(seq, sizeof(seq), "\r\x1b[0K");
+        _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+    }
+
+    if(flags & SWZRL_REFRESH_WRITE){
+        // - write the prompt and the current buffer content
+        _swzrl_abuffer_append(&abuffer, swzrl->prompt, strlen(swzrl->prompt));
+        if(_maskMode == 1){
+            for (size_t i = 0; i < swzrl->len; i++){
+                _swzrl_abuffer_append(&abuffer, "*", 1);
+            }
+        }else{
+            _swzrl_abuffer_append(&abuffer, swzrl->buffer, swzrl->len);
+        }
+
+        // - show hints if a any
+        _swzrl_refresh_show_hints(&abuffer, swzrl, plen);
+
+        // - if we are at the very end of the screen with our prompt, we need
+        // - to emit a newline and move the prompt at the first column.
+        if(swzrl->pos && swzrl->pos == swzrl->len && (swzrl->pos+plen)%swzrl->cols==0){
+            // lndebug(...)
+            _swzrl_abuffer_append(&abuffer, "\n", 1);
+            snprintf(seq, sizeof(seq), "\r");
+            _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+            rows++;
+            if(rows > (int)swzrl->oldRows){
+                swzrl->oldRows = rows;
+            }
+        }
+        // - move cursor to right position.
+        /* current cursor relative row. */
+        rpos2 = (plen + swzrl->pos + swzrl->cols) / swzrl->cols;
+        // lndebug(...)
+
+        /* Go up till we reach the expected position. */
+        if(rows - rpos2 > 0){
+            // lndebug(...)
+            snprintf(seq, sizeof(seq), "\x1b[%dA", rows - rpos2);
+            _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+        }
+
+        // - set column.
+        col = (plen + (int)(swzrl->pos)) % (int)swzrl->cols;
+        // lndebug(...)
+        if(col){
+            snprintf(seq, sizeof(seq), "\r\x1b[%dC", col);
+        }else{
+            snprintf(seq, sizeof(seq), "\r");
+        }
+        _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+    }
+
+    // lndebug(...)
+    swzrl->oldPos = swzrl->pos;
+    if(write(fd, abuffer.buffer, abuffer.len) == -1){
+        // - can't recover from write error.
+    }
+    _swzrl_abuffer_destroy(&abuffer);
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
