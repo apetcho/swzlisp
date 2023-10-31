@@ -680,6 +680,14 @@ static int _swzrl_edit_insert(SWZRLState *swzrl, char c){
     return 0;
 }
 
+// -*-
+static void _swzrl_edit_move_left(SWZRLState *swzrl){
+    if(swzrl->pos > 0){
+        swzrl->pos--;
+        _swzrl_refresh_line(swzrl);
+    }
+}
+
 int swzrl_edit_start(
     SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
