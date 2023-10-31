@@ -259,6 +259,16 @@ void swzrl_clear_screen(void){
     }
 }
 
+/**
+ * @brief Beep
+ * Used for completion when there is nothing to complete or when all the choices
+ * were already shown.
+ */
+static void _swzrl_beep(void){
+    fprintf(stderr, "\x7");
+    fflush(stderr);
+}
+
 // -*-
 void swzrl_print_keycodes(void){
     //! @todo
