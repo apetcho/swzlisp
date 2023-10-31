@@ -468,6 +468,56 @@ static void _swzrl_refresh_show_hints(AppendBuffer *abuffer, SWZRLState *swzrl, 
     }
 }
 
+// -*-
+static void _swzrl_refresh_single_line(SWZRLState *swzrl, int flags){
+    char seq[64];
+    size_t plen = strlen(swzrl->prompt);
+    int fd = swzrl->ofd;
+    char *buffer = swzrl->buffer;
+    size_t len = swzrl->len;
+    size_t pos = swzrl->pos;
+    AppendBuffer abuffer;
+
+    while((plen+pos) >= swzrl->cols){
+        buffer++;
+        len--;
+        pos--;
+    }
+    while(plen+len > swzrl->cols){
+        len--;
+    }
+    _swzrl_abuffer_init(&abuffer);
+    // - Cursor to left edge
+    snprintf(seq, sizeof(seq), "\r");
+    _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+    if(flags & SWZRL_REFRESH_WRITE){
+        // - write the prompt and the current buffer content
+        _swzrl_abuffer_append(&abuffer, swzrl->prompt, strlen(swzrl->prompt));
+        if(_maskMode == 1){
+            while(len--){
+                _swzrl_abuffer_append(&abuffer, "*", 1);
+            }
+        }else{
+            _swzrl_abuffer_append(&abuffer, buffer, len);
+        }
+        // -*- show hints if any.
+        _swzrl_refresh_show_hints(&abuffer, swzrl, plen);
+    }
+    // - erase to right
+    snprintf(seq, sizeof(seq), "\x1b[0K");
+    _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+    if(flags & SWZRL_REFRESH_WRITE){
+        // move cursor to original position
+        snprintf(seq, sizeof(seq), "\r\x1b[%dC", (int)(pos + plen));
+        _swzrl_abuffer_append(&abuffer, seq, strlen(seq));
+    }
+
+    if(write(fd, abuffer.buffer, abuffer.len) == -1){
+        // can't recover from write error.
+    }
+    _swzrl_abuffer_destroy(&abuffer);
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
