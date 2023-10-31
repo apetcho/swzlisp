@@ -634,6 +634,16 @@ void swzrl_hide(SWZRLState *swzrl){
     }
 }
 
+// -*-
+void swzrl_show(SWZRLState *swzrl){
+    if(swzrl->in_completion){
+        _swzrl_refresh_line_with_completion(swzrl, NULL, SWZRL_REFRESH_WRITE);
+    }else{
+        _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_WRITE);
+    }
+}
+
+
 int swzrl_edit_start(
     SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
@@ -653,10 +663,6 @@ void swzrl_edit_stop(SWZRLState *swzrl){
     //! @todo
 }
 
-// -*-
-void swzrl_show(SWZRLState *swzrl){
-    //! @todo
-}
 
 // -*-
 static void _swzrl_refresh_line(SWZRLState *swzrl){
