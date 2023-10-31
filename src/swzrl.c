@@ -622,6 +622,11 @@ static void _swzrl_refresh_line_with_flags(SWZRLState *swzrl, int flags){
     }
 }
 
+// -*-
+static void _swzrl_refresh_line(SWZRLState *swzrl){
+    _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_ALL);
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
