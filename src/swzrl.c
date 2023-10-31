@@ -704,6 +704,14 @@ static void _swzrl_edit_move_home(SWZRLState *swzrl){
     }
 }
 
+// -*-
+static void _swzrl_edit_move_end(SWZRLState *swzrl){
+    if(swzrl->pos != swzrl->len){
+        swzrl->pos = swzrl->len;
+        _swzrl_refresh_line(swzrl);
+    }
+}
+
 int swzrl_edit_start(
     SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
