@@ -79,6 +79,11 @@ void swzrl_enable_mask_mode(void){
 }
 
 // -*-
+void swzrl_disable_mask_mode(void){
+    _maskMode = 0;
+}
+
+// -*-
 void swzrl_clear_screen(void){
     //! @todo
 }
@@ -93,10 +98,6 @@ void swzrl_print_keycodes(void){
     //! @todo
 }
 
-// -*-
-void swzrl_disable_mask_mode(void){
-    //! @todo
-}
 
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
