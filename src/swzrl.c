@@ -380,7 +380,7 @@ void swzrl_set_hints_callback(SWZRLHintsCallback callback){
 
 // -*-
 void swzrl_set_destroy_callack(SWZRLDestroyHintsCallback callack){
-    //! @todo
+    _destroyHintsCallback = callack;
 }
 
 // -*-
