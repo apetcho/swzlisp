@@ -113,13 +113,69 @@ char* _swz_repl_history(void){
 }
 
 // -*-
-void _swz_repl_run_with_runtime(SWZRuntime *swz, SWZEnv *env){
-    //! @todo
+static void _swz_repl_run_with_runtime(SWZRuntime *swz, SWZEnv *env){
+    HistEvent event;
+    EditLine *eline = el_init("swzlisp", stdin, stdout, stderr);
+    History *hist = history_init();
+    char *histfile = _swz_repl_history();
+
+    history(hist, &event, H_SETSIZE, 1000);
+    history(hist, &event, H_LOAD, histfile);
+    el_set(eline, EL_PROMPT, _swz_repl_prompt);
+    el_set(eline, EL_EDITOR, "mvim");
+    el_set(eline, EL_HIST, history, hist);
+
+    for (;;){
+        SWZObject *self = NULL;
+        SWZObject *result = NULL;
+        self = _swz_repl_parse_single_input(swz, eline, hist);
+        if(!self && swz_get_errno(swz) == SWZE_EXIT){
+            /* CTRL-D */
+            break;
+        }else if(!self){
+            /* syntax error or other parse error */
+            swz_eprint(swz, stderr);
+            swz_clear_error(swz);
+            swz_mark(swz, (SWZObject *)env);
+            swz_sweep(swz);
+            continue;
+        }
+
+        result = swz_eval(swz, env, self);
+        if(!result){
+            /* some general error */
+            swz_eprint(swz, stderr);
+            swz_clear_error(swz);
+        }else if(!swz_nil_p(result)){
+            /* code returned somthing interesting, print it */
+            swz_print(stdout, result);
+            fprintf(stdout, "\n");
+        }
+        swz_mark(swz, (SWZObject *)env);
+        swz_sweep(swz);
+    }
+
+    history(hist, &event, H_SAVE, histfile);
+    history_end(hist);
+    free(histfile);
+    el_end(eline);
 }
 
 // -*-
-int _swz_repl_run(void){
-    //! @todo
+static int _swz_repl_run(void){
+    SWZRuntime *swz = NULL;
+    SWZEnv *env = NULL;
+
+    swz = swzlisp_new();
+    if(!_disableSymcache){
+        swzlisp_enable_symbol_cache(swz);
+    }
+    if(!_disbaleStrcache){
+        swzlisp_enable_string_cache(swz);
+    }
+    env = swz_alloc_default_env(swz);
+    _swz_repl_run_with_runtime(swz, env);
+    swzlisp_delete(swz); // implicitly sweeps everythins
     return 0;
 }
 
