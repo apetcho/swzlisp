@@ -7,8 +7,11 @@
 #include<stddef.h>
 #include<stdarg.h>
 #include<stdint.h>
+#include<limits.h>
+#include<float.h>
 #include<stdio.h>
 #include<wchar.h>
+#include<math.h>
 
 #define SWZ_UNUSED(arg)     (void)arg
 #define SWZ_VERSION_MAJOR   "0"
@@ -26,6 +29,17 @@ static void* _my_alloc(size_t size){
         abort();
     }
     memset(result, 0, size);
+    return result;
+}
+
+// -*-
+static inline bool almost_equal(double x, double y){
+    static double eps = DBL_EPSILON;
+    double diff = fabs(x - y);
+    x = fabs(x);
+    y = fabs(y);
+    double xymax = (x > y) ? x : y;
+    bool result = (diff <= xymax*eps) ? true: false;
     return result;
 }
 
@@ -102,17 +116,20 @@ typedef bool (*CompareFn)(const void*, const void*);
 typedef int (*PrintFn)(FILE*, const void *);
 
 typedef struct {
-    uint32_t len;
-    uint32_t allocated;
+    uint32_t len;           // number of items currently in the table
+    uint32_t allocated;     // number of items allocated
+    // -
     uint32_t ksize;
     uint32_t vsize;
+    // -
     HashFn hashfn;
     CompareFn equalfn;
+    // -
     void *table;
 } HTable;
 
 void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
-HTable* htable_new(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
+HTable* htable_alloc(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize);
 void htable_dealloc(HTable *htable);
 void htable_delete(HTable *htable);
 void htable_insert(HTable *htable, void *key, void *value);
@@ -132,8 +149,8 @@ uint32_t htable_string_hash(void *data);
 bool htable_string_equal(const void *lhs, const void *rhs);
 bool htable_int_equal(const void *lhs, const void *rhs);
 //! @note: extension to floating-point numbers
-
 bool htable_float_equal(const void *lhs, const void *rhs);
+
 Iterator htable_iterator_keys(HTable *htable);
 Iterator htable_iterator_keys_ptr(HTable *htable);
 Iterator htable_iterator_values(HTable *htable);

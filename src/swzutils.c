@@ -409,20 +409,20 @@ static uint64_t _htable_next_size(uint64_t current){
     return htablePrimes[idx + 1];
 }
 
-#define SWZ_ITEMSIZE(htable) (SWZ_HTABLE_KEY_OFFSET + (htable)->ksize + (htable)->vsize)
-#define SWZ_MARK_AT_BUF(htable, buf, i)     \
-    (*(int8_t*)(((char*)buf) + i * SWZ_ITEMSIZE(htable)))
-#define SWZ_MARK_AT(htable, i) SWZ_MARK_AT_BUF(htable, htable->table, i)
+#define SWZ_ITEMSIZE(ht)    (SWZ_HTABLE_KEY_OFFSET + (ht)->ksize + (ht)->vsize)
+#define SWZ_MARK_AT_BUF(ht, buf, i)     \
+    (*(int8_t*)(((char*)buf) + i*SWZ_ITEMSIZE(ht)))
+#define SWZ_MARK_AT(ht, i)  SWZ_MARK_AT_BUF(ht, ht->table, i)
 
-#define SWZ_KEY_PTR_BUF(htable, buf, i)     \
-    (void*)(((char*)buf) + i *SWZ_ITEMSIZE(htable) + SWZ_HTABLE_KEY_OFFSET)
-#define SWZ_KEY_PTR(htable, i) SWZ_KEY_PTR_BUF(htable, (htable)->table, i)
+#define SWZ_KEY_PTR_BUF(ht, buf, i)     \
+    (void*)(((char*)buf) + i*SWZ_ITEMSIZE(ht) + SWZ_HTABLE_KEY_OFFSET)
+#define SWZ_KEY_PTR(ht, i)  SWZ_KEY_PTR_BUF(ht, (ht)->table, i)
 
-#define SWZ_VALUE_PTR_BUF(htable, buf, i)               \
-    (void*)(((char*)buf) + i * SWZ_ITEMSIZE(htable) +   \
-    SWZ_HTABLE_KEY_OFFSET + (htable)->ksize)
+#define SWZ_VALUE_PTR_BUF(ht, buf, i)               \
+    (void*)(((char*)buf) + i*SWZ_ITEMSIZE(ht) +     \
+    SWZ_HTABLE_KEY_OFFSET + (ht)->ksize)
 
-#define SWZ_VALUE_PTR(htable, i)    SWZ_VALUE_PTR_BUF(htable, (htable)->table, i)
+#define SWZ_VALUE_PTR(ht, i)    SWZ_VALUE_PTR_BUF(ht, (ht)->table, i)
 
 
 // -*-
@@ -452,7 +452,7 @@ static uint32_t _htable_find_retrieve(const HTable *htable, void *key){
 
     while(SWZ_MARK_AT(htable, index) != SWZ_HTABLE_EMPTY){
         if(SWZ_MARK_AT(htable, index)==SWZ_HTABLE_FULL &&
-            htable->equalfn(key, SWZ_KEY_PTR(htable, index)) == 0){
+            htable->equalfn(key, SWZ_KEY_PTR(htable, index))==0){
             // -
             return index;
         }
@@ -470,7 +470,7 @@ static void _htable_resize(HTable *htable){
     allocated = htable->allocated;
     htable->len = 0;
     htable->allocated = _htable_next_size(allocated);
-    htable->table = calloc(htable->allocated, SWZ_ITEMSIZE(htable));
+    htable->table = _my_alloc(htable->allocated*SWZ_ITEMSIZE(htable));
     for (index = 0; index < allocated; index++){
         if(SWZ_MARK_AT_BUF(htable, table, index)==SWZ_HTABLE_FULL){
             htable_insert(
@@ -498,13 +498,13 @@ void htable_init(HTable *htable, HashFn hashfn, CompareFn equalfn, uint32_t ksiz
     htable->hashfn = hashfn;
     htable->equalfn = equalfn;
     // -*- allocate table
-    htable->table = calloc(SWZ_HTABLE_INITIAL_SIZE, SWZ_ITEMSIZE(htable));
+    htable->table = _my_alloc(SWZ_HTABLE_INITIAL_SIZE*SWZ_ITEMSIZE(htable));
 }
 
 // -*-
-HTable* htable_new(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
+HTable* htable_alloc(HashFn hashfn, CompareFn equalfn, uint32_t ksize, uint32_t vsize){
     HTable *htable = NULL;
-    htable = calloc(1, sizeof(*htable));
+    htable = _my_alloc(sizeof(HTable));
     htable_init(htable, hashfn, equalfn, ksize, vsize);
     return htable;
 }
@@ -560,7 +560,7 @@ int htable_remove(HTable *htable, void *key){
 
 // -*-
 int htable_remove_ptr(HTable *htable, void *key){
-    return htable_remove(htable, key);
+    return htable_remove(htable, &key);
 }
 
 // -*-
@@ -640,32 +640,11 @@ bool htable_int_equal(const void *lhs, const void *rhs){
     return (x==y);
 }
 
-/*
-bool almostEqual(double x, double y){
-    static double eps = DBL_EPSILON;
-    double diff = fabs(x - y);
-    x = fabs(x);
-    y = fabs(y);
-    double xymax = (x > y) ? x : y;
-    if(diff <= xymax * eps){
-        return
-    }
-    bool result = (diff <= xymax*eps) ? true: false;
-    return result;
-}
-*/
 //! @note: extension to floating-point numbers
 bool htable_float_equal(const void *lhs, const void *rhs){
     double x = *(double *)lhs;
-    double y = *(double *)rhs;
-    static double eps = DBL_EPSILON;
-
-    double diff = fabs(x - y);
-    x = fabs(x);
-    y = fabs(y);
-    double xymax = (x > y) ? x : y;
-    bool result = (diff <= xymax*eps) ? true: false;
-    return result;
+    double y = *(double *)rhs;    
+    return almost_equal(x, y);
 }
 
 
@@ -673,9 +652,7 @@ bool htable_float_equal(const void *lhs, const void *rhs){
 static void _htable_print(FILE* stream, const HTable *htable, PrintFn keyprintfn, PrintFn valprintfn, int fullmode){
     uint64_t i;
     const char *marks[] = {
-        "EMPTY",
-        " FULL",
-        "GRAVE"
+        "EMPTY", " FULL", "GRAVE"
     };
     printf(
         "table size %" PRIu32 ", allocated %" PRIu32"\n",
@@ -686,13 +663,11 @@ static void _htable_print(FILE* stream, const HTable *htable, PrintFn keyprintfn
         if(fullmode || mark==SWZ_HTABLE_FULL){
             printf(
                 "[%04llu|%p|%p|%s]:\n", i,
-                SWZ_KEY_PTR(htable, i), SWZ_VALUE_PTR(htable, i),
-                marks[mark]
+                SWZ_KEY_PTR(htable, i), SWZ_VALUE_PTR(htable, i), marks[mark]
             );
             if(mark == SWZ_HTABLE_FULL){
                 printf("  key: ");
-                if (keyprintfn)
-                {
+                if (keyprintfn){
                     keyprintfn(stream, SWZ_KEY_PTR(htable, i));
                 }
                 printf("\n  value: ");
