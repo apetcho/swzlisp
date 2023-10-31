@@ -209,6 +209,49 @@ static int _swzrl_get_cursor_position(int ifd, int ofd){
     return cols;
 }
 
+/**
+ * @brief Get the number columns of the current terminal, or assume 80.
+ * 
+ * @param ifd 
+ * @param ofd 
+ * @return int 
+ */
+static int _swzrl_get_columns(int ifd, int ofd){
+    struct winsize ws;
+
+    if(ioctl(1, TIOCGWINSZ, &ws) == -1 | ws.ws_col == 0){
+        // - ioctl() failed. try to query the terminal itself.
+        int start, cols;
+        // - Get the initial position so we can restore it later.
+        start = _swzrl_get_cursor_position(ifd, ofd);
+        if(start == -1){
+            goto failed;
+        }
+
+        // - Go to right margin and get position.
+        if(write(ofd, "\x1b[999C", 6) != 6){
+            goto failed;
+        }
+        cols = _swzrl_get_cursor_position(ifd, ofd);
+        if(cols == -1){
+            goto failed;
+        }
+
+        // - Restore position.
+        if(cols > start){
+            char seq[32];
+            snprintf(seq, sizeof(seq), "\x1b[%dD", cols - start);
+            if(write(ofd, seq, strlen(seq)) == -1){}
+        }
+        return cols;
+    }else{
+        return ws.ws_col;
+    }
+
+failed:
+    return 80;
+}
+
 // -*-
 void swzrl_clear_screen(void){
     //! @todo
