@@ -643,6 +643,42 @@ void swzrl_show(SWZRLState *swzrl){
     }
 }
 
+/**
+ * @brief Insert a character at the cursor current position.
+ * 
+ * On error writing to the terminal -1 is return, otherwise 0.
+ * 
+ * @param swzrl 
+ * @param c 
+ * @return int 
+ */
+static int _swzrl_edit_insert(SWZRLState *swzrl, char c){
+    if(swzrl->len < swzrl->buflen){
+        if(swzrl->len == swzrl->pos){
+            swzrl->buffer[swzrl->pos] = c;
+            swzrl->pos++;
+            swzrl->len++;
+            swzrl->buffer[swzrl->len] = '\0';
+            if((!_mlMode && swzrl->plen + swzrl->len) < swzrl->cols && !_hintsCallback){
+                // - avoid a full update of the line in the trivial case.
+                char d = (_maskMode == 1) ? '*' : c;
+                if(write(swzrl->ofd, &d, 1) == -1){
+                    return -1;
+                }
+            }else{
+                _swzrl_refresh_line(swzrl);
+            }
+        }else{
+            memmove(swzrl->buffer + swzrl->pos + 1, swzrl->buffer + swzrl->pos, swzrl->len - swzrl->pos);
+            swzrl->buffer[swzrl->pos] = c;
+            swzrl->len++;
+            swzrl->pos++;
+            swzrl->buffer[swzrl->len] = '\0';
+            _swzrl_refresh_line(swzrl);
+        }
+    }
+    return 0;
+}
 
 int swzrl_edit_start(
     SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
