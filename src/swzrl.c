@@ -622,24 +622,18 @@ static void _swzrl_refresh_line_with_flags(SWZRLState *swzrl, int flags){
     }
 }
 
-// -*-
-static void _swzrl_refresh_line(SWZRLState *swzrl){
-    _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_ALL);
-}
-
-// -*------------------------------*-
-// -*- Linenoise (a.k.a Readline) -*-
-// -*------------------------------*-
-extern char *swzRLEditMore;
-
-// -*-
-void swzrl_print_keycodes(void){
-    //! @todo
-}
-
 // -*--------------------*-
 // -*- Non blocking API -*-
 // -*--------------------*-
+// -*-
+void swzrl_hide(SWZRLState *swzrl){
+    if(_mlMode){
+        _swzrl_refresh_multiline(swzrl, SWZRL_REFRESH_CLEAN);
+    }else{
+        _swzrl_refresh_single_line(swzrl, SWZRL_REFRESH_CLEAN);
+    }
+}
+
 int swzrl_edit_start(
     SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
@@ -660,14 +654,26 @@ void swzrl_edit_stop(SWZRLState *swzrl){
 }
 
 // -*-
-void swzrl_hide(SWZRLState *swzrl){
+void swzrl_show(SWZRLState *swzrl){
     //! @todo
 }
 
 // -*-
-void swzrl_show(SWZRLState *swzrl){
+static void _swzrl_refresh_line(SWZRLState *swzrl){
+    _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_ALL);
+}
+
+// -*------------------------------*-
+// -*- Linenoise (a.k.a Readline) -*-
+// -*------------------------------*-
+extern char *swzRLEditMore;
+
+// -*-
+void swzrl_print_keycodes(void){
     //! @todo
 }
+
+
 
 // -*----------------*-
 // -*- Blocking API -*-
