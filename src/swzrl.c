@@ -416,6 +416,17 @@ static void _swzrl_abuffer_init(AppendBuffer *abuffer){
     abuffer->len = 0;
 }
 
+// -*-
+static void _swzrl_abuffer_append(AppendBuffer *abuffer, const char *cstr, size_t len){
+    char *buffer = realloc(abuffer->buffer, abuffer->len + len);
+    if(buffer == NULL){
+        return;
+    }
+    memcpy(buffer + abuffer->len, cstr, len);
+    abuffer->buffer = buffer;
+    abuffer->len += len;
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
