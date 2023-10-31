@@ -375,7 +375,7 @@ void swzrl_set_completion_callback(SWZRLCompletionCallack callback){
 
 // -*-
 void swzrl_set_hints_callback(SWZRLHintsCallback callback){
-    //! @todo
+    _hintsCallback = callback;
 }
 
 // -*-
