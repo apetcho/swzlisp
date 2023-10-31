@@ -1093,7 +1093,26 @@ static char *_swzrl_no_tty(void){
 // -*----------------*-
 // -*-
 char *swzrl_new(const char* prompt){
-    //! @todo
+    char buffer[SWZRL_MAXLEN];
+    if(!isatty(STDIN_FILENO)){
+        return _swzrl_no_tty();
+    }else if(_swzrl_is_unsupported_terminal()){
+        size_t len;
+        printf("%s", prompt);
+        fflush(stdout);
+        if(fgets(buffer, SWZRL_MAXLEN, stdin)==NULL){
+            return NULL;
+        }
+        len = strlen(buffer);
+        while(len && (buffer[len-1]=='\n' || buffer[len-1]=='\r')){
+            len--;
+            buffer[len] = '\0';
+        }
+        return strdup(buffer);
+    }else{
+        char *result = _swzrl_blocking_edit(STDIN_FILENO, STDOUT_FILENO, buffer, SWZRL_MAXLEN, prompt);
+        return result;
+    }
     return NULL;
 }
 
