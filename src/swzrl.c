@@ -1207,7 +1207,19 @@ int swzrl_history_set_maxlen(int len){
 
 // -*-
 int swzrl_history_save(const char *filename){
-    //! @todo
+    mode_t oldUmask = umask(S_IXUSR | S_IRWXG | S_IRWXO);
+    FILE *stream;
+
+    stream = fopen(filename, "w");
+    if(stream==NULL){
+        return -1;
+    }
+    umask(oldUmask);
+    chmod(filename, S_IRUSR | S_IWUSR);
+    for (int j = 0; j < _historyLen; j++){
+        fprintf(stream, "%s\n", _history[j]);
+    }
+    fclose(stream);
     return 0;
 }
 
