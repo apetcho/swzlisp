@@ -85,8 +85,31 @@ static char* _swz_repl_prompt(EditLine *eline){
 
 // -*-
 char* _swz_repl_history(void){
-    //! @todo
-    return NULL;
+    const char *varname = "HOME=";
+    const char *basename = ".swzlisp_history";
+    char *buffer = NULL;
+    size_t varlen = strlen(varname);
+    size_t baselen = strlen(basename);
+
+    size_t len, i;
+    for (i = 0; environ[i]; i++){
+        if(strncmp(varname, environ[i], varlen)==0){
+            break;
+        }
+    }
+    if(!environ[i]){
+        fprintf(stderr, "Unable to find HOME variable\n");
+        exit(EXIT_FAILURE);
+    }
+
+    len = strlen(&environ[i][varlen]);
+    buffer = _my_alloc(len + baselen + 2);
+    strncpy(buffer, &environ[i][varlen], len + 1);
+    if(buffer[len-1] != '/'){
+        strncat(buffer, "/", 2);
+    }
+    strncat(buffer, basename, baselen);
+    return buffer;
 }
 
 // -*-
