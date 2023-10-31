@@ -728,6 +728,16 @@ static void _swzrl_edit_history_next(SWZRLState *swzrl, int dir){
 }
 
 // -*-
+static void _swzrl_edit_delete(SWZRLState *swzrl){
+    if(swzrl->len > 0 && swzrl->pos < swzrl->len){
+        memmove(swzrl->buffer + swzrl->pos, swzrl->buffer + swzrl->pos + 1, swzrl->len - swzrl->pos - 1);
+        swzrl->len--;
+        swzrl->buffer[swzrl->len] = '\0';
+        _swzrl_refresh_line(swzrl);
+    }
+}
+
+// -*-
 static void _swzrl_edit_move_end(SWZRLState *swzrl){
     if(swzrl->pos != swzrl->len){
         swzrl->pos = swzrl->len;
