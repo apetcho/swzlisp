@@ -1118,7 +1118,20 @@ char *swzrl_new(const char* prompt){
 
 // -*-
 void swzrl_delete(void *ptr){
-    //! @todo
+    if(ptr == swzRLEditMore){
+        return;
+    }
+    free(ptr);
+}
+
+// -*-
+static void _swzrl_free_history(void){
+    if(_history){
+        for (int j = 0; j < _historyLen; j++){
+            free(_history[j]);
+        }
+        free(_history);
+    }
 }
 
 // -*---------------*-
@@ -1126,7 +1139,7 @@ void swzrl_delete(void *ptr){
 // -*---------------*-
 // -*-
 int swzrl_history_add(const char *line){
-    //! @todo
+    
     return 0;
 }
 
