@@ -208,7 +208,7 @@ void rbuffer_pop_back(RingBuffer *rbuffer, void *dst){
 // -*------------------------------------------------------------*-
 
 void iterator_close_noop(Iterator* iter){
-    (void)iter;
+    SWZ_UNUSED(iter);
 }
 
 // -*-
@@ -280,7 +280,7 @@ Iterator iterator_concat(Iterator *iter, size_t n){
 
 // -*-
 Iterator iterator_concat2(Iterator left, Iterator right){
-    Iterator *arr = calloc(2, sizeof(Iterator));
+    Iterator *arr = _my_alloc(2*sizeof(Iterator));
     if(!arr){
         abort();
     }
@@ -291,7 +291,7 @@ Iterator iterator_concat2(Iterator left, Iterator right){
 
 // -*-
 Iterator iterator_concat3(Iterator a, Iterator b, Iterator c){
-    Iterator *arr = calloc(3, sizeof(*arr));
+    Iterator *arr = _my_alloc(3*sizeof(*arr));
     arr[0] = a;
     arr[1] = b;
     arr[2] = c;
@@ -300,13 +300,14 @@ Iterator iterator_concat3(Iterator a, Iterator b, Iterator c){
 
 // -*-
 static void* _empty_next(Iterator *iter){
-    (void)iter;
+    // (void)iter;
+    SWZ_UNUSED(iter);
     return NULL;
 }
 
 // -*-
 static bool _empty_has_next(Iterator *iter){
-    (void)iter;
+    SWZ_UNUSED(iter);
     return false;
 }
 
@@ -319,7 +320,6 @@ Iterator iterator_empty(){
     iter.close = iterator_close_noop;
     return iter;
 }
-
 
 // -*-
 static bool _array_has_next(Iterator *iter){
@@ -353,8 +353,7 @@ Iterator iterator_array(void **array, uint32_t len, bool own){
 
 // -*-
 Iterator iterator_from_args(int n, ...){
-    void **array = calloc(n, sizeof(void*));
-    assert(array);
+    void **array = _my_alloc(n*sizeof(void*));
     va_list args;
 
     va_start(args, n);
@@ -362,7 +361,7 @@ Iterator iterator_from_args(int n, ...){
         array[i] = va_arg(args, void *);
     }
     va_end(args);
-
+    assert(array);
     return iterator_array(array, n, true);
 }
 

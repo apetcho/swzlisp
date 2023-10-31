@@ -75,10 +75,11 @@ void rbuffer_grow(RingBuffer *rbuffer);
 // -*------------------------------------------------------------*-
 typedef struct iterator Iterator;
 struct iterator {
-    void *data;
-    uint32_t index;
-    int stateIdx;
+    void *data;                     // the container data structure
+    uint32_t index;                 // zero-based index for the iterator
+    int stateIdx;                   // some state variables tha my help
     void *statePtr;
+    // -
     bool (*has_next)(Iterator*);
     void *(*next)(Iterator*);
     void (*close)(Iterator*);
@@ -185,6 +186,7 @@ SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, const char *cstr, int flags);
 SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 SWZFloat *swz_alloc_float(SWZRuntime *swz, double num);
 SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald);
+SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *path);
 
 void swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
 void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj);
@@ -226,7 +228,6 @@ bool swz_is_number(SWZRuntime *swz, SWZObject *obj);
 bool swz_is_integer(SWZRuntime *swz, SWZObject *obj);
 bool swz_is_float(SWZRuntime *swz, SWZObject *obj);
 
-
 void swz_env_add_builtin(
     SWZRuntime *swz, SWZEnv *env, const char* name,
     SWZFun fun, void *params, int evald
@@ -249,7 +250,6 @@ Arguments formats:
 */
 bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 
-SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *path);
 //! @todo: change swz_module_get_env() -> swz_module_env()
 SWZEnv* swz_module_get_env(const SWZModule *module);
 void swz_register_module(SWZRuntime *swz, SWZModule *module);
