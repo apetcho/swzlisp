@@ -1177,8 +1177,32 @@ int swzrl_history_add(const char *line){
 
 // -*-
 int swzrl_history_set_maxlen(int len){
-    //! @todo
-    return 0;
+    char **buffer;
+    if(len < 1){
+        return 0;
+    }
+    if(_history){
+        int cpylen = _historyLen;
+        buffer = malloc(sizeof(char *) * len);
+        if(buffer==NULL){
+            return 0;
+        }
+        if(len < cpylen){
+            for (int j = 0; j < cpylen - len; j++){
+                free(_history[j]);
+            }
+            cpylen = len;
+        }
+        memset(buffer, 0, sizeof(char *) * len);
+        memcpy(buffer, _history + (_historyLen - cpylen), sizeof(char *) * cpylen);
+        free(_history);
+        _history = buffer;
+    }
+    _historyMaxLen = len;
+    if(_historyLen > _historyMaxLen){
+        _historyLen = _historyMaxLen;
+    }
+    return 1;
 }
 
 // -*-
