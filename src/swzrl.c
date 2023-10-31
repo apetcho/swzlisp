@@ -295,14 +295,13 @@ static void _swzrl_refresh_line_with_completion(SWZRLState *swzrl, SWZRLCompleti
     // - Show the edited line with completion if possible, or just refresh.
     if(swzrl->completionIdx < swzrl->len){
         SWZRLState saved = *swzrl;
-        if(completions == NULL || completions->buffer == NULL){
-            abort();
+        if(completions != NULL || completions->buffer != NULL){    
+            swzrl->len = swzrl->pos = strlen(completions->buffer[swzrl->completionIdx]);
+            _swzrl_refresh_line_with_flags(swzrl, flags);
+            swzrl->len = saved.len;
+            swzrl->pos = saved.pos;
+            swzrl->buffer = saved.buffer;
         }
-        swzrl->len = swzrl->pos = strlen(completions->buffer[swzrl->completionIdx]);
-        _swzrl_refresh_line_with_flags(swzrl, flags);
-        swzrl->len = saved.len;
-        swzrl->pos = saved.pos;
-        swzrl->buffer = saved.buffer;
     }else{
         _swzrl_refresh_line_with_flags(swzrl, flags);
     }
@@ -318,10 +317,10 @@ static int _swzrl_complete_line(SWZRLState *swzrl, int keypressed){
     SWZRLCompletions completions = {.len = 0, .buffer = NULL};
     int nwritten;
     char key = keypressed;
-    if(_complectionCallback == NULL){
-        abort();
+    if(_complectionCallback != NULL){
+        _complectionCallback(swzrl->buffer, &completions);
     }
-    _complectionCallback(swzrl->buffer, &completions);
+    
     if(completions.len == 0){
         _swzrl_beep();
         swzrl->in_completion = 0;
@@ -749,7 +748,7 @@ static void _swzrl_edit_backspace(SWZRLState *swzrl){
 }
 
 // -*-
-static void _swzrl_edit_prev_word(SWZRLState *swzrl){
+static void _swzrl_edit_delete_prev_word(SWZRLState *swzrl){
     size_t oldPos = swzrl->pos;
     size_t diff;
 
@@ -814,10 +813,177 @@ int swzrl_edit_start(
     return 0;
 }
 
+// -*------------------------------*-
+// -*- Linenoise (a.k.a Readline) -*-
+// -*------------------------------*-
+char *swzRLEditMore = "If you see this, you are miusing the API: "
+    "when swzrl_edit_feed() is called, if it returns swzrlEditMore "
+    "the user is yet editing the line. See the README file for more "
+    "information";
+
 // -*-
 char *swzrl_edit_feed(SWZRLState *swzrl){
-    //! @todo
-    return NULL;
+    // - not a tty, pas control to line reading without charact count limits.
+    if(!isatty(swzrl->ifd)){
+        return _swzrl_no_tty();
+    }
+
+    char c;
+    int nread;
+    char seq[3];
+    nread = read(swzrl->ifd, &c, 1);
+    if(nread <= 0){
+        return NULL;
+    }
+    if((swzrl->in_completion || c==9) && _complectionCallback != NULL){
+        c = _swzrl_complete_line(swzrl, c);
+        // return on errors
+        if(c < 0){
+            return NULL;
+        }
+        // read next character when 0
+        if(c==0){
+            return swzRLEditMore;
+        }
+    }
+    switch(c){
+    case SWZRL_KEY_ENTER:
+        _historyLen--;
+        free(_history[_historyLen]);
+        if(_mlMode){
+            _swzrl_edit_move_end(swzrl);
+        
+        }
+        if(_hintsCallback){
+            // - force a refresh without hints to leave the previous
+            // - line as the user typed if after a newline.
+            SWZRLHintsCallback handler = _hintsCallback;
+            _hintsCallback = NULL;
+            _swzrl_refresh_line(swzrl);
+            _hintsCallback = handler;
+        }
+        return strdup(swzrl->buffer);
+    case SWZRL_KEY_CTRL_C:
+        errno = EAGAIN;
+        return NULL;
+    case SWZRL_KEY_BACKSPACE:
+    case SWZRL_KEY_CTRL_H:
+        _swzrl_edit_backspace(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_D:
+        if(swzrl->len > 0){
+            _swzrl_edit_delete(swzrl);
+        }else{
+            _historyLen--;
+            free(_history[_historyLen]);
+            errno = ENOENT;
+            return NULL;
+        }
+        break;
+    case SWZRL_KEY_CTRL_T:
+        if(swzrl->pos > 0 && swzrl->pos < swzrl->len){
+            int aux = swzrl->buffer[swzrl->pos - 1];
+            swzrl->buffer[swzrl->pos - 1] = swzrl->buffer[swzrl->pos];
+            swzrl->buffer[swzrl->pos] = aux;
+            if(swzrl->pos != swzrl->len-1){
+                swzrl->pos++;
+            }
+            _swzrl_refresh_line(swzrl);
+        }
+        break;
+    case SWZRL_KEY_CTRL_B:
+        _swzrl_edit_move_left(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_F:
+        _swzrl_edit_move_right(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_P:
+        _swzrl_edit_history_next(swzrl, SWZRL_HISTORY_PREV);
+        break;
+    case SWZRL_KEY_CTRL_N:
+        _swzrl_edit_history_next(swzrl, SWZRL_HISTORY_NEXT);
+        break;
+    case SWZRL_KEY_ESC:
+        if(read(swzrl->ifd, seq, 1)==-1){break;}
+        if(read(swzrl->ifd, seq+1, 1)==-1){ break; }
+        // ESC [ sequences
+        if(seq[0] == '['){
+            if(seq[1] >= '0' && seq[1] <= '9'){
+                // -  extended escape, read additional byte.
+                if(read(swzrl->ifd, seq+2, 1)==-1){ break; }
+                if(seq[2]=='~'){
+                    switch(seq[1]){
+                    case '3': // delete key
+                        _swzrl_edit_delete(swzrl);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }else{
+                switch(seq[1]){
+                case 'A': // Up
+                    _swzrl_edit_history_next(swzrl, SWZRL_HISTORY_PREV);
+                    break;
+                case 'B': // Down
+                    _swzrl_edit_history_next(swzrl, SWZRL_HISTORY_PREV);
+                    break;
+                case 'C': // Right
+                    _swzrl_edit_move_right(swzrl);
+                    break;
+                case 'D': // Left
+                    _swzrl_edit_move_left(swzrl);
+                    break;
+                case 'H': // Home
+                    _swzrl_edit_move_home(swzrl);
+                    break;
+                case 'F': // End
+                    _swzrl_edit_move_end(swzrl);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }else if(seq[0]=='O'){ // ESC O sequence
+            switch(seq[1]){
+            case 'H': // Home
+                _swzrl_edit_move_home(swzrl);
+                break;
+            case 'F': // End
+                _swzrl_edit_move_end(swzrl);
+                break;
+            }
+        }
+        break;
+    default:
+        if(_swzrl_edit_insert(swzrl, c)){
+            return NULL;
+        }
+    case SWZRL_KEY_CTRL_U: // delete the whole line
+        swzrl->buffer[0] = '\0';
+        swzrl->pos = swzrl->len = 0;
+        _swzrl_refresh_line(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_K: // delete from current to end of line
+        swzrl->buffer[swzrl->pos] = '\0';
+        swzrl->len = swzrl->pos;
+        _swzrl_refresh_line(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_A:  // go to the start of the line
+        _swzrl_edit_move_home(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_E:  // got to end of the line
+        _swzrl_edit_move_end(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_L:  // clear screen
+        swzrl_clear_screen();
+        _swzrl_refresh_line(swzrl);
+        break;
+    case SWZRL_KEY_CTRL_W:  // delete previous word
+        _swzrl_edit_delete_prev_word(swzrl);
+        break;
+    }
+    return swzRLEditMore;
 }
 
 // -*-
@@ -830,11 +996,6 @@ void swzrl_edit_stop(SWZRLState *swzrl){
 static void _swzrl_refresh_line(SWZRLState *swzrl){
     _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_ALL);
 }
-
-// -*------------------------------*-
-// -*- Linenoise (a.k.a Readline) -*-
-// -*------------------------------*-
-extern char *swzRLEditMore;
 
 // -*-
 void swzrl_print_keycodes(void){
