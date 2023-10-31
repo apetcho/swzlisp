@@ -108,6 +108,60 @@ static int _swzrl_is_unsupported_terminal(void){
     return 0;
 }
 
+// -*- Raw mode:
+static int _swzrl_enable_raw_mode(int fd){
+    struct termios raw;
+
+    // -
+    if(!isatty(STDIN_FILENO)){
+        goto fatal;
+    }
+    if(!_atexitRegistered){
+        atexit(_swz_at_exit);
+        _atexitRegistered = 1;
+    }
+    if(tcgetattr(fd, &_origTermios)==-1){
+        goto fatal;
+    }
+    /* Modifiy the original mode */
+    raw = _origTermios;
+    /* input modes:
+        - no break
+        - no CR to NL
+        - no partity check
+        - no strip char,
+        - no start/stop output control.
+     */
+    raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+    /* output modes: disable post processing */
+    raw.c_oflag &= ~(OPOST);
+    /* control modes: set 8 bit chars */
+    raw.c_cflag |= (CS8);
+    /* local modes:
+        - echoing off
+        - canonical off
+        - no extended functions
+        - no signal chars (^Z, ^C)
+    */
+    raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
+    /* control chars:
+        - set return condition:: min number of bytes and timer
+    We want read to return every single byte, without timeout.
+    */
+    raw.c_cc[VMIN] = 1;
+    raw.c_cc[VTIME] = 0; // 1 byte, no timer
+
+    if(tcsetattr(fd, TCSAFLUSH, &raw) < 0){
+        goto fatal;
+    }
+    _rawMode = 1;
+    return 0;
+
+fatal:
+    errno = ENOTTY;
+    return -1;
+}
+
 // -*-
 void swzrl_clear_screen(void){
     //! @todo
