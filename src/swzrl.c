@@ -1134,6 +1134,12 @@ static void _swzrl_free_history(void){
     }
 }
 
+// -*-
+static void _swz_at_exit(void){
+    _swzrl_disable_raw_mode(STDIN_FILENO);
+    _swzrl_free_history();
+}
+
 // -*---------------*-
 // -*- History API -*-
 // -*---------------*-
