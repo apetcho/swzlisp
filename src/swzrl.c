@@ -1020,10 +1020,36 @@ static void _swzrl_refresh_line(SWZRLState *swzrl){
 
 // -*-
 void swzrl_print_keycodes(void){
-    //! @todo
+    char quit[4];
+    const char *msg = 
+        "SWZRL key codes debugging mode.\n"
+        "Press keys to see scane codes. Type 'quit' at any time to exit.\n";
+    printf("%s", msg);
+    if(_swzrl_enable_raw_mode(STDIN_FILENO)==-1){
+        return;
+    }
+    memset(quit, ' ', 4);
+    while(1){
+        char c;
+        int nread;
+        nread = read(STDIN_FILENO, &c, 1);
+        if(nread <= 0){ continue; }
+        /* shift string to left. */
+        memmove(quit, quit + 1, sizeof(quit) - 1);
+        /* Insert current char on the right. */
+        quit[sizeof(quit) - 1] = c;
+        if(memcmp(quit, "quit", sizeof(quit))==0){ break; }
+
+        printf(
+            "'%c' %02x (%d) (type quit to exit)\n",
+            isprint(c) ? c : '?', (int)c, (int)c
+        );
+        /* Go left edge manually, we are in raw mode. */
+        printf("\r");
+        fflush(stdout);
+    }
+    _swzrl_disable_raw_mode(STDIN_FILENO);
 }
-
-
 
 // -*----------------*-
 // -*- Blocking API -*-
