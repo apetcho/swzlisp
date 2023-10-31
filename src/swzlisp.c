@@ -250,6 +250,31 @@ static int _swz_version(void){
 // -*-  M A I N   D R I V E R -*-
 // -*--------------------------*-
 int main(int argc, char **argv){
-    //! @todo
-    return 0;
+    int opt;
+    int file_repl = 0;
+    while((opt=getopt(argc, argv, "hvxYT")) != -1){
+        switch(opt){
+        case 'x':
+            file_repl = 1;
+            break;
+        case 'v':
+            return _swz_version();
+        case 'T':
+            _disbaleStrcache = 1;
+            break;
+        case 'Y':
+            _disableSymcache = 1;
+            break;
+        case 'h':
+        default:
+            return _swz_help();
+        }
+    }
+
+    if(optind >= argc){
+        return _swz_repl_run();
+    }else{
+        return _swz_file_run(argv[optind], argc - optind, argv + optind, file_repl);
+    }
+    // return 0;
 }
