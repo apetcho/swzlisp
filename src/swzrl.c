@@ -749,6 +749,23 @@ static void _swzrl_edit_backspace(SWZRLState *swzrl){
 }
 
 // -*-
+static void _swzrl_edit_prev_word(SWZRLState *swzrl){
+    size_t oldPos = swzrl->pos;
+    size_t diff;
+
+    while(swzrl->pos > 0 && swzrl->buffer[swzrl->pos-1]==' '){
+        swzrl->pos--;
+    }
+    while(swzrl->pos > 0 && swzrl->buffer[swzrl->pos-1]!=' '){
+        swzrl->pos--;
+    }
+    diff = oldPos - swzrl->pos;
+    memmove(swzrl->buffer + swzrl->pos, swzrl->buffer + oldPos, swzrl->len - oldPos + 1);
+    swzrl->len -= diff;
+    _swzrl_refresh_line(swzrl);
+}
+
+// -*-
 static void _swzrl_edit_move_end(SWZRLState *swzrl){
     if(swzrl->pos != swzrl->len){
         swzrl->pos = swzrl->len;
