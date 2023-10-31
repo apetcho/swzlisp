@@ -269,6 +269,39 @@ static void _swzrl_beep(void){
     fflush(stderr);
 }
 
+// -*------------------*-
+// -*- Completion API -*-
+// -*------------------*-
+// -*-
+static void _swzrl_free_completions(SWZRLCompletions *completions){
+    for (size_t i = 0; i < completions->len; i++){
+        free(completions->buffer[i]);
+    }
+    if(completions->buffer != NULL){
+        free(completions->buffer);
+    }
+}
+
+// -*-
+void swzrl_set_completion_callback(SWZRLCompletionCallack callback){
+    //! @todo
+}
+
+// -*-
+void swzrl_set_hints_callback(SWZRLHintsCallback callback){
+    //! @todo
+}
+
+// -*-
+void swzrl_set_destroy_callack(SWZRLDestroyHintsCallback callack){
+    //! @todo
+}
+
+// -*-
+void swzrl_add_completion(SWZRLCompletions* completions, const char *cstr){
+    //! @todo
+}
+
 // -*-
 void swzrl_print_keycodes(void){
     //! @todo
@@ -324,29 +357,6 @@ char *swzrl_new(const char* prompt){
 
 // -*-
 void swzrl_delete(void *ptr){
-    //! @todo
-}
-
-// -*------------------*-
-// -*- Completion API -*-
-// -*------------------*-
-// -*-
-void swzrl_set_completion_callback(SWZRLCompletionCallack callback){
-    //! @todo
-}
-
-// -*-
-void swzrl_set_hints_callback(SWZRLHintsCallback callback){
-    //! @todo
-}
-
-// -*-
-void swzrl_set_destroy_callack(SWZRLDestroyHintsCallback callack){
-    //! @todo
-}
-
-// -*-
-void swzrl_add_completion(SWZRLCompletions* completions, const char *cstr){
     //! @todo
 }
 
