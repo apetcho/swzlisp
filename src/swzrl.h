@@ -52,11 +52,11 @@ void swzrl_delete(void *ptr);
 // -*------------------*-
 typedef void (*SWZRLCompletionCallack)(const char *, SWZRLCompletions *);
 typedef char *(*SWZRLHintsCallback)(const char*, int *color, int *bold);
-typedef void (*SWZRLDestroyCallback)(void *);
+typedef void (*SWZRLDestroyHintsCallback)(void *);
 
 void swzrl_set_completion_callback(SWZRLCompletionCallack callback);
 void swzrl_set_hints_callback(SWZRLHintsCallback callback);
-void swzrl_set_destroy_callack(SWZRLDestroyCallback callack);
+void swzrl_set_destroy_callack(SWZRLDestroyHintsCallback callack);
 void swzrl_add_completion(SWZRLCompletions* completions, const char*);
 
 // -*---------------*-
