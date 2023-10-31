@@ -14,6 +14,8 @@
 // -*- default history max length
 #define SWZRL_HISTORY_MAXLEN    100
 #define SWZRL_MAXLEN            4096
+#define SWZRL_HISTORY_NEXT      0
+#define SWZRL_HISTORY_PREV      1
 
 static char *_unsupportedTerm[] = {"dumb", "cons25", "emacs", NULL};
 static SWZRLCompletionCallack _complectionCallback = NULL;
@@ -700,6 +702,27 @@ static void _swzrl_edit_move_right(SWZRLState *swzrl){
 static void _swzrl_edit_move_home(SWZRLState *swzrl){
     if(swzrl->pos != 0){
         swzrl->pos = 0;
+        _swzrl_refresh_line(swzrl);
+    }
+}
+
+// -*-
+static void _swzrl_edit_history_next(SWZRLState *swzrl, int dir){
+    if(_historyLen > 1){
+        free(_history[_historyLen - 1 - swzrl->historyIdx]);
+        _history[_historyLen - 1 - swzrl->historyIdx] = strdup(swzrl->buffer);
+        // - show the new entry
+        swzrl->historyIdx += (dir == SWZRL_HISTORY_PREV) ? 1 : -1;
+        if(swzrl->historyIdx < 0){
+            swzrl->historyIdx = 0;
+            return;
+        }else if(swzrl->historyIdx >= _historyLen){
+            swzrl->historyIdx = _historyLen - 1;
+            return;
+        }
+        strncpy(swzrl->buffer, _history[_historyLen - 1 - swzrl->historyIdx], swzrl->buflen);
+        swzrl->buffer[swzrl->buflen - 1] = '\0';
+        swzrl->len = swzrl->pos = strlen(swzrl->buffer);
         _swzrl_refresh_line(swzrl);
     }
 }

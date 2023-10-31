@@ -22,7 +22,7 @@ typedef struct {
     size_t len;
     size_t cols;
     size_t oldRows;
-    int historyId;
+    int historyIdx;
 } SWZRLState;
 
 typedef struct {
