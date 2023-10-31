@@ -21,10 +21,10 @@ static SWZRLHintsCallback _hintsCallback = NULL;
 static SWZRLDestroyHintsCallback _destroyHintsCallback = NULL;
 
 static char *_swzrl_no_tty(void);
-static void _swzrl_refresh_line_with_completion(SWZRLState *state, SWZRLCompletions *completions, int flags);
-static void _swzrl_refresh_line_with_flags(SWZRLState *state, int flags);
+static void _swzrl_refresh_line_with_completion(SWZRLState *swzrl, SWZRLCompletions *completions, int flags);
+static void _swzrl_refresh_line_with_flags(SWZRLState *swzrl, int flags);
 static void _swz_at_exit(void);
-static void _swzrl_refresh_line(SWZRLState *state);
+static void _swzrl_refresh_line(SWZRLState *swzrl);
 
 /* In order to restore at exit. */
 static struct termios _origTermios;
@@ -370,7 +370,7 @@ static int _swzrl_complete_line(SWZRLState *swzrl, int keypressed){
 
 // -*-
 void swzrl_set_completion_callback(SWZRLCompletionCallack callback){
-    //! @todo
+    _complectionCallback = callback;
 }
 
 // -*-
