@@ -21,7 +21,7 @@ void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity){
         fprintf(stderr, "Invalid character buffer argument.\n");
         abort();
     }
-    cbuffer->buffer = calloc(capacity, sizeof(char));
+    cbuffer->buffer = _my_alloc(capacity*sizeof(char));
     cbuffer->buffer[0] = '\0';
     cbuffer->capacity = capacity;
     cbuffer->len = 0;
@@ -34,7 +34,7 @@ void cbuffer_init(CharBuffer *cbuffer, uint32_t capacity){
  * @return CharBuffer* 
  */
 CharBuffer* cbuffer_new(uint32_t capacity){
-    CharBuffer *cbuffer = calloc(1, sizeof(CharBuffer));
+    CharBuffer *cbuffer = _my_alloc(sizeof(CharBuffer));
     cbuffer_init(cbuffer, capacity);
     return cbuffer;
 }
@@ -133,7 +133,7 @@ void rbuffer_init(RingBuffer *rbuffer, uint32_t dsize, int init){
     rbuffer->nalloc = init;
     rbuffer->start = 0;
     rbuffer->count = 0;
-    rbuffer->buffer = calloc(dsize, init);
+    rbuffer->buffer = _my_alloc(dsize*init);
 }
 
 // -*-
@@ -142,13 +142,33 @@ void rbuffer_dealloc(RingBuffer *rbuffer){
 }
 
 // -*-
+void rbuffer_grow(RingBuffer *rbuffer){
+    int i, oldalloc;
+    oldalloc = rbuffer->nalloc;
+    rbuffer->nalloc *= 2;
+    rbuffer->buffer = realloc(rbuffer->buffer, rbuffer->nalloc * rbuffer->dsize);
+    int oldIdx, neoIdx;
+    for (i = 0; i < rbuffer->count; i++){
+        oldIdx = (rbuffer->start + i) % oldalloc;
+        neoIdx = (rbuffer->start + i) % rbuffer->nalloc;
+        if(oldIdx != neoIdx){
+            memcpy(
+                (char *)rbuffer->buffer + neoIdx * rbuffer->dsize,
+                (char *)rbuffer->buffer + oldIdx * rbuffer->dsize,
+                rbuffer->nalloc
+            );
+        }
+    }
+}
+
+// -*-
 void rbuffer_push_front(RingBuffer *rbuffer, void *src){
-    int neostart;
+    int start;
     if(rbuffer->count >= rbuffer->nalloc){
         rbuffer_grow(rbuffer);
     }
-    neostart = (rbuffer->start + rbuffer->nalloc - 1) % rbuffer->nalloc;
-    rbuffer->start = neostart;
+    start = (rbuffer->start + rbuffer->nalloc - 1) % rbuffer->nalloc;
+    rbuffer->start = start;
     memcpy(
         (char *)rbuffer->buffer + rbuffer->start * rbuffer->dsize,
         src, rbuffer->dsize
@@ -182,25 +202,6 @@ void rbuffer_pop_back(RingBuffer *rbuffer, void *dst){
     rbuffer->count--;
 }
 
-// -*-
-void rbuffer_grow(RingBuffer *rbuffer){
-    int i, oldalloc;
-    oldalloc = rbuffer->nalloc;
-    rbuffer->nalloc *= 2;
-    rbuffer->buffer = realloc(rbuffer->buffer, rbuffer->nalloc * rbuffer->dsize);
-    for (i = 0; i < rbuffer->count; i++){
-        int oldIdx, neoIdx;
-        oldIdx = (rbuffer->start + i) % oldalloc;
-        neoIdx = (rbuffer->start + i) % rbuffer->nalloc;
-        if(oldIdx != neoIdx){
-            memcpy(
-                (char *)rbuffer->buffer + neoIdx * rbuffer->dsize,
-                (char *)rbuffer->buffer + oldIdx * rbuffer->dsize,
-                rbuffer->nalloc
-            );
-        }
-    }
-}
 
 // -*------------------------------------------------------------*-
 // -*- Iterator                                                 -*-

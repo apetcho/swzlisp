@@ -167,7 +167,8 @@ typedef struct swzlambda SWZLambda;
 typedef struct swzlist SWZList;
 typedef struct swzmodule SWZModule;
 
-extern SWZType *swzType;
+typedef SWZObject *(*SWZFun)(SWZRuntime *, SWZEnv *, SWZList *, void *);
+
 
 void swz_print(FILE *stream, SWZObject *obj);
 SWZObject* swz_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj);
@@ -175,17 +176,21 @@ SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *
 bool swz_compare(const SWZObject *self, const SWZObject *other);
 bool swz_is(SWZObject *obj, SWZType *type);
 
-extern SWZType *swzEnv;
-
 SWZEnv* swz_alloc_default_env(SWZRuntime *swz);
 SWZEnv* swz_alloc_empty_env(SWZRuntime *swz);
+SWZList* swz_alloc_list(SWZRuntime *swz, SWZObject *car, SWZObject *cdr);
+SWZObject *swz_alloc_nil(SWZRuntime *swz);
+SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
+SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, const char *cstr, int flags);
+SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
+SWZFloat *swz_alloc_float(SWZRuntime *swz, double num);
+SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald);
+
 void swz_env_populate_builtins(SWZRuntime *swz, SWZEnv *env);
 void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj);
 SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol);
 SWZObject *swz_env_lookup_string(SWZRuntime *swz, SWZEnv *env, const char* key);
 
-extern SWZType *swzList;
-SWZList* swz_alloc_list(SWZRuntime *swz, SWZObject *car, SWZObject *cdr);
 SWZList* swz_list_singleton(SWZRuntime *swz, SWZObject *entry);
 SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag);
 uint32_t swz_list_length(const SWZList *list);
@@ -194,9 +199,11 @@ void swz_list_set_car(SWZList *list, SWZObject *car);
 SWZObject *swz_list_get_cdr(const SWZList *list);
 void swz_list_set_cdr(SWZList *list, SWZObject *cdr);
 void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject *item);
-SWZObject *swz_alloc_nil(SWZRuntime *swz);
 bool swz_nil_p(SWZObject *obj);
 
+extern SWZType *swzType;
+extern SWZType *swzEnv;
+extern SWZType *swzList;
 extern SWZType *swzSymbol;
 extern SWZType *swzInteger;
 extern SWZType *swzFloat;
@@ -205,18 +212,13 @@ extern SWZType *swzBuiltin;
 extern SWZType *swzLambda;
 extern SWZType *swzModule;
 
-
 #define SWZFLAG_COPY    0x1
 #define SWZFLAG_OWN     0x2
 
-SWZString* swz_alloc_string(SWZRuntime *swz, char *cstr, int flags);
 char* swz_get_string(const SWZString *self); // get
-SWZSymbol* swz_alloc_symbol(SWZRuntime *swz, const char *cstr, int flags);
 char* swz_get_symbol(const SWZSymbol *self); //
-SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num);
 long swz_get_integer(const SWZInteger *self);
 //! @note: extension
-SWZFloat *swz_alloc_float(SWZRuntime *swz, double num);
 double swz_get_float(const SWZFloat *self);
 
 //! @note: extension
@@ -224,9 +226,7 @@ bool swz_is_number(SWZRuntime *swz, SWZObject *obj);
 bool swz_is_integer(SWZRuntime *swz, SWZObject *obj);
 bool swz_is_float(SWZRuntime *swz, SWZObject *obj);
 
-typedef SWZObject *(*SWZFun)(SWZRuntime *, SWZEnv *, SWZList *, void *);
 
-SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald);
 void swz_env_add_builtin(
     SWZRuntime *swz, SWZEnv *env, const char* name,
     SWZFun fun, void *params, int evald
@@ -252,11 +252,7 @@ bool swz_get_args(SWZRuntime *swz, SWZList *list, char* fmt, ...);
 SWZModule* swz_alloc_module(SWZRuntime *swz, SWZString *name, SWZString *path);
 //! @todo: change swz_module_get_env() -> swz_module_env()
 SWZEnv* swz_module_get_env(const SWZModule *module);
-//typedef SWZModule *(*InitModuleFn)(SWZRuntime*);
 void swz_register_module(SWZRuntime *swz, SWZModule *module);
-// SWZModule* swz_save_module(
-//     SWZRuntime *swz, const char* name, InitModuleFn save_module_fn
-// );
 SWZModule *swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path);
 SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name);
 
