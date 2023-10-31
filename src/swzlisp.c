@@ -227,8 +227,16 @@ static int _swz_file_run(char *filename, int argc, char **argv, int repl){
 }
 
 // -*-
-int _swz_help(void){
-    //! @todo
+static int _swz_help(void){
+    puts("Usage: swzlisp [options...] [file]    load file and run main");
+    puts("   or: swzlis  [options...]           run a REPL");
+    puts("");
+    puts("Options:");
+    puts("  -h  Show this help message and exit");
+    puts("  -v  Show the swzlisp version and exit");
+    puts("  -x  When file is specified, load it and run REPL rather than main");
+    puts("  -T  Disable string caching");
+    puts("  -Y  Disable symbol caching");
     return 0;
 }
 
