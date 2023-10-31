@@ -283,6 +283,35 @@ static void _swzrl_free_completions(SWZRLCompletions *completions){
 }
 
 // -*-
+static void _swzrl_refresh_line_with_completion(SWZRLState *state, SWZRLCompletions *completions, int flags){
+    // - Obtain the table of complections if the caller didn't provide one
+    SWZRLCompletions ctable = { .len=0, .buffer=NULL};
+    if(completions == NULL && _complectionCallback != NULL){
+        _complectionCallback(state->buffer, &ctable);
+        completions = &ctable;
+    }
+    // - Show the edited line with completion if possible, or just refresh.
+    if(state->completionIdx < state->len){
+        SWZRLState saved = *state;
+        if(completions == NULL || completions->buffer == NULL){
+            abort();
+        }
+        state->len = state->pos = strlen(completions->buffer[state->completionIdx]);
+        _swzrl_refresh_line_with_flags(state, flags);
+        state->len = saved.len;
+        state->pos = saved.pos;
+        state->buffer = saved.buffer;
+    }else{
+        _swzrl_refresh_line_with_flags(state, flags);
+    }
+
+    // free completion table if needed.
+    if(completions != &ctable){
+        _swzrl_free_completions(&ctable);
+    }
+}
+
+// -*-
 void swzrl_set_completion_callback(SWZRLCompletionCallack callback){
     //! @todo
 }

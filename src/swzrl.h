@@ -13,6 +13,7 @@ typedef struct {
     size_t completionIdx;
     int ifd;
     int ofd;
+    char *buffer;
     size_t buflen;
     const char *prompt;
     size_t plen;
