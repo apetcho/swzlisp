@@ -170,6 +170,44 @@ static void _swzrl_disable_raw_mode(int fd){
     }
 }
 
+/**
+ * @brief Get the cursor position.
+ * 
+ * Use the ESC [6n escape sequence to query the horizontal cursor position
+ * and return it. On error -1 is returned, on success the position of the 
+ * cursor positon.
+ * @param ifd 
+ * @param ofd 
+ * @return int 
+ */
+static int _swzrl_get_cursor_position(int ifd, int ofd){
+    char buffer[32];
+    int cols, rows;
+    unsigned int i = 0;
+
+    /* Report cursor location */
+    if(write(ofd, "\x1b[6n", 4) != 4){
+        return -1;
+    }
+
+    /* Read the response: ESC [ rows ; cols R */
+    while(i < sizeof(buffer)-1){
+        if(read(ifd, buffer+i, 1) != 1){ break;}
+        if(buffer[i] == 'R'){ break; }
+        i++;
+    }
+    buffer[i] = '\0';
+
+    // Parse it
+    if(buffer[0] != SWZRL_KEY_ESC || buffer[1] != '['){
+        return -1;
+    }
+    if (sscanf(buffer + 2, "%d;%d", &rows, &cols) != 2){
+        return -1;
+    }
+
+    return cols;
+}
 
 // -*-
 void swzrl_clear_screen(void){
