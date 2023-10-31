@@ -6,7 +6,7 @@
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
-extern char *swzRLEditorMore;
+extern char *swzRLEditMore;
 
 typedef struct {
     int in_completion;

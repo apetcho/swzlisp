@@ -432,10 +432,46 @@ static void _swzrl_abuffer_destroy(AppendBuffer *abuffer){
     free(abuffer->buffer);
 }
 
+// -*-
+static void _swzrl_refresh_show_hints(AppendBuffer *abuffer, SWZRLState *swzrl, int plen){
+    char seq[64];
+    if(_hintsCallback && plen+swzrl->len < swzrl->cols){
+        int color = -1;
+        int bold = 0;
+        char *hint = _hintsCallback(swzrl->buffer, &color, &bold);
+        if(hint){
+            size_t hintlen = strlen(hint);
+            size_t hintMaxLen = swzrl->cols - (plen + swzrl->len);
+            if(hintlen > hintMaxLen){
+                hintlen = hintMaxLen;
+            }
+            if(hintlen > hintMaxLen){
+                hintlen = hintMaxLen;
+            }
+            if(bold == 1 && color == -1){
+                color = 37;
+            }
+            if(color != -1 || bold != 0){
+                snprintf(seq, 64, "\x1b[%d;%d;49m", bold, color);
+            }else{
+                seq[0] = '\0';
+            }
+            _swzrl_abuffer_append(abuffer, seq, strlen(seq));
+            _swzrl_abuffer_append(abuffer, hint, hintlen);
+            if(color != -1 || bold != 0){
+                _swzrl_abuffer_append(abuffer, "\x1b[0m", 4);
+            }
+            if(_destroyHintsCallback){
+                _destroyHintsCallback(hint);
+            }
+        }
+    }
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
-extern char *swzRLEditorMore;
+extern char *swzRLEditMore;
 
 // -*-
 void swzrl_print_keycodes(void){
