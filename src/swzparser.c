@@ -421,6 +421,6 @@ SWZObject* swz_parse_progn_f(SWZRuntime *swz, FILE *stream){
 // swz_load_file(...)
 SWZObject* swz_load_file(SWZRuntime *swz, SWZEnv *env, FILE *stream){
     SWZObject *progn = swz_parse_progn_f(swz, stream);
-    SWZ_IS_VALID_PTR(progn);
+    SWZ_VALIDATE_PTR(progn);
     return swz_eval(swz, env, progn);
 }

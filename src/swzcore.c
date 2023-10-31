@@ -481,7 +481,7 @@ SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZ
             node = (SWZList *)node->cdr;
         }
         node->car = mapfn(swz, env, params, args->car);
-        SWZ_IS_VALID_PTR(node->car);
+        SWZ_VALIDATE_PTR(node->car);
     }
 
     if(args->type != swzList){
@@ -529,7 +529,7 @@ void swz_textchach_remove(HTable *cache, struct swztext *text){
 
 // -*-
 static HTable* _swz_alloc_textcache(void){
-    return htable_new(swz_text_hash, swz_text_compare, sizeof(Text *), 0);
+    return htable_alloc(swz_text_hash, swz_text_compare, sizeof(Text *), 0);
 }
 
 // -*-
@@ -802,7 +802,7 @@ SWZModule* swz_import_file(SWZRuntime *swz, SWZString *name, SWZString *path){
     }
 
     obj = swz_load_file(swz, module_env, stream);
-    SWZ_IS_VALID_PTR(obj);
+    SWZ_VALIDATE_PTR(obj);
 
     module = (SWZModule *)swz_alloc(swz, swzModule);
     module->env = module_env;
@@ -959,7 +959,7 @@ static SWZObject* _swz_builtin_define(SWZRuntime *swz, SWZEnv *env, SWZList *arg
         return NULL;
     }
     expr = swz_eval(swz, env, expr);
-    SWZ_IS_VALID_PTR(expr);
+    SWZ_VALIDATE_PTR(expr);
     swz_env_bind(env, symbol, expr);
     return expr;
 }
@@ -1233,7 +1233,7 @@ static SWZObject *_swz_builtin_if(SWZRuntime *swz, SWZEnv *env, SWZList *args, v
         return NULL;
     }
     cond = swz_eval(swz, env, cond);
-    SWZ_IS_VALID_PTR(cond);
+    SWZ_VALIDATE_PTR(cond);
     if(swz_truthy(cond)){
         return swz_eval(swz, env, yes);
     }else{
@@ -1333,7 +1333,7 @@ static SWZObject* _swz_builtin_map(SWZRuntime *swz, SWZEnv *env, SWZList *form, 
             self = (SWZList *)self->cdr;
         }
         self->car = swz_call(swz, env, fun, args);
-        SWZ_IS_VALID_PTR(self->car);
+        SWZ_VALIDATE_PTR(self->car);
         form = _swz_advance_lists(swz, form);
     }
     if(self==NULL){
@@ -1387,7 +1387,7 @@ static SWZObject* _swz_builtin_reduce(SWZRuntime *swz, SWZEnv *env, SWZList *for
 
     SWZ_FOREACH(self){
         acc = swz_call(swz, env, callable, _swz_alloc_pair_list(swz, acc, self->car));
-        SWZ_IS_VALID_PTR(acc);
+        SWZ_VALIDATE_PTR(acc);
     }
     return acc;
 }
@@ -1518,7 +1518,7 @@ static SWZObject* _swz_builtin_assert_error(SWZRuntime *swz, SWZEnv *env, SWZLis
         return NULL;
     }
     symbol = (SWZSymbol *)swz_eval(swz, env, self);
-    SWZ_IS_VALID_PTR(symbol);
+    SWZ_VALIDATE_PTR(symbol);
     if(symbol->type != swzSymbol){
         return swz_error(swz, SWZE_TYPE, "error type must be symbol");
     }
@@ -1632,7 +1632,7 @@ static SWZObject* _swz_builtin_import(SWZRuntime *swz, SWZEnv *env, SWZList *arg
     }
 
     module = swz_do_import(swz, symbol);
-    SWZ_IS_VALID_PTR(module);
+    SWZ_VALIDATE_PTR(module);
     swz_env_bind(env, symbol, (SWZObject *)module);
     return (SWZObject *)module;
 }

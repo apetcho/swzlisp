@@ -159,6 +159,36 @@ Iterator htable_iterator_values_ptr(HTable *htable);
 // -*------------------------------------------------------------*-
 // -*- Core + Internals Data Structures                         -*-
 // -*------------------------------------------------------------*-
+#define SWZK_LAMBDA     0
+#define SWZK_MACRO      1
+#define SWZFLAG_COPY    0x1
+#define SWZFLAG_OWN     0x2
+
+#define SWZ_ERRORS                                                          \
+    SWZE_DEF(SWZE_ERROR, 1, "SWZError", "a catch-all")                      \
+    SWZE_DEF(SWZE_EOF, 2, "SWZEof", "end of file while parsing")            \
+    SWZE_DEF(SWZE_SYNTAX, 3, "SWZSyntaxError", "syntax error")              \
+    SWZE_DEF(SWZE_FILE, 4, "SWZFileError", "error reading file")            \
+    SWZE_DEF(SWZE_TOO_MANY, 5, "SWZTooManyArgsError", "too many arguments")  \
+    SWZE_DEF(SWZE_TOO_FEW, 6, "SWZNotEnoughArgsError", "not enough arguments")\
+    SWZE_DEF(SWZE_TYPE, 7, "SWZTypeError", "wrong type argument in function") \
+    SWZE_DEF(SWZE_CALL, 8, "SWZNotCallableError", "not callable")           \
+    SWZE_DEF(SWZE_EVAL, 9, "SWZNotEvaluatableError", "not avaluatable")     \
+    SWZE_DEF(SWZE_NOT_FOUND, 10, "SWZNotFoundError", "not found")           \
+    SWZE_DEF(SWZE_EXIT, 11, "SWZExitError", "exit the interpreter")         \
+    SWZE_DEF(SWZE_ASSERT, 12, "SWZAssertionError", "assertion error")       \
+    SWZE_DEF(SWZE_VALUE, 13, "SWZValueError", "invalid argument")           \
+    SWZE_DEF(SWZE_ERRNO, 14, "", "")
+
+#define SWZE_COUNT  (SWZE_ERRNO + 1)
+
+// -*- lisp_error_check
+#define SWZ_VALIDATE_PTR(ptr) do {  \
+    if(!ptr){                       \
+        return NULL;                \
+    }                               \
+}while(0)
+
 //! @todo: docstring
 // -*- core -*-
 typedef struct swzruntime SWZRuntime;   // interpreter
@@ -231,9 +261,6 @@ extern SWZType *swzBuiltin;
 extern SWZType *swzLambda;
 extern SWZType *swzModule;
 
-#define SWZFLAG_COPY    0x1
-#define SWZFLAG_OWN     0x2
-
 char* swz_get_string(const SWZString *self); // get
 char* swz_get_symbol(const SWZSymbol *self); //
 long swz_get_integer(const SWZInteger *self);
@@ -286,24 +313,6 @@ void swz_sweep(SWZRuntime *swz);
 
 SWZList *swz_quote(SWZRuntime *swz, SWZObject *obj);
 
-#define SWZ_ERRORS                                                          \
-    SWZE_DEF(SWZE_ERROR, 1, "SWZError", "a catch-all")                      \
-    SWZE_DEF(SWZE_EOF, 2, "SWZEof", "end of file while parsing")            \
-    SWZE_DEF(SWZE_SYNTAX, 3, "SWZSyntaxError", "syntax error")              \
-    SWZE_DEF(SWZE_FILE, 4, "SWZFileError", "error reading file")            \
-    SWZE_DEF(SWZE_TOO_MANY, 5, "SWZTooManyArgsError", "too many arguments")  \
-    SWZE_DEF(SWZE_TOO_FEW, 6, "SWZNotEnoughArgsError", "not enough arguments")\
-    SWZE_DEF(SWZE_TYPE, 7, "SWZTypeError", "wrong type argument in function") \
-    SWZE_DEF(SWZE_CALL, 8, "SWZNotCallableError", "not callable")           \
-    SWZE_DEF(SWZE_EVAL, 9, "SWZNotEvaluatableError", "not avaluatable")     \
-    SWZE_DEF(SWZE_NOT_FOUND, 10, "SWZNotFoundError", "not found")           \
-    SWZE_DEF(SWZE_EXIT, 11, "SWZExitError", "exit the interpreter")         \
-    SWZE_DEF(SWZE_ASSERT, 12, "SWZAssertionError", "assertion error")       \
-    SWZE_DEF(SWZE_VALUE, 13, "SWZValueError", "invalid argument")           \
-    SWZE_DEF(SWZE_ERRNO, 14, "", "")
-
-#define SWZE_COUNT  (SWZE_ERRNO + 1)
-
 enum SWZError{
 #define SWZE_DEF(err, ev, msg, desc) err = ev, 
     SWZ_ERRORS
@@ -315,12 +324,6 @@ extern const char *swzErrorNames[SWZE_COUNT];
 SWZObject *swz_error(SWZRuntime *swz, enum SWZError errnum, const char *errmsg);
 void swz_dump_stack(SWZRuntime *swz, SWZList *stack, FILE *stream);
 
-// -*- lisp_error_check
-#define SWZ_IS_VALID_PTR(ptr) do {  \
-    if(!ptr){                       \
-        return NULL;                \
-    }                               \
-}while(0)
 
 void swz_eprint(SWZRuntime *swz, FILE *stream);
 char *swz_get_error(SWZRuntime *swz);
@@ -454,9 +457,6 @@ struct swzmodule {
 typedef SWZObject *(*SWZMapFn)(SWZRuntime*, SWZEnv*, void*, SWZObject*);
 
 SWZList *swz_map(SWZRuntime* swz, SWZEnv* env, void *params, SWZMapFn mapfn, SWZList *args);
-
-#define SWZK_LAMBDA     0
-#define SWZK_MACRO      1
 
 void swzlisp_init(SWZRuntime *swz);
 void swzlisp_dealloc(SWZRuntime *swz);

@@ -690,7 +690,7 @@ static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *cal
     SWZBuiltin *builtin = (SWZBuiltin *)callable;
     if(builtin->evald){
         args = swz_eval_list(swz, env, args);
-        SWZ_IS_VALID_PTR(args);
+        SWZ_VALIDATE_PTR(args);
     }else if (swz_is_bad_list(args)){
         return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
@@ -774,7 +774,7 @@ static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *call
         argv = args;
     }else{
         argv = swz_eval_list(swz, env, args);
-        SWZ_IS_VALID_PTR(argv);
+        SWZ_VALIDATE_PTR(argv);
     }
 
     if(swz_is_bad_list(argv)){
