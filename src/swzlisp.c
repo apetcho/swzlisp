@@ -73,8 +73,13 @@ static SWZObject* _swz_repl_parse_single_input(SWZRuntime *swz, EditLine *eline,
 }
 
 // -*-
-char* _swz_repl_prompt(EditLine *eline){
-    //! @todo
+static char* _swz_repl_prompt(EditLine *eline){
+    SWZ_UNUSED(eline);
+    if(_lineContinue){
+        return "...> ";
+    }else{
+        return "swz> ";
+    }
     return NULL;
 }
 
