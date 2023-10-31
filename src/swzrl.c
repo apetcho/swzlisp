@@ -613,6 +613,15 @@ static void _swzrl_refresh_multiline(SWZRLState *swzrl, int flags){
     _swzrl_abuffer_destroy(&abuffer);
 }
 
+// -*-
+static void _swzrl_refresh_line_with_flags(SWZRLState *swzrl, int flags){
+    if(_mlMode){
+        _swzrl_refresh_multiline(swzrl, flags);
+    }else{
+        _swzrl_refresh_single_line(swzrl, flags);
+    }
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
