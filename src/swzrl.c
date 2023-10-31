@@ -163,6 +163,15 @@ fatal:
 }
 
 // -*-
+static void _swzrl_disable_raw_mode(int fd){
+    // - Don't even check the return value as it's too late.
+    if(_rawMode && tcsetattr(fd, TCSAFLUSH, &_origTermios) != -1){
+        _rawMode = 0;
+    }
+}
+
+
+// -*-
 void swzrl_clear_screen(void){
     //! @todo
 }
