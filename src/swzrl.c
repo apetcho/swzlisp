@@ -1145,8 +1145,34 @@ static void _swz_at_exit(void){
 // -*---------------*-
 // -*-
 int swzrl_history_add(const char *line){
-    
-    return 0;
+    char *linecpy = NULL;
+    if(_historyMaxLen == 0){
+        return 0;
+    }
+    // intializration of first call.
+    if(_history==NULL){
+        _history = malloc(sizeof(char *) * _historyMaxLen);
+        if(_history==NULL){
+            return 0;
+        }
+        memset(_history, 0, sizeof(char *) * _historyMaxLen);
+    }
+    // don't add duplicated lines.
+    if(_historyLen && !strcmp(_history[_historyLen-1], line)){
+        return 0;
+    }
+    linecpy = strdup(line);
+    if(!linecpy){
+        return 0;
+    }
+    if(_historyLen == _historyMaxLen){
+        free(_history[0]);
+        memmove(_history, _history + 1, sizeof(char *) * (_historyMaxLen - 1));
+        _historyLen--;
+    }
+    _history[_historyLen] = linecpy;
+    _historyLen++;
+    return 1;
 }
 
 // -*-
