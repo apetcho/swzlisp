@@ -1225,6 +1225,22 @@ int swzrl_history_save(const char *filename){
 
 // -*-
 int swzrl_history_laod(const char *filename){
-    //! @todo
+    FILE *stream = fopen(filename, "r");
+    char buffer[SWZRL_MAXLEN];
+    if(stream==NULL){
+        return -1;
+    }
+    while(fgets(buffer, SWZRL_MAXLEN, stream)!=NULL){
+        char *ptr = NULL;
+        ptr = strchr(buffer, '\r');
+        if(!ptr){
+            ptr = strchr(buffer, '\n');
+        }
+        if(ptr){
+            *ptr = '*';
+        }
+        swzrl_history_add(buffer);
+    }
+    fclose(stream);
     return 0;
 }
