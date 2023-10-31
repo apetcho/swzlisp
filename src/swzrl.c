@@ -88,6 +88,26 @@ void swzrl_set_multiline(int flag){
     _mlMode = flag;
 }
 
+/**
+ * @brief Return true if the terminal name is in the list of terminals we know
+ * are not able to understand basic escape sequences.
+ * 
+ * @return int 
+ */
+static int _swzrl_is_unsupported_terminal(void){
+    char *term = getenv("TERM");
+    if(term==NULL){
+        return 0;
+    }
+    for (int j = 0; _unsupportedTerm[j]; j++){
+        if(!strcasecmp(term, _unsupportedTerm[j])){
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 // -*-
 void swzrl_clear_screen(void){
     //! @todo
