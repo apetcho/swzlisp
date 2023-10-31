@@ -73,7 +73,7 @@ int swzrl_history_laod(const char *filename);
 void swzrl_clear_screen(void);
 void swzrl_set_multiline(int flag);
 void swzrl_print_keycodes(void);
-void swzrl_enable_mask_mode_enable(void);
+void swzrl_enable_mask_mode(void);
 void swzrl_disable_mask_mode(void);
 
 

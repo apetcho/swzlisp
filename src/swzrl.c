@@ -70,11 +70,38 @@ enum SWZKeyEvent{
 #define SWZRL_REFRESH_ALL       (SWZRL_REFRESH_CLEAN | SWZRL_REFRESH_WRITE)
 
 
+// -*-------------------*-
+// -*- Other utilities -*-
+// -*-------------------*-
+// -*-
+void swzrl_enable_mask_mode(void){
+    _maskMode = 1;
+}
+
+// -*-
+void swzrl_clear_screen(void){
+    //! @todo
+}
+
+// -*-
+void swzrl_set_multiline(int flag){
+    //! @todo
+}
+
+// -*-
+void swzrl_print_keycodes(void){
+    //! @todo
+}
+
+// -*-
+void swzrl_disable_mask_mode(void){
+    //! @todo
+}
+
 // -*------------------------------*-
 // -*- Linenoise (a.k.a Readline) -*-
 // -*------------------------------*-
 extern char *swzRLEditorMore;
-
 
 
 // -*--------------------*-
@@ -171,32 +198,4 @@ int swzrl_history_save(const char *filename){
 int swzrl_history_laod(const char *filename){
     //! @todo
     return 0;
-}
-
-// -*-------------------*-
-// -*- Other utilities -*-
-// -*-------------------*-
-// -*-
-void swzrl_clear_screen(void){
-    //! @todo
-}
-
-// -*-
-void swzrl_set_multiline(int flag){
-    //! @todo
-}
-
-// -*-
-void swzrl_print_keycodes(void){
-    //! @todo
-}
-
-// -*-
-void swzrl_enable_mask_mode_enable(void){
-    //! @todo
-}
-
-// -*-
-void swzrl_disable_mask_mode(void){
-    //! @todo
 }
