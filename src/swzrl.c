@@ -84,12 +84,12 @@ void swzrl_disable_mask_mode(void){
 }
 
 // -*-
-void swzrl_clear_screen(void){
-    //! @todo
+void swzrl_set_multiline(int flag){
+    _mlMode = flag;
 }
 
 // -*-
-void swzrl_set_multiline(int flag){
+void swzrl_clear_screen(void){
     //! @todo
 }
 
