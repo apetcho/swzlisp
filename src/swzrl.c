@@ -996,6 +996,24 @@ void swzrl_edit_stop(SWZRLState *swzrl){
 }
 
 // -*-
+// This just implement a blocking loop for the multiplexed API. In many applications
+// that are not event-deriven, we can just call the blocking swzrl API, wait for
+// the user to complete editing and return the buffer.
+// -*-
+static char* _swzrl_blocking_edit(int ifd, int ofd, char *buffer, size_t buflen, const char* prompt){
+    SWZRLState swzrl;
+    if(buflen == 0){
+        errno = EINVAL;
+        return NULL;
+    }
+    swzrl_edit_start(&swzrl, ifd, ofd, buffer, buflen, prompt);
+    char *result = NULL;
+    while((result = swzrl_edit_feed(&swzrl))==swzRLEditMore){}
+    swzrl_edit_stop(&swzrl);
+    return result;
+}
+
+// -*-
 static void _swzrl_refresh_line(SWZRLState *swzrl){
     _swzrl_refresh_line_with_flags(swzrl, SWZRL_REFRESH_ALL);
 }
