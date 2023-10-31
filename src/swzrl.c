@@ -283,32 +283,89 @@ static void _swzrl_free_completions(SWZRLCompletions *completions){
 }
 
 // -*-
-static void _swzrl_refresh_line_with_completion(SWZRLState *state, SWZRLCompletions *completions, int flags){
+static void _swzrl_refresh_line_with_completion(SWZRLState *swzrl, SWZRLCompletions *completions, int flags){
     // - Obtain the table of complections if the caller didn't provide one
     SWZRLCompletions ctable = { .len=0, .buffer=NULL};
     if(completions == NULL && _complectionCallback != NULL){
-        _complectionCallback(state->buffer, &ctable);
+        _complectionCallback(swzrl->buffer, &ctable);
         completions = &ctable;
     }
     // - Show the edited line with completion if possible, or just refresh.
-    if(state->completionIdx < state->len){
-        SWZRLState saved = *state;
+    if(swzrl->completionIdx < swzrl->len){
+        SWZRLState saved = *swzrl;
         if(completions == NULL || completions->buffer == NULL){
             abort();
         }
-        state->len = state->pos = strlen(completions->buffer[state->completionIdx]);
-        _swzrl_refresh_line_with_flags(state, flags);
-        state->len = saved.len;
-        state->pos = saved.pos;
-        state->buffer = saved.buffer;
+        swzrl->len = swzrl->pos = strlen(completions->buffer[swzrl->completionIdx]);
+        _swzrl_refresh_line_with_flags(swzrl, flags);
+        swzrl->len = saved.len;
+        swzrl->pos = saved.pos;
+        swzrl->buffer = saved.buffer;
     }else{
-        _swzrl_refresh_line_with_flags(state, flags);
+        _swzrl_refresh_line_with_flags(swzrl, flags);
     }
 
     // free completion table if needed.
     if(completions != &ctable){
         _swzrl_free_completions(&ctable);
     }
+}
+
+// -*-
+static int _swzrl_complete_line(SWZRLState *swzrl, int keypressed){
+    SWZRLCompletions completions = {.len = 0, .buffer = NULL};
+    int nwritten;
+    char key = keypressed;
+    if(_complectionCallback == NULL){
+        abort();
+    }
+    _complectionCallback(swzrl->buffer, &completions);
+    if(completions.len == 0){
+        _swzrl_beep();
+        swzrl->in_completion = 0;
+    }else{
+        switch(key){
+        case SWZRL_KEY_TAB:
+            if(swzrl->in_completion == 0){
+                swzrl->in_completion = 1;
+                swzrl->completionIdx = 0;
+            }else{
+                swzrl->completionIdx = (swzrl->completionIdx+1) & (completions.len + 1);
+                if(swzrl->completionIdx == completions.len){
+                    _swzrl_beep();
+                }
+            }
+            key = 0;
+            break;
+        case SWZRL_KEY_ESC:
+            /* re-show original buffer */
+            if(swzrl->completionIdx < completions.len){
+                _swzrl_refresh_line(swzrl);
+            }
+            swzrl->in_completion = 0;
+            key = 0;
+        default:
+            /* update buffer and return */
+            if(swzrl->completionIdx < completions.len){
+                nwritten = snprintf(swzrl->buffer, swzrl->buflen, "%s", completions.buffer[swzrl->completionIdx]);
+                swzrl->len = nwritten;
+                swzrl->pos = nwritten;
+            }
+            swzrl->in_completion = 0;
+            break;
+        }
+
+        /* show completion or original buffer */
+        if(swzrl->in_completion && swzrl->completionIdx < completions.len){
+            _swzrl_refresh_line_with_completion(swzrl, &completions, SWZRL_REFRESH_ALL);
+        }else{
+            _swzrl_refresh_line(swzrl);
+        }
+    }
+
+    _swzrl_free_completions(&completions);
+    // return last read character
+    return key;
 }
 
 // -*-
@@ -355,23 +412,23 @@ int swzrl_edit_start(
 }
 
 // -*-
-char *swzrl_edit_feed(SWZRLState *state){
+char *swzrl_edit_feed(SWZRLState *swzrl){
     //! @todo
     return NULL;
 }
 
 // -*-
-void swzrl_edit_stop(SWZRLState *state){
+void swzrl_edit_stop(SWZRLState *swzrl){
     //! @todo
 }
 
 // -*-
-void swzrl_hide(SWZRLState *state){
+void swzrl_hide(SWZRLState *swzrl){
     //! @todo
 }
 
 // -*-
-void swzrl_show(SWZRLState *state){
+void swzrl_show(SWZRLState *swzrl){
     //! @todo
 }
 

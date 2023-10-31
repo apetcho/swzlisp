@@ -34,13 +34,13 @@ typedef struct {
 // -*- Non blocking API -*-
 // -*--------------------*-
 int swzrl_edit_start(
-    SWZRLState *state, int ifd, int ofd, char *buf, size_t buflen,
+    SWZRLState *swzrl, int ifd, int ofd, char *buf, size_t buflen,
     const char* prompt
 );
-char *swzrl_edit_feed(SWZRLState *state);
-void swzrl_edit_stop(SWZRLState *state);
-void swzrl_hide(SWZRLState *state);
-void swzrl_show(SWZRLState *state);
+char *swzrl_edit_feed(SWZRLState *swzrl);
+void swzrl_edit_stop(SWZRLState *swzrl);
+void swzrl_hide(SWZRLState *swzrl);
+void swzrl_show(SWZRLState *swzrl);
 
 // -*----------------*-
 // -*- Blocking API -*-
