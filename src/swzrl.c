@@ -385,7 +385,22 @@ void swzrl_set_destroy_callack(SWZRLDestroyHintsCallback callack){
 
 // -*-
 void swzrl_add_completion(SWZRLCompletions* completions, const char *cstr){
-    //! @todo
+    size_t len = strlen(cstr);
+    char *cpy = NULL;
+    char **buffer = NULL;
+
+    cpy = malloc(len + 1);
+    if(cpy == NULL){
+        return;
+    }
+    memcpy(cpy, cstr, len + 1);
+    buffer = realloc(completions->buffer, sizeof(char *) * (completions->len + 1));
+    if(buffer == NULL){
+        free(cpy);
+        return;
+    }
+    completions->buffer = buffer;
+    completions->buffer[completions->len++] = cpy;
 }
 
 // -*-
