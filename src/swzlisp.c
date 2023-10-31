@@ -241,8 +241,8 @@ static int _swz_help(void){
 }
 
 // -*-
-int _swz_version(void){
-    //! @todo
+static int _swz_version(void){
+    printf("swzlisp version %s\n", swzVersion);
     return 0;
 }
 
