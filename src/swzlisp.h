@@ -12,6 +12,7 @@
 #include<stdio.h>
 #include<wchar.h>
 #include<assert.h>
+#include<errno.h>
 #include<math.h>
 
 #define SWZ_UNUSED(arg)     (void)arg
@@ -20,7 +21,6 @@
 #define SWZ_VERSION_PATCH   "0"
 #define SWZ_VERSION_FULL    \
     SWZ_VERSION_MAJOR "." SWZ_VERSION_MINOR "." SWZ_VERSION_PATCH
-
 
 //
 static void* _my_alloc(size_t size){
@@ -162,8 +162,8 @@ Iterator htable_iterator_values_ptr(HTable *htable);
 // -*------------------------------------------------------------*-
 #define SWZK_LAMBDA     0
 #define SWZK_MACRO      1
-#define SWZFLAG_COPY    0x1
-#define SWZFLAG_OWN     0x2
+#define SWZF_COPY    0x1
+#define SWZF_OWN     0x2
 
 #define SWZ_ERRORS                                                          \
     SWZE_DEF(SWZE_ERROR, 1, "SWZError", "a catch-all")                      \
@@ -208,8 +208,6 @@ Iterator htable_iterator_values_ptr(HTable *htable);
 //! @todo: docstring
 // -*- core -*-
 typedef struct swzruntime SWZRuntime;   // interpreter | Engine
-
-
 typedef struct swzobject SWZObject;
 typedef struct swztype SWZType;
 typedef struct swzenv SWZEnv;
@@ -225,7 +223,6 @@ typedef struct swzmodule SWZModule;
 
 typedef SWZObject *(*SWZFun)(SWZRuntime *, SWZEnv *, SWZList *, void *);
 
-
 extern SWZType *swzType;
 extern SWZType *swzEnv;
 extern SWZType *swzList;
@@ -237,15 +234,14 @@ extern SWZType *swzBuiltin;
 extern SWZType *swzLambda;
 extern SWZType *swzModule;
 
-extern const char *const swzVersion;
-
-
+// -
 enum SWZError{
 #define SWZE_DEF(err, ev, msg, desc) err = ev, 
     SWZ_ERRORS
 #undef SWZE_DEF
 };
 
+extern const char *const swzVersion;
 extern const char *swzErrorNames[SWZE_COUNT];
 
 struct swzobject{
@@ -273,7 +269,7 @@ struct swzruntime{
 // -
 struct swzenv{
     SWZ_OBJECT_HEAD;
-    HTable scope;
+    HTable table;
     SWZEnv *parent;
 };
 

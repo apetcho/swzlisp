@@ -207,7 +207,7 @@ static SWZObject* _split_symbol(SWZRuntime *swz, const char *src, int ndot, int 
     token = _my_alloc(len + 1);
     strncpy(token, src, len);
     token[len] = '\0';
-    symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
+    symbol = swz_alloc_symbol(swz, token, SWZF_OWN);
     free(token);
     prev = (SWZObject *)symbol;
     src = delim + 1;
@@ -225,7 +225,7 @@ static SWZObject* _split_symbol(SWZRuntime *swz, const char *src, int ndot, int 
         token = _my_alloc(len + 1);
         strncpy(token, src, len);
         token[len] = '\0';
-        symbol = swz_alloc_symbol(swz, token, SWZFLAG_OWN);
+        symbol = swz_alloc_symbol(swz, token, SWZF_OWN);
         free(token);
 
         // -
@@ -273,7 +273,7 @@ static Result _swz_parse_symbol(SWZRuntime *swz, const char *src, int idx){
     cpy = _my_alloc(i + 1);
     strncpy(cpy, src + idx, i);
     // -
-    symbol = swz_alloc_symbol(swz, cpy, SWZFLAG_OWN);
+    symbol = swz_alloc_symbol(swz, cpy, SWZF_OWN);
     free(cpy);
     SWZ_RESULT_OK(symbol, idx + i);
 }

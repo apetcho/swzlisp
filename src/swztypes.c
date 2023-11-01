@@ -131,7 +131,7 @@ static SWZObject *_swz_env_alloc(SWZRuntime *swz){
     env = _my_alloc(sizeof(SWZEnv));
     env->parent = NULL;
     htable_init(
-        &env->scope,
+        &env->table,
         swz_text_hash,
         swz_text_compare,
         sizeof(void *),
@@ -145,18 +145,18 @@ static void _swz_env_dealloc(SWZRuntime *swz, void *arg){
     SWZ_UNUSED(swz);
     SWZEnv *env = NULL;
     env = (SWZEnv *)arg;
-    htable_dealloc(&env->scope);
+    htable_dealloc(&env->table);
     free(env);
 }
 
 // -*-
 static void _swz_env_print(FILE *stream, SWZObject *obj){
     SWZEnv *env = (SWZEnv *)obj;
-    Iterator iterator = htable_iterator_keys_ptr(&env->scope);
+    Iterator iterator = htable_iterator_keys_ptr(&env->table);
     fprintf(stream, "(env:");   // scope
     while(iterator.has_next(&iterator)){
         SWZObject *key = iterator.next(&iterator);
-        SWZObject *value = htable_get_ptr(&env->scope, key);
+        SWZObject *value = htable_get_ptr(&env->table, key);
         fprintf(stream, " ");
         swz_print(stream, key);
         fprintf(stream, ": ");
@@ -171,13 +171,13 @@ static Iterator _swz_env_iter(SWZObject *obj){
     if(env->parent){
         return iterator_concat3(
             iterator_single_value(env->parent),
-            htable_iterator_keys_ptr(&env->scope),
-            htable_iterator_values_ptr(&env->scope)
+            htable_iterator_keys_ptr(&env->table),
+            htable_iterator_values_ptr(&env->table)
         );
     }else{
         return iterator_concat2(
-            htable_iterator_keys_ptr(&env->scope),
-            htable_iterator_values_ptr(&env->scope)
+            htable_iterator_keys_ptr(&env->table),
+            htable_iterator_values_ptr(&env->table)
         );
     }
 }
@@ -212,19 +212,19 @@ static bool _swz_env_compare(const SWZObject *self, const SWZObject *other){
     }
 
     // - now equality check of scope contents
-    if(htable_length(&lhsEnv->scope) != htable_length(&rhsEnv->scope)){
+    if(htable_length(&lhsEnv->table) != htable_length(&rhsEnv->table)){
         return false;
     }
 
-    iterator = htable_iterator_keys_ptr(&lhsEnv->scope);
+    iterator = htable_iterator_keys_ptr(&lhsEnv->table);
     while(iterator.has_next(&iterator)){
         key = (SWZSymbol *)iterator.next(&iterator);
-        rhs = (SWZObject *)htable_get_ptr(&rhsEnv->scope, key);
+        rhs = (SWZObject *)htable_get_ptr(&rhsEnv->table, key);
         if(!rhs){
             iterator.close(&iterator);
             return false;
         }
-        value = (SWZObject *)htable_get_ptr(&lhsEnv->scope, key);
+        value = (SWZObject *)htable_get_ptr(&lhsEnv->table, key);
         if(!swz_compare(value, rhs)){
             iterator.close(&iterator);
             return false;

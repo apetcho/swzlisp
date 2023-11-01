@@ -644,7 +644,7 @@ bool htable_int_equal(const void *lhs, const void *rhs){
 bool htable_float_equal(const void *lhs, const void *rhs){
     double x = *(double *)lhs;
     double y = *(double *)rhs;    
-    return almost_equal(x, y);
+    return _almost_equal(x, y);
 }
 
 

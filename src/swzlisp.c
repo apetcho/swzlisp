@@ -155,7 +155,7 @@ static int _swz_repl_run(void){
     SWZRuntime *swz = NULL;
     SWZEnv *env = NULL;
 
-    swz = swz_new();
+    swz = swzlisp_new();
     if(!_disableSymcache){
         swzlisp_enable_symbol_cache(swz);
     }
@@ -182,7 +182,7 @@ static int _swz_file_run(char *filename, int argc, char **argv, int repl){
         return 1;
     }
 
-    swz = swz_new();
+    swz = swzlisp_new();
     if(!_disableSymcache){
         swzlisp_enable_symbol_cache(swz);
     }

@@ -1,7 +1,4 @@
 #include "swzlisp.h"
-#include<stdlib.h>
-#include<string.h>
-#include<errno.h>
 
 // -*-------------*-
 // -*- utilities -*-
@@ -16,7 +13,7 @@ const char* swzErrorNames[SWZE_COUNT] = {
 
 // -*-
 void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj){
-    htable_insert_ptr(&env->scope, symbol, obj);
+    htable_insert_ptr(&env->table, symbol, obj);
 
     SWZLambda *lambda = NULL;
     if(obj->type == swzLambda){
@@ -29,16 +26,15 @@ void swz_env_bind(SWZEnv *env, SWZSymbol *symbol, SWZObject *obj){
 
 // -*-
 SWZObject* swz_env_lookup(SWZRuntime *swz, SWZEnv *env, SWZSymbol *symbol){
-    SWZObject *obj = htable_get_ptr(&env->scope, symbol);
+    SWZObject *obj = htable_get_ptr(&env->table, symbol);
     if(!obj){
         if(env->parent){
             return swz_env_lookup(swz, env->parent, symbol);
         }else{
             return swz_error(swz, SWZE_NOT_FOUND, "symbol not found in scope");
         }
-    }else{
-        return obj;
     }
+    return obj;
 }
 
 // -*-
@@ -79,7 +75,8 @@ SWZObject *swz_progn(SWZRuntime *swz, SWZEnv *env, SWZList *list){
     SWZObject *obj = NULL;
     while(1){
         obj = swz_eval(swz, env, list->car);
-        if(swz_nil_p(list->cdr)){
+        SWZ_VALIDATE_PTR(obj);
+        if (swz_nil_p(list->cdr)){
             return obj;
         }else{
             list = (SWZList *)list->cdr;
@@ -194,18 +191,18 @@ SWZList* swz_list_of_strings(SWZRuntime *swz, char **list, size_t n, int flag){
         return (SWZList *)swz_alloc_nil(swz);
     }
     SWZList *result = NULL;
-    SWZList *lst = NULL;
+    SWZList *self = NULL;
     SWZString *str = NULL;
 
     result = (SWZList *)swz_alloc(swz, swzList);
-    lst = result;
+    self = result;
     for (size_t i = 0; i < n; i++){
         str = swz_alloc_string(swz, list[i], flag);
-        lst->car = (SWZObject *)str;
-        lst->cdr = swz_alloc(swz, swzList);
-        lst = (SWZList *)lst->cdr;
+        self->car = (SWZObject *)str;
+        self->cdr = swz_alloc(swz, swzList);
+        self = (SWZList *)self->cdr;
     }
-    lst->cdr = swz_alloc_nil(swz);
+    self->cdr = swz_alloc_nil(swz);
     return result;
 }
 
@@ -344,9 +341,9 @@ void swz_list_append(SWZRuntime *swz, SWZList **head, SWZList **tail, SWZObject 
 
 // -*-
 SWZInteger* swz_alloc_integer(SWZRuntime *swz, long num){
-    SWZInteger *number = (SWZInteger *)swz_alloc(swz, swzInteger);
-    number->val = num;
-    return number;
+    SWZInteger *self = (SWZInteger *)swz_alloc(swz, swzInteger);
+    self->val = num;
+    return self;
 }
 
 // -*-
@@ -355,11 +352,10 @@ long swz_get_integer(const SWZInteger *self){
 }
 
 SWZFloat *swz_alloc_float(SWZRuntime *swz, double num){
-    SWZFloat *number = (SWZFloat *)swz_alloc(swz, swzFloat);
-    number->val = num;
-    return number;
+    SWZFloat *self = (SWZFloat *)swz_alloc(swz, swzFloat);
+    self->val = num;
+    return self;
 }
-
 
 double swz_get_float(const SWZFloat *self){
     return self->val;
@@ -413,6 +409,10 @@ void swz_eprint(SWZRuntime *swz, FILE *stream){
     }
     if(swz->errline){
         fprintf(stream, "at line: %d: ", (int)swz->errline);
+    }
+    if(swz->errnum >= SWZE_COUNT){
+        fprintf(stream, "Error: unknown error\n");
+        return;
     }
     char *errmsg = NULL;
     if (swz->errnum == SWZE_ERRNO){
@@ -500,7 +500,7 @@ bool swz_truthy(SWZObject *obj){
     SWZFloat zero;
     zero.type = swzFloat;
     zero.val = 0;
-    return swz_is_number(NULL, obj) && !swz_compare(obj, (SWZObject *)&zero);
+    return obj->type==swzInteger && !swz_compare(obj, (SWZObject *)&zero);
 }
 
 // -*---------------*-
@@ -548,7 +548,7 @@ static Text* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTable *cache, char
         str = _swz_textcache_lookup(cache, cstr);
         if(str){
             // -
-            if((flags & SWZFLAG_OWN) && !(flags & SWZFLAG_COPY)){
+            if((flags & SWZF_OWN) && !(flags & SWZF_COPY)){
                 free(cstr);
             }
             return str;
@@ -556,11 +556,11 @@ static Text* _swz_alloc_text(SWZRuntime *swz, SWZType *type, HTable *cache, char
     }
     // -
     str = (Text *)swz_alloc(swz, type);
-    if(flags & SWZFLAG_COPY){
+    if(flags & SWZF_COPY){
         cstr = _my_strdup(cstr);
     }
     str->cstr = cstr;
-    str->can_free = flags & SWZFLAG_OWN;
+    str->can_free = flags & SWZF_OWN;
     if(cache){
         // -
         _swz_textcache_save(cache, str);
@@ -717,7 +717,7 @@ static SWZObject* _os_getenv(SWZRuntime *swz, SWZEnv *env, SWZList *args, void *
     }
     cstr = getenv(str->cstr);
     if(cstr){
-        return (SWZObject *)swz_alloc_string(swz, cstr, SWZFLAG_COPY | SWZFLAG_OWN);
+        return (SWZObject *)swz_alloc_string(swz, cstr, SWZF_COPY | SWZF_OWN);
     }else{
         return swz_alloc_nil(swz);
     }
@@ -827,8 +827,8 @@ SWZModule* swz_do_import(SWZRuntime *swz, SWZSymbol *name){
     len += 1 /*null*/ + 7 /* ./.lisp*/;
     filename = _my_alloc(len);
     sprintf(filename, "./%s.lisp", name->cstr);
-    modulepath = swz_alloc_string(swz, filename, SWZFLAG_OWN);
-    modulename = swz_alloc_symbol(swz, name->cstr, SWZFLAG_OWN | SWZFLAG_COPY);
+    modulepath = swz_alloc_string(swz, filename, SWZF_OWN);
+    modulename = swz_alloc_symbol(swz, name->cstr, SWZF_OWN | SWZF_COPY);
     return swz_import_file(swz, modulename, modulepath);
 }
 
