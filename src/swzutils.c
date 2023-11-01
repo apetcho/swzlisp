@@ -452,7 +452,7 @@ static uint32_t _htable_find_retrieve(const HTable *htable, void *key){
 
     while(SWZ_MARK_AT(htable, index) != SWZ_HTABLE_EMPTY){
         if(SWZ_MARK_AT(htable, index)==SWZ_HTABLE_FULL &&
-            htable->equalfn(key, SWZ_KEY_PTR(htable, index))==0){
+            htable->equalfn(key, SWZ_KEY_PTR(htable, index))){ // ==0
             // -
             return index;
         }

@@ -1,12 +1,3 @@
-#include<stdbool.h>
-#include<stdlib.h>
-#include<string.h>
-#include<assert.h>
-#include<float.h>
-#include<limits.h>
-#include<math.h>
-#include<stdio.h>
-
 #include "swzlisp.h"
 
 #define SWZ_TYPE_HEADER     \
@@ -17,29 +8,29 @@
 
 // -*-
 static SWZObject* _swz_eval_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
-    (void)env;
-    (void)obj;
+    SWZ_UNUSED(env);
+    SWZ_UNUSED(obj);
     return swz_error(swz, SWZE_EVAL, "cannot evaluate this object");
 }
 
 // -*-
 static SWZObject* _swz_eval_same(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
-    (void)swz;
-    (void)env;
+    SWZ_UNUSED(swz);
+    SWZ_UNUSED(env);
     return obj;
 }
 
 // -*-
 static SWZObject* _swz_call_error(SWZRuntime *swz, SWZEnv *env, SWZObject *obj, SWZList *list){
-    (void)env;
-    (void)obj;
-    (void)list;
+    SWZ_UNUSED(env);
+    SWZ_UNUSED(obj);
+    SWZ_UNUSED(list);
     return swz_error(swz, SWZE_CALL, "not callable!");
 }
 
 // -*-
 static void _swz_simple_dealloc(SWZRuntime *swz, void *arg){
-    (void)swz;
+    SWZ_UNUSED(swz);
     free(arg);
 }
 
@@ -162,7 +153,7 @@ static void _swz_env_dealloc(SWZRuntime *swz, void *arg){
 static void _swz_env_print(FILE *stream, SWZObject *obj){
     SWZEnv *env = (SWZEnv *)obj;
     Iterator iterator = htable_iterator_keys_ptr(&env->scope);
-    fprintf(stream, "(scope:");
+    fprintf(stream, "(env:");   // scope
     while(iterator.has_next(&iterator)){
         SWZObject *key = iterator.next(&iterator);
         SWZObject *value = htable_get_ptr(&env->scope, key);
@@ -271,16 +262,16 @@ SWZType *swzList = &_swzlist;
 // -*-
 static SWZObject *_swz_list_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     SWZObject *callable;
-    SWZList *list = (SWZList *)obj;
+    SWZList *self = (SWZList *)obj;
 
     if(swz_nil_p(obj)){
         return swz_error(swz, SWZE_CALL, "Cannot call empty list");
     }
-    if(list->cdr->type != swzList){
+    if(self->cdr->type != swzList){
         return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
-    callable = swz_eval(swz, env, list->car);
-    return swz_call(swz, env, callable, (SWZList *)list->cdr);
+    callable = swz_eval(swz, env, self->car);
+    return swz_call(swz, env, callable, (SWZList *)self->cdr);
 }
 
 // -*-
@@ -346,7 +337,7 @@ static void* _swz_list_iter_next(Iterator *iterator){
 static bool _swz_list_has_next(Iterator *iterator){
     SWZObject *list = (SWZObject *)iterator->data;
     if(swz_nil_p(list)){
-        return true;
+        return false;
     }
     return iterator->index < iterator->stateIdx;
 }
@@ -367,7 +358,7 @@ static bool _swz_list_compare(const SWZObject *self, const SWZObject *other){
     if(self == other){
         return true;
     }
-    if(self->type != other->type || self->type != swzList){
+    if(self->type != swzList || self->type != other->type){
         return false;
     }
     SWZList *lhs = (SWZList *)self;
@@ -416,8 +407,8 @@ static void _swz_txt_print(FILE *stream, SWZObject *obj){
 
 // -*-
 static SWZObject *_swz_txt_alloc(SWZRuntime *swz){
-    struct swztext *text = NULL;
     SWZ_UNUSED(swz);
+    struct swztext *text = NULL;
     text = _my_alloc(sizeof(struct swztext));
     text->cstr = NULL;
     text->can_free = 1;
@@ -428,9 +419,9 @@ static SWZObject *_swz_txt_alloc(SWZRuntime *swz){
 static void _swz_txt_dealloc(SWZRuntime *swz, void *arg){
     struct swztext *text = (struct swztext *)arg;
     if(text->type == swzString && swz->strcache){
-        swz_textchach_remove(swz->strcache, text);
+        swz_textcache_remove(swz->strcache, text);
     }else if(text->type == swzSymbol && swz->symcache){
-        swz_textchach_remove(swz->symcache, text);
+        swz_textcache_remove(swz->symcache, text);
     }
 
     // - deal with the ownership
@@ -443,8 +434,7 @@ static void _swz_txt_dealloc(SWZRuntime *swz, void *arg){
 // -*-
 static SWZObject *_swz_symbol_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
     SWZ_UNUSED(swz);
-    SWZSymbol *symbol = NULL;
-    symbol = (SWZSymbol *)obj;
+    SWZSymbol *symbol = (SWZSymbol *)obj;
     return swz_env_lookup(swz, env, symbol);
 }
 
@@ -498,10 +488,7 @@ static SWZObject *_swz_integer_alloc(SWZRuntime *swz){
 
 // -*-
 static bool _swz_is_integer(SWZObject *obj){
-    if(!obj){
-        return false;
-    }
-    if(obj->type != swzInteger){
+    if(!obj || obj->type != swzInteger){
         return false;
     }
     return true;
@@ -509,10 +496,7 @@ static bool _swz_is_integer(SWZObject *obj){
 
 // -*-
 static bool _swz_is_float(SWZObject *obj){
-    if(!obj){
-        return false;
-    }
-    if(obj->type != swzFloat){
+    if(!obj || obj->type != swzFloat){
         return false;
     }
     return true;
@@ -521,17 +505,6 @@ static bool _swz_is_float(SWZObject *obj){
 // -*-
 static bool _swz_is_number(SWZObject *obj){
     return (_swz_is_integer(obj) || _swz_is_float(obj));
-}
-
-// -
-static bool _swz_almostEqual(double x, double y){
-    static double eps = DBL_EPSILON;
-    double diff = fabs(x - y);
-    x = fabs(x);
-    y = fabs(y);
-    double xymax = (x > y) ? x : y;
-    bool result = (diff <= xymax*eps) ? true: false;
-    return result;
 }
 
 // -*-
@@ -549,22 +522,23 @@ static bool _swz_num_compare(SWZObject *self, SWZObject *other){
         SWZInteger *lhs = (SWZInteger *)self;
         if(_swz_is_integer(other)){
             SWZInteger *rhs = (SWZInteger *)other;
+            return (lhs->val == rhs->val);
         }else{
             double x = (double)lhs->val;
             double y = ((SWZFloat *)other)->val;
-            return _swz_almostEqual(x, y);
+            return _almost_equal(x, y);
         }
     }
     // self is a SWZFloat
     if(_swz_is_integer(other)){
         double x = ((SWZFloat *)self)->val;
         double y = (double)((SWZInteger *)other)->val;
-        return _swz_almostEqual(x, y);
+        return _almost_equal(x, y);
     }
     // both are SWZFloat
     double x = ((SWZFloat *)self)->val;
     double y = ((SWZFloat *)other)->val;
-    return _swz_almostEqual(x, y);
+    return _almost_equal(x, y);
 }
 
 // -*-
@@ -679,7 +653,7 @@ static void _swz_builtin_print(FILE *stream, SWZObject *obj){
 static SWZObject *_swz_builtin_alloc(SWZRuntime *swz){
     SWZ_UNUSED(swz);
     SWZBuiltin *builtin = _my_alloc(sizeof(SWZBuiltin));
-    builtin->fun = NULL;
+    builtin->call = NULL;
     builtin->name = NULL;
     builtin->evald = 0;
     return (SWZObject *)builtin;
@@ -694,7 +668,7 @@ static SWZObject *_swz_builtin_call(SWZRuntime* swz, SWZEnv *env, SWZObject *cal
     }else if (swz_is_bad_list(args)){
         return swz_error(swz, SWZE_SYNTAX, "unexpected cons cell");
     }
-    return builtin->fun(swz, env, args, builtin->params);
+    return builtin->call(swz, env, args, builtin->params);
 }
 
 // -*-
@@ -702,14 +676,14 @@ static bool _swz_builtin_compare(const SWZObject *self, const SWZObject *other){
     if(self == other){
         return true;
     }
-    if(self->type != other->type || self->type != swzBuiltin){
+    if(self->type != swzBuiltin || self->type != other->type){
         return false;
     }
     SWZBuiltin *lhs = (SWZBuiltin *)self;
     SWZBuiltin *rhs = (SWZBuiltin *)other;
 
     return (
-        (lhs->fun==rhs->fun) &&
+        (lhs->call==rhs->call) &&
         (lhs->params==rhs->params) &&
         (strcmp(lhs->name, rhs->name)==0)
     );
@@ -799,6 +773,7 @@ static SWZObject *_swz_lambda_call(SWZRuntime *swz, SWZEnv *env, SWZObject *call
     }
 
     result = swz_progn(swz, inner, lambda->body);
+    SWZ_VALIDATE_PTR(result);
     if(lambda->kind == SWZK_MACRO){
         result = swz_eval(swz, env, result);
     }
@@ -849,7 +824,7 @@ static bool _swz_lambda_compare(const SWZObject *self, const SWZObject *other){
         return true;
     }
 
-    if(self->type != other->type || self->type != swzLambda){
+    if(self->type != swzLambda || self->type != other->type){
         return false;
     }
 
@@ -884,14 +859,11 @@ SWZObject* swz_eval(SWZRuntime *swz, SWZEnv *env, SWZObject *obj){
 // -*-
 SWZObject *swz_call(SWZRuntime *swz, SWZEnv *env, SWZObject *callable, SWZList *args){
     SWZObject *result = NULL;
-
     // create a new stack frame
     swz->stack = swz_alloc_list(swz, callable, (SWZObject *)swz->stack);
     swz->sdepth++;
-
     // make function call;
     result = callable->type->call(swz, env, callable, args);
-
     // get rid of stack frame
     swz->stack = (SWZList *)swz->stack->cdr;
     swz->sdepth--;

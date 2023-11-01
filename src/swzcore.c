@@ -276,7 +276,7 @@ SWZObject *swz_run_main_if_exists(SWZRuntime *swz, SWZEnv *env, int argc, char *
 // -*-
 SWZBuiltin *swz_alloc_builtin(SWZRuntime *swz, const char* name, SWZFun fun, void *params, int evald){
     SWZBuiltin *builtin = (SWZBuiltin *)swz_alloc(swz, swzBuiltin);
-    builtin->fun = fun;
+    builtin->call = fun;
     builtin->name = name;
     builtin->params = params;
     builtin->evald = evald;
@@ -519,7 +519,7 @@ static void _swz_textcache_save(HTable *cache, struct swztext *text){
 }
 
 // -*-
-void swz_textchach_remove(HTable *cache, struct swztext *text){
+void swz_textcache_remove(HTable *cache, struct swztext *text){
     Text *existing = NULL;
     existing = htable_get_key_ptr(cache, text);
     if(existing == text){
