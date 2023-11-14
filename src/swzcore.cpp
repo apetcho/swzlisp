@@ -201,8 +201,15 @@ Object Object::pop(){
 
 // -*-
 Object Object::to_integer() const {
-    //! @todo
-    return Object();
+    if(!this->is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    if(this->m_type == Type::Integer){
+        return *this;
+    }
+    // This object is as Float
+    auto result = Object(static_cast<long>(this->as_float()));
+    return result;
 }
 
 // -*-
