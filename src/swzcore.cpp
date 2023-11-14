@@ -878,6 +878,7 @@ T Env<T>::get(std::string name) const {
 
 template<typename T>
 void Env<T>::put(std::string name, T value){
+    this->m_bindings[name] = value;
 }
 
 // -*-------------------------------------------------------------------*-
