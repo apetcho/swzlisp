@@ -817,7 +817,12 @@ Error<T>::Error(T value, const Env<T>& env, const char *message){
 }
 
 template<typename T>
-Error<T>::Error(const Error& other){}
+Error<T>::Error(const Error& other){
+    this->m_error = other.m_error;
+    this->m_env = other.m_env;
+    this->m_reason = other.m_reason;
+    this->m_message = other.m_message;
+}
 
 template<typename T>
 std::string Error<T>::describe(){}
