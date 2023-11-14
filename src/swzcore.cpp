@@ -13,9 +13,7 @@ Object::Object(): m_type{Type::Unit}{}
 Object::Object(long val): m_type{Type::Integer}, m_value{val}{}
 
 // -*-
-Object::Object(double val){
-    //! @todo
-}
+Object::Object(double val): m_type{Type::Float}, m_value{val}{}
 
 // -*-
 Object::Object(std::vector<Object> list){
