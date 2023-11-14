@@ -89,7 +89,7 @@ template<typename T>
 class Error {
 public:
     Error();
-    Error(T value, const Env<T>& env, const char *cstr);
+    Error(T value, const Env<T>& env, const char *message);
     Error(const Error& other);
     ~Error();
 
@@ -98,7 +98,7 @@ public:
 private:
     std::shared_ptr<T> m_reason;
     Env<T> m_env;
-    const char* m_cstr;
+    const char* m_message;
 };
 
 class Object;
@@ -112,14 +112,13 @@ public:
     Object(long);                                                               // Type::Integer 
     Object(double);                                                             // Type::Float
     Object(std::vector<Object>);                                                // Type::List
-    Object(const Object&);                                                      // Type::Quote
     Object(std::vector<Object> params, Object ans, const Env<Object>& env);     // Type::Lambda
     Object(std::string, Fun);                                                   // Type::Builtin
 
     // -
     static Object create_quote(Object obj);                                     // Quote
     static Object create_atom(std::string str);                                 // Atom
-    static Object create_string(std::string& str);                              // String
+    static Object create_string(std::string str);                               // String
 
     // -*-
     std::vector<std::string> atoms();
@@ -127,7 +126,7 @@ public:
     Object apply(std::vector<Object> args, Env<Object>& env);
     Object eval(Env<Object>& env);
     bool is_number() const;
-    bool as_bool() const;
+    bool as_boolean() const;
     long as_integer() const;
     double as_float() const;
     std::string as_string() const;
@@ -191,6 +190,52 @@ private:
     }
 };
 
+// -*----------*-
+// -*- Parser -*-
+// -*----------*-
+// to_string()
+// replace()
+// is_symbol() | is_valid_char()
+// skip_whitespace()
+// parse(std::string, int) | next_token() -> Object
+// parse(std::string) -> std::vector<Object>
+class Parser{
+private:
+    std::string m_source;
+    std::string::const_iterator m_begin;
+    std::string::const_iterator m_end;
+    std::string::iterator m_iter;
+
+public:
+    Parser(std::string& source);
+    ~Parser() = default;
+
+    // -*-
+    static void replace(std::string &input, std::string old, std::string neo);
+    Object next_token();
+    std::vector<Object> parse();
+};
+
+// -*-
+
+class Runtime{
+private:
+    // Parser m_parser;
+    // std::string m_filename;
+    // std::string m_source;
+
+public:
+    Runtime() = default;
+    ~Runtime() = default;
+    // ::read_file(const std::string& filename) -> std::string
+    static std::string read_file(const std::string& filename);
+    // +run(std::string, Env<Object>&) -> Object
+    static Object execute(Env<Object>& env);
+    static Object execute(std::string source, Env<Object>& env);
+    static Object execute(std::string filename);
+    static Object repl(Env<Object>& env);
+    static Env<Object> builtins;
+};
 
 
 // -*-------------------------------------------------------------------*-
