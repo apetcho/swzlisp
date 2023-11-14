@@ -66,8 +66,33 @@ Object Object::create_string(std::string str){
 
 // -*-
 std::vector<std::string> Object::atoms(){
-    //! @todo
-    return {};
+    std::vector<std::string> result;
+    std::vector<std::string> tmp;
+    std::vector<Object> items;
+
+    switch(this->m_type){
+    case Type::Atom:
+        result.push_back(this->as_atom());
+        break;
+    case Type::Quote:
+        this->unwrap(items);
+        result = items[0].atoms();
+        break;
+    case Type::Lambda:
+        this->unwrap(items);
+        result = items[1].atoms();
+        break;
+    case Type::List:
+        this->unwrap(items);
+        for(auto item: items){
+            tmp = item.atoms();
+            result.insert(result.end(), tmp.begin(), tmp.end());
+        }
+        break;
+    default:
+        break;
+    }
+    return result;
 }
 
 // -*-
