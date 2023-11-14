@@ -58,8 +58,10 @@ Object Object::create_atom(std::string str){
 
 // -*-
 Object Object::create_string(std::string str){
-    //! @todo
-    return Object();
+    Object self;
+    self.m_type = Type::String;
+    self.m_value = str;
+    return self;
 }
 
 // -*-

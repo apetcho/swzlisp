@@ -166,27 +166,27 @@ private:
     Value m_value;
 
     // -*-
-    void get_value(long& value){
+    void unwrap(long& value){
         value = std::get<long>(m_value);
     }
 
     // -*-
-    void get_value(double& value){
+    void unwrap(double& value){
         value = std::get<double>(m_value);
     }
 
     // -*-
-    void get_value(std::string& value){
+    void unwrap(std::string& value){
         value = std::get<std::string>(m_value);
     }
 
     // -*-
-    void get_value(Builtin& value){
+    void unwrap(Builtin& value){
         value = std::get<Builtin>(m_value);
     }
     
     // -*-
-    void get_value(std::vector<Object>& value){
+    void unwrap(std::vector<Object>& value){
         value = std::get<std::vector<Object>>(m_value);
     }
 };
