@@ -157,8 +157,47 @@ Object Object::apply(std::vector<Object> args, Env<Object>& env){
 
 // -*-
 Object Object::eval(Env<Object>& env){
-    //! @todo
-    return Object();
+    Object result;
+    switch(this->m_type){
+    case Type::Quote:{
+            List data;
+            auto self = *this;
+            self.unwrap(data);
+            result = data[0];
+        }//
+        break;
+    case Type::Atom:{
+            std::string data;
+            auto self = *this;
+            self.unwrap(data);
+            result = env.get(data);
+        }//
+        break;
+    case Type::List:{
+            List argv;
+            Object fun;
+            List data;
+            auto self = *this;
+            self.unwrap(data);
+            if(data.size() == 0){
+                throw Error(*this, env, ErrorKind::SyntaxError);
+            }
+            argv = std::vector<Object>(data.begin()+1, data.end());
+            fun = data[0].eval(env);
+            if(!fun.is_builtin()){
+                // user-defined function
+                for(size_t i=0; i < argv.size(); i++){
+                    argv[i] = argv[i].eval(env);
+                }
+            }
+            result = fun.apply(argv, env);
+        }//
+        break;
+    default:
+        result = *this;
+        break;
+    }
+    return result;
 }
 
 // -*-
