@@ -40,8 +40,12 @@ Object::Object(std::string name, Fun fun): m_type{Type::Builtin}{
 
 // -*-
 Object Object::create_quote(Object obj){
-    //! @todo
-    return Object();
+    Object self;
+    self.m_type = Type::Quote;
+    std::vector<Object> vec;
+    vec.push_back(obj);
+    self.m_value = vec;
+    return self;
 }
 
 // -*-
