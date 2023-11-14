@@ -160,7 +160,8 @@ private:
     // Fun -> Builtin
     // std::vector<Object> -> List, Lambda, Quote
     Type m_type;
-    typedef std::variant<long, double, std::string, Fun, std::vector<Object>> Value;
+    typedef std::pair<std::string, Fun> Builtin;
+    typedef std::variant<long, double, std::string, Builtin, std::vector<Object>> Value;
     Env<Object> m_env; // lambda
     Value m_value;
 
@@ -180,8 +181,8 @@ private:
     }
 
     // -*-
-    void get_value(Fun& value){
-        value = std::get<Fun>(m_value);
+    void get_value(Builtin& value){
+        value = std::get<Builtin>(m_value);
     }
     
     // -*-

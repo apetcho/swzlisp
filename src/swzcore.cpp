@@ -33,8 +33,9 @@ Object::Object(std::vector<Object> params, Object ans, const Env<Object>& env)
 }
 
 // -*-
-Object::Object(std::string name, Fun fun){
-    //! @todo
+Object::Object(std::string name, Fun fun): m_type{Type::Builtin}{
+    Builtin builtin = {name, fun};
+    this->m_value = builtin;
 }
 
 // -*-
