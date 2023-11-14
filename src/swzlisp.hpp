@@ -7,6 +7,7 @@
 #include<sstream>
 #include<fstream>
 #include<variant>
+#include<utility>
 #include<memory>
 #include<vector>
 #include<random>
@@ -162,8 +163,9 @@ private:
     // Fun -> Builtin
     // std::vector<Object> -> List, Lambda, Quote
     Type m_type;
+    typedef std::vector<Object> List;
     typedef std::pair<std::string, Fun> Builtin;
-    typedef std::variant<long, double, std::string, Builtin, std::vector<Object>> Value;
+    typedef std::variant<long, double, std::string, Builtin, List> Value;
     Env<Object> m_env; // lambda
     Value m_value;
 
@@ -188,8 +190,8 @@ private:
     }
     
     // -*-
-    void unwrap(std::vector<Object>& value){
-        value = std::get<std::vector<Object>>(m_value);
+    void unwrap(List& value){
+        value = std::get<List>(m_value);
     }
 };
 

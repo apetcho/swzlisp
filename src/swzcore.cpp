@@ -179,7 +179,12 @@ std::vector<Object> Object::as_list() const{
 
 // -*-
 void Object::push(Object obj){
-    //! @todo
+    if(this->m_type != Type::List){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+
+    List& self = std::get<List>(this->m_value);
+    self.push_back(obj);
 }
 
 // -*-
