@@ -8,6 +8,7 @@
 #include<fstream>
 #include<variant>
 #include<utility>
+#include<limits>
 #include<memory>
 #include<vector>
 #include<random>
