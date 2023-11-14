@@ -866,13 +866,19 @@ bool Env<T>::contains(const std::string& name) const {
 }
 
 template<typename T>
-T Env<T>::get(const std::string& name) const{
-    //! @todo
-    return T{};
+T Env<T>::get(std::string name) const {
+    auto entry = this->m_bindings.find(name);
+    if(entry == this->m_bindings.end()){
+        throw std::runtime_error(
+            "'" + name + "' has no binding in the current environment"
+        );
+    }
+    return entry->second;
 }
 
 template<typename T>
-void Env<T>::put(std::string name, T value){}
+void Env<T>::put(std::string name, T value){
+}
 
 // -*-------------------------------------------------------------------*-
 // -*- operator<<                                                      -*-

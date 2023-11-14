@@ -76,7 +76,7 @@ public:
     Env();
     Env(const Env&);
     bool contains(const std::string& name) const;
-    T get(const std::string& name) const;
+    T get(std::string name) const;
     void put(std::string name, T value);
 
     friend std::ostream& operator<<(std::ostream& out, const Env&);
