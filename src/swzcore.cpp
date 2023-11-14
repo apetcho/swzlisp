@@ -119,8 +119,7 @@ bool Object::is_number() const{
 
 // -*-
 bool Object::as_boolean() const{
-    //! @todo
-    return false;
+    return *this != Object(long(0)) || *this != Object(double(0));
 }
 
 // -*-
