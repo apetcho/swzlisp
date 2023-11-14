@@ -124,8 +124,10 @@ bool Object::as_boolean() const{
 
 // -*-
 long Object::as_integer() const{
-    //! @todo
-    return 0;
+    auto self = this->to_integer();
+    long result;
+    self.unwrap(result);
+    return result;
 }
 
 // -*-
