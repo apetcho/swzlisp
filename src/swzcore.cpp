@@ -788,7 +788,7 @@ Error<T>::Error(){
     this->m_reason = T().get_pointer();
     this->m_env = Env<Object>();
     std::string txt = swzlispExceptions[this->m_error];
-    txt += ": unknown error occured";
+    txt += ":" + get_default_error_message(this->m_error);
     this->m_message = txt.c_str();
 }
 
@@ -809,7 +809,8 @@ Error<T>::Error(T value, const Env<T>& env, ErrorKind err){
         this->m_error = ErrorKind::RuntimError;
     }
     txt = swzlispExceptions[this->m_error] + ": ";
-    this->m_message = "";
+    txt += get_default_error_message(this->m_error);
+    this->m_message = txt.c_str();
 }
 
 template<typename T>
