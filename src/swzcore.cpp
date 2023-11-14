@@ -825,7 +825,15 @@ Error<T>::Error(const Error& other){
 }
 
 template<typename T>
-std::string Error<T>::describe(){}
+std::string Error<T>::describe(){
+    std::string result = swzlispExceptions[this->m_error] + ": ";
+    if(this->m_message==""){
+        result += get_default_error_message(this->m_error);
+    }else{
+        result += this->m_message;
+    }
+    return result;
+}
 
 // -*-------------------------------------------------------------------*-
 // -*- Env                                                             -*-
