@@ -886,7 +886,7 @@ void Env<T>::put(std::string name, T value){
 // -*-------------------------------------------------------------------*-
 // -*-
 std::ostream& operator<<(std::ostream& os, const Object& obj){
-    //! @todo
+    os << obj.str();
     return os;
 }
 
