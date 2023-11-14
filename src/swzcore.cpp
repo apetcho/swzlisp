@@ -157,8 +157,13 @@ std::string Object::as_string() const{
 
 // -*-
 std::string Object::as_atom() const {
-    //! @todo
-    return "";
+    if(this->m_type != Type::Atom){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    auto self = *this;
+    std::string result{};
+    self.unwrap(result);
+    return result;
 }
 
 // -*-
