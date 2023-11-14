@@ -124,6 +124,8 @@ public:
     static Object create_atom(std::string str);                                 // Atom
     static Object create_string(std::string str);                               // String
 
+    Type type() const{ return this->m_type; }
+
     // -*-
     std::vector<std::string> atoms();
     bool is_builtin() const;
