@@ -855,8 +855,14 @@ Env<T>::Env(const Env<T>& other){
 
 template<typename T>
 bool Env<T>::contains(const std::string& name) const {
-    //! @todo
-    return false;
+    bool result = false;
+    auto ptr = this->m_bindings.find(name);
+    if(ptr!=this->m_bindings.end()){
+        result = true;
+    }else{
+        result = this->m_parent->contains(name);
+    }
+    return result;
 }
 
 template<typename T>
