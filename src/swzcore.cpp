@@ -214,8 +214,15 @@ Object Object::to_integer() const {
 
 // -*-
 Object Object::to_float() const {
-    //! @todo
-    return Object();
+    if(!this->is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    if(this->m_type == Type::Float){
+        return *this;
+    }
+    // This object is an Integer
+    auto result = Object(static_cast<double>(this->as_integer()));
+    return result;
 }
 
 // -*-
