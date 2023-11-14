@@ -316,8 +316,7 @@ bool Object::operator<=(Object other) const{
 
 // -*-
 bool Object::operator<(Object other) const{
-    //! @todo
-    return false;
+    return !(*this <= other);
 }
 
 // -*-
