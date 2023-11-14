@@ -787,9 +787,7 @@ Error<T>::Error(){
     this->m_error = ErrorKind::RuntimError;
     this->m_reason = T().get_pointer();
     this->m_env = Env<Object>();
-    std::string txt = swzlispExceptions[this->m_error];
-    txt += ":" + get_default_error_message(this->m_error);
-    this->m_message = txt.c_str();
+    this->m_message = "";
 }
 
 /*
@@ -803,18 +801,20 @@ Error<T>::Error(T value, const Env<T>& env, ErrorKind err){
     this->m_error = err;
     this->m_reason = value.get_pointer();
     this->m_env = env;
-    std::string txt{};
     auto entry = swzlispExceptions.find(err);
     if(entry == swzlispExceptions.end()){
         this->m_error = ErrorKind::RuntimError;
     }
-    txt = swzlispExceptions[this->m_error] + ": ";
-    txt += get_default_error_message(this->m_error);
-    this->m_message = txt.c_str();
+    this->m_message = "";
 }
 
 template<typename T>
-Error<T>::Error(T value, const Env<T>& env, const char *message){}
+Error<T>::Error(T value, const Env<T>& env, const char *message){
+    this->m_error = ErrorKind::RuntimError;
+    this->m_reason = value.get_pointer();
+    this->m_env = env;
+    this->m_message = message;
+}
 
 template<typename T>
 Error<T>::Error(const Error& other){}
