@@ -97,8 +97,7 @@ std::vector<std::string> Object::atoms(){
 
 // -*-
 bool Object::is_builtin() const{
-    //! @todo
-    return false;
+    return this->m_type == Type::Builtin;
 }
 
 // -*-
