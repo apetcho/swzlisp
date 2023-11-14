@@ -114,8 +114,7 @@ Object Object::eval(Env<Object>& env){
 
 // -*-
 bool Object::is_number() const{
-    //! @todo
-    return false;
+    return this->m_type==Type::Integer || this->m_type==Type::Float;
 }
 
 // -*-
