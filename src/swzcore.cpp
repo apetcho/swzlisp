@@ -262,7 +262,7 @@ bool Object::operator==(Object other) const{
             self.unwrap(fn1);
             other.unwrap(fn2);
             result = (
-                fn1.first==fn2.first && fn1.second==fn2.second
+                fn1.name==fn2.name && fn1.fun==fn2.fun
             );
         }
         break;
@@ -656,8 +656,8 @@ std::string Object::str() const {
             auto self = *this;
             self.unwrap(builtin);
             std::ostringstream stream;
-            stream << "<" << builtin.first << " @ ";
-            stream << "0x" << std::hex << builtin.second << ">";
+            stream << "<" << builtin.name << " @ ";
+            stream << "0x" << std::hex << builtin.fun << ">";
             result = stream.str();
         }//
         break;
@@ -672,8 +672,88 @@ std::string Object::str() const {
 
 // -*-
 std::string Object::repr() const {
-    //! @todo
-    return "";
+    std::string result{};
+    switch(this->m_type){
+    case Type::Quote:{
+            List data;
+            auto self = *this;
+            self.unwrap(data);
+            result = "'" + data[0].repr();
+        }//
+        break;
+    case Type::Atom:{
+            auto self = *this;
+            self.unwrap(result);
+        }//
+        break;
+    case Type::Integer:{
+            long x;
+            this->to_integer().unwrap(x);
+            std::ostringstream stream;
+            stream << x;
+            result = stream.str();
+        }//
+        break;
+    case Type::Float:{
+            double x;
+            this->to_float().unwrap(x);
+            std::ostringstream stream;
+            stream << x;
+            result = stream.str();
+        }//
+        break;
+    case Type::String:{
+            std::string data;
+            auto self = *this;
+            self.unwrap(data);
+            for(size_t i=0; i < data.size(); i++){
+                if(data[i]=='"'){ result += "\\\""; }
+                else{ result.push_back(data[i]); }
+            }
+            result = "\"" + data + "\"";
+        }//
+        break;
+    case Type::Lambda:{
+            List items;
+            auto self = *this;
+            self.unwrap(items);
+            std::string data = "";
+            for(auto item: items){
+                data += item.repr() + " ";
+            }
+            data = std::string(data.begin(), data.end()-1);
+            result = "(lambda " + data + ")";
+        }//
+        break;
+    case Type::List:{
+            List items;
+            auto self = *this;
+            self.unwrap(items);
+            std::string data = "";
+            for(auto item: items){
+                data += item.repr() + " ";
+            }
+            data = std::string(data.begin(), data.end()-1);
+            result = "(" + data + ")";
+        }//
+        break;
+    case Type::Builtin:{
+            Builtin builtin;
+            auto self = *this;
+            self.unwrap(builtin);
+            std::ostringstream stream;
+            stream << "<" + builtin.name << " @ 0x";
+            stream << std::hex << builtin.fun << ">";
+            result = stream.str();
+        }//
+        break;
+    case Type::Unit:
+        result = "()";
+        break;
+    default:
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    return result;
 }
 
 // -*-------------------------------------------------------------------*-

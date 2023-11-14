@@ -164,8 +164,11 @@ private:
     // Fun -> Builtin
     // std::vector<Object> -> List, Lambda, Quote
     Type m_type;
+    struct Builtin{
+        std::string name;
+        Fun fun;
+    };
     typedef std::vector<Object> List;
-    typedef std::pair<std::string, Fun> Builtin;
     typedef std::variant<long, double, std::string, Builtin, List> Value;
     Env<Object> m_env; // lambda
     Value m_value;
