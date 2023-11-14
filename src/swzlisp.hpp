@@ -125,6 +125,7 @@ public:
     static Object create_string(std::string str);                               // String
 
     Type type() const{ return this->m_type; }
+    bool is_integer() const { return this->m_type==Type::Integer; }
 
     // -*-
     std::vector<std::string> atoms();
