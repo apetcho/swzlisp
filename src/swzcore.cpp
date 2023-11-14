@@ -891,8 +891,12 @@ std::ostream& operator<<(std::ostream& os, const Object& obj){
 }
 
 // -*-
-std::ostream& operator<<(std::ostream& os, const Env<Object>& enf){
-    //! @todo
+std::ostream& operator<<(std::ostream& os, const Env<Object>& env){
+    os << "{ " << std::endl;
+    for(auto entry: env.m_bindings){
+        os << "'" << entry.first << ": " << entry.second.repr() << ",\n";
+    }
+    os << "}" << std::endl;
     return os;
 }
 
