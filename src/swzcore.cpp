@@ -168,8 +168,13 @@ std::string Object::as_atom() const {
 
 // -*-
 std::vector<Object> Object::as_list() const{
-    //! @todo
-    return {};
+    if(this->m_type!=Type::List){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    auto self = *this;
+    std::vector<Object> result = {};
+    self.unwrap(result);
+    return result;
 }
 
 // -*-
