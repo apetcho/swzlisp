@@ -110,7 +110,7 @@ typedef Object (*Fun)(std::vector<Object>, Env<Object>&);
 
 
 // -*-
-class Object{
+class Object: public std::enable_shared_from_this<Object>{
 public:
     Object();                                                                   // Type::Unit
     Object(long);                                                               // Type::Integer 
@@ -123,6 +123,12 @@ public:
     static Object create_quote(Object obj);                                     // Quote
     static Object create_atom(std::string str);                                 // Atom
     static Object create_string(std::string str);                               // String
+
+    // -*-
+    std::shared_ptr<Object> get_pointer(){
+        return shared_from_this();
+    }
+    // -*-
 
     Type type() const{ return this->m_type; }
     bool is_integer() const { return this->m_type==Type::Integer; }
