@@ -527,8 +527,61 @@ Object Object::operator/(Object other) const {
 
 // -*-
 Object Object::operator%(Object other) const {
-    //! @todo
-    return Object();
+    if(this->m_type==Type::Unit && other.is_number()){
+        return other;
+    }
+    if(other.m_type==Type::Unit && this->is_number()){
+        return *this;
+    }
+
+    if(!(this->is_number() && other.is_number())){
+        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+    }
+
+    auto almost_equal = [](double x, double y) -> bool {
+        double eps = std::numeric_limits<double>::epsilon();
+        double delta = std::fabs(x-y);
+        x = std::fabs(x);
+        y = std::fabs(y);
+        double xymax = (x > y) ? x : y;
+        bool result = (delta <= xymax*eps) ? true: false;
+        return result;
+    };
+
+    Object result;
+    if(this->m_type==Type::Float){
+        double x, y;
+        this->to_float().unwrap(x);
+        other.to_float().unwrap(y);
+        if(almost_equal(y, 0.0)){
+            throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+        }
+        result.m_type = Type::Float;
+        result.m_value = std::fmod(x, y);
+    }else if(this->m_type==Type::Integer){
+        if(other.m_type==Type::Float){
+            double x, y;
+            this->to_float().unwrap(x);
+            other.to_float().unwrap(y);
+            if(almost_equal(y, 0.0)){
+                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+            }
+            result.m_type = Type::Float;
+            result.m_value = std::fmod(x, y);
+        }else{
+            long x, y;
+            this->to_integer().unwrap(x);
+            other.to_integer().unwrap(y);
+            if(y==0){
+                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+            }
+            result.m_type = Type::Integer;
+            result.m_value = (x % y);
+        }
+    }else{
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    return result;
 }
 
 // -*-
