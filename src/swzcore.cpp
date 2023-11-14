@@ -19,8 +19,17 @@ Object::Object(double val): m_type{Type::Float}, m_value{val}{}
 Object::Object(std::vector<Object> list): m_type{Type::List}, m_value{list}{}
 
 // -*-
-Object::Object(std::vector<Object> params, Object ans, const Env<Object>& env){
-    //! @todo
+Object::Object(std::vector<Object> params, Object ans, const Env<Object>& env)
+: m_type{Type::Lambda}{
+    std::vector<Object> self;
+    self.push_back(Object(params));
+    self.push_back(ans);
+    auto _atoms = ans.atoms();
+    for(auto name: _atoms){
+        if(env.contains(name)){
+            this->m_env.put(name, env.get(name));
+        }
+    }
 }
 
 // -*-
@@ -244,10 +253,16 @@ template<typename T>
 Env<T>::Env(const Env<T>& other){}
 
 template<typename T>
-bool Env<T>::contains(const std::string& name) const {}
+bool Env<T>::contains(const std::string& name) const {
+    //! @todo
+    return false;
+}
 
 template<typename T>
-T Env<T>::get(const std::string& name) const{}
+T Env<T>::get(const std::string& name) const{
+    //! @todo
+    return T{};
+}
 
 template<typename T>
 void Env<T>::put(std::string name, T value){}
