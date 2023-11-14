@@ -50,8 +50,10 @@ Object Object::create_quote(Object obj){
 
 // -*-
 Object Object::create_atom(std::string str){
-    //! @todo
-    return Object();
+    Object self;
+    self.m_type = Type::Atom;
+    self.m_value = str;
+    return self;
 }
 
 // -*-
