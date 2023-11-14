@@ -315,12 +315,12 @@ bool Object::operator<=(Object other) const{
 }
 
 // -*-
-bool Object::operator<(Object other) const{
+bool Object::operator>(Object other) const{
     return !(*this <= other);
 }
 
 // -*-
-bool Object::operator>(Object other) const{
+bool Object::operator<(Object other) const{
     if(!this->is_number()){
         throw Error(*this, Env<Object>(), ErrorKind::TypeError);
     }
@@ -349,8 +349,41 @@ bool Object::operator>(Object other) const{
 
 // -*-
 Object Object::operator+(Object other) const {
-    //! @todo
-    return Object();
+    if(other.m_type==Type::Unit){
+        return other;
+    }else if(this->m_type==Type::Unit){
+        return *this;
+    }
+
+    if(!this->is_number() || !other.is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    Object result;
+
+    if(this->m_type==Type::Float){
+        double x, y;
+        this->to_float().unwrap(x);
+        other.to_float().unwrap(y);
+        result.m_type = Type::Float;
+        result.m_value = (x+y);
+    }else if(this->m_type==Type::Integer){
+        if(other.m_type==Type::Float){
+            double x, y;
+            this->to_float().unwrap(x);
+            other.to_float().unwrap(y);
+            result.m_type = Type::Float;
+            result.m_value = (x + y);
+        }else{
+            long x, y;
+            this->to_integer().unwrap(x);
+            other.to_integer().unwrap(y);
+            result.m_type = Type::Integer;
+            result.m_value = (x+y);
+        }
+    }
+    //! @note: ---- maybe implement the same operator for String & List
+
+    return result;
 }
 
 // -*-
