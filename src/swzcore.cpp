@@ -839,10 +839,19 @@ std::string Error<T>::describe(){
 // -*- Env                                                             -*-
 // -*-------------------------------------------------------------------*-
 template<typename T>
-Env<T>::Env(){}
+Env<T>::Env(){
+    this->m_bindings = {};
+    this->m_parent = nullptr;
+}
 
 template<typename T>
-Env<T>::Env(const Env<T>& other){}
+Env<T>::Env(const Env<T>& other){
+    this->m_bindings = {};
+    for(auto entry=other.m_bindings.begin(); entry!=other.m_bindings.end(); entry++){
+        this->m_bindings[entry->first] = entry->second;
+    }
+    this->m_parent = other.m_parent;
+}
 
 template<typename T>
 bool Env<T>::contains(const std::string& name) const {
