@@ -126,6 +126,7 @@ public:
 
     Type type() const{ return this->m_type; }
     bool is_integer() const { return this->m_type==Type::Integer; }
+    bool is_float() const { return this->m_type==Type::Float; }
 
     // -*-
     std::vector<std::string> atoms();
