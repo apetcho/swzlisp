@@ -78,6 +78,9 @@ public:
     bool contains(const std::string& name) const;
     T get(std::string name) const;
     void put(std::string name, T value);
+    void set_parent(const std::shared_ptr<Env>& parent){
+        this->m_parent = parent;
+    }
 
     friend std::ostream& operator<<(std::ostream& out, const Env&);
 
