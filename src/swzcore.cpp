@@ -586,8 +586,8 @@ Object Object::operator%(Object other) const {
 
 // -*-
 std::string Object::type_name(){
-    //! @todo
-    return "";
+    std::string result = swzlispTypes[this->m_type];
+    return result;
 }
 
 // -*-
