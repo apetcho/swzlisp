@@ -760,7 +760,14 @@ std::string Object::repr() const {
 // -*- Error                                                           -*-
 // -*-------------------------------------------------------------------*-
 template<typename T>
-Error<T>::Error(){}
+Error<T>::Error(){
+    this->m_error = ErrorKind::RuntimError;
+    this->m_reason = T().get_pointer();
+    this->m_env = Env<Object>();
+    std::string txt = swzlispExceptions[this->m_error];
+    txt += ": unknown error occured";
+    this->m_message = txt.c_str();
+}
 
 /*
 ErrorKind m_error;
