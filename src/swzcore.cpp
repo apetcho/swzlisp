@@ -321,8 +321,30 @@ bool Object::operator<(Object other) const{
 
 // -*-
 bool Object::operator>(Object other) const{
-    //! @todo
-    return false;
+    if(!this->is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    bool result = false;
+    if(this->m_type==Type::Float){
+        auto self = *this;
+        double x, y;
+        self.unwrap(x);
+        other.to_float().unwrap(y);
+        result = (x < y);
+    }else if(this->m_type==Type::Integer){
+        if(other.m_type==Type::Float){
+            double x, y;
+            this->to_float().unwrap(x);
+            other.unwrap(y);
+            result = (x < y);
+        }else{
+            long x, y;
+            this->to_integer().unwrap(x);
+            other.unwrap(y);
+            result = (x < y);
+        }
+    }
+    return result;
 }
 
 // -*-
