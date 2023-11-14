@@ -82,6 +82,7 @@ public:
     std::shared_ptr<Env<T>> get_pointer(){
         return shared_from_this();
     }
+    
     void set_parent(const std::shared_ptr<Env>& parent){
         this->m_parent = parent;
     }
