@@ -89,6 +89,7 @@ template<typename T>
 class Error {
 public:
     Error();
+    Error(T value, const Env<T>& env, ErrorKind);
     Error(T value, const Env<T>& env, const char *message);
     Error(const Error& other);
     ~Error();
@@ -96,6 +97,7 @@ public:
     std::string describe();
 
 private:
+    ErrorKind m_error;
     std::shared_ptr<T> m_reason;
     Env<T> m_env;
     const char* m_message;

@@ -124,6 +124,9 @@ bool Object::as_boolean() const{
 
 // -*-
 long Object::as_integer() const{
+    if(!this->is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
     auto self = this->to_integer();
     long result;
     self.unwrap(result);
@@ -132,6 +135,9 @@ long Object::as_integer() const{
 
 // -*-
 double Object::as_float() const{
+    if(!this->is_number()){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
     auto self = this->to_float();
     double result;
     self.unwrap(result);
@@ -140,8 +146,13 @@ double Object::as_float() const{
 
 // -*-
 std::string Object::as_string() const{
-    //! @todo
-    return "";
+    if(this->m_type != Type::String){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    std::string result{};
+    auto self = *this;
+    self.unwrap(result);
+    return result;
 }
 
 // -*-
