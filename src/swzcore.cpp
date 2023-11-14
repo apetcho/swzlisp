@@ -227,8 +227,76 @@ Object Object::to_float() const {
 
 // -*-
 bool Object::operator==(Object other) const{
-    //! @todo
-    return false;
+    if(this->m_type==Type::Float && other.m_type==Type::Integer){
+        return *this == other.to_float();
+    }
+    if(this->m_type==Type::Integer && other.m_type==Type::Float){
+        return this->to_float()==other;
+    }
+    if(this->m_type != other.m_type){
+        return false;
+    }
+
+    bool result = false;
+    switch(this->m_type){
+    case Type::Float:{
+            double x, y;
+            auto self = *this;
+            self.unwrap(x);
+            other.unwrap(y);
+            result = (x == y);
+        }//
+        break;
+    case Type::Integer:{
+            long x, y;
+            auto self = *this;
+            self.unwrap(x);
+            other.unwrap(y);
+            result = (x == y);
+        }//
+        break;
+    case Type::Builtin:{
+            Builtin fn1;
+            Builtin fn2;
+            auto self = *this;
+            self.unwrap(fn1);
+            other.unwrap(fn2);
+            result = (
+                fn1.first==fn2.first && fn1.second==fn2.second
+            );
+        }
+        break;
+    case Type::String:
+    case Type::Atom:{
+            std::string x, y;
+            auto self = *this;
+            self.unwrap(x);
+            other.unwrap(y);
+            result = x == y;
+        }//
+        break;
+    case Type::Lambda:
+    case Type::List:{
+            List x, y;
+            auto self = *this;
+            self.unwrap(x);
+            other.unwrap(y);
+            result = (x == y);
+        }//
+        break;
+    case Type::Quote:{
+            List x, y;
+            auto self = *this;
+            self.unwrap(x);
+            other.unwrap(y);
+            result = (x[0]==y[0]);
+        }//
+        break;
+    default:
+        result = true;
+        break;
+    }
+    return result;
 }
 
 // -*-
