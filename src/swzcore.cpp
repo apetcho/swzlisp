@@ -189,8 +189,14 @@ void Object::push(Object obj){
 
 // -*-
 Object Object::pop(){
-    //! @todo
-    return Object();
+    if(this->m_type != Type::List){
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    auto& self = std::get<List>(this->m_value);
+    size_t len = self.size();
+    auto result = self[len-1];
+    self.pop_back();
+    return result;
 }
 
 // -*-
