@@ -10,9 +10,7 @@ namespace swzlisp{
 Object::Object(): m_type{Type::Unit}{}
 
 // -*-
-Object::Object(long val){
-    //! @todo
-}
+Object::Object(long val): m_type{Type::Integer}, m_value{val}{}
 
 // -*-
 Object::Object(double val){
