@@ -759,6 +759,29 @@ std::string Object::repr() const {
 // -*-------------------------------------------------------------------*-
 // -*- Error                                                           -*-
 // -*-------------------------------------------------------------------*-
+// -*-
+static std::string get_default_error_message(ErrorKind err){
+    std::string result{};
+    switch(err){
+    case ErrorKind::RuntimError:
+        result = "unknown error";
+        break;
+    case ErrorKind::SyntaxError:
+        result = "invalid syntax";
+        break;
+    case ErrorKind::TypeError:
+        result = "type mismatch";
+        break;
+    case ErrorKind::ValueError:
+        result = "invalid value or argument";
+        break;
+    case ErrorKind::ZeroDivisionError:
+        result = "invalid operation. Division by zero";
+        break;
+    }
+    return result;
+}
+// -*-
 template<typename T>
 Error<T>::Error(){
     this->m_error = ErrorKind::RuntimError;
@@ -776,7 +799,18 @@ Env<T> m_env;
 const char* m_message;
 */
 template<typename T>
-Error<T>::Error(T value, const Env<T>& env, ErrorKind){}
+Error<T>::Error(T value, const Env<T>& env, ErrorKind err){
+    this->m_error = err;
+    this->m_reason = value.get_pointer();
+    this->m_env = env;
+    std::string txt{};
+    auto entry = swzlispExceptions.find(err);
+    if(entry == swzlispExceptions.end()){
+        this->m_error = ErrorKind::RuntimError;
+    }
+    txt = swzlispExceptions[this->m_error] + ": ";
+    this->m_message = "";
+}
 
 template<typename T>
 Error<T>::Error(T value, const Env<T>& env, const char *message){}
