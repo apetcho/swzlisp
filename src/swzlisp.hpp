@@ -108,17 +108,87 @@ typedef Object (*Fun)(std::vector<Object>, Env<Object>&);
 // -*-
 class Object{
 public:
-    Object();                                           // Type::Unit
-    Object(long);                                       // Type::Integer 
-    Object(double);                                     // Type::Float
-    Object(std::vector<Object>);                        // Type::List
-    Object(const Object&);                              // Type::Quote
-    Object(std::string, Type);                          // Type::Atom or Type::String
-    Object(std::vector<Object>, Object, const Env<Object>&);    // Type::Lambda
-    Object(std::string, Fun);      // Type::Builtin
+    Object();                                                                   // Type::Unit
+    Object(long);                                                               // Type::Integer 
+    Object(double);                                                             // Type::Float
+    Object(std::vector<Object>);                                                // Type::List
+    Object(const Object&);                                                      // Type::Quote
+    Object(std::vector<Object> params, Object ans, const Env<Object>& env);     // Type::Lambda
+    Object(std::string, Fun);                                                   // Type::Builtin
 
+    // -
+    static Object create_quote(Object obj);                                     // Quote
+    static Object create_atom(std::string str);                                 // Atom
+    static Object create_string(std::string& str);                              // String
+
+    // -*-
+    std::vector<std::string> atoms();
+    bool is_builtin() const;
+    Object apply(std::vector<Object> args, Env<Object>& env);
+    Object eval(Env<Object>& env);
+    bool is_number() const;
+    bool as_bool() const;
+    long as_integer() const;
+    double as_float() const;
+    std::string as_string() const;
+    std::string as_atom() const;
+    std::vector<Object> as_list() const;
+    void push(Object obj);
+    Object pop();
+    Object to_integer() const;
+    Object to_float() const;
+    bool operator==(Object other) const;
+    bool operator!=(Object other) const;
+    bool operator>=(Object other) const;
+    bool operator<=(Object other) const;
+    bool operator>(Object other) const;
+    bool operator<(Object other) const;
+    Object operator+(Object other) const;
+    Object operator-(Object other) const;
+    Object operator*(Object other) const;
+    Object operator/(Object other) const;
+    Object operator%(Object other) const;
+    std::string type_name();
+    std::string to_string() const;
+    std::string repr() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Object& obj);
 
 private:
+    // long -> Integer
+    // double -> Float
+    // std::string -> String, Atom
+    // Fun -> Builtin
+    // std::vector<Object> -> List, Lambda, Quote
+    Type m_type;
+    typedef std::variant<long, double, std::string, Fun, std::vector<Object>> Value;
+    Env<Object> m_env; // lambda
+    Value m_value;
+
+    // -*-
+    void get_value(long& value){
+        value = std::get<long>(m_value);
+    }
+
+    // -*-
+    void get_value(double& value){
+        value = std::get<double>(m_value);
+    }
+
+    // -*-
+    void get_value(std::string& value){
+        value = std::get<std::string>(m_value);
+    }
+
+    // -*-
+    void get_value(Fun& value){
+        value = std::get<Fun>(m_value);
+    }
+    
+    // -*-
+    void get_value(std::vector<Object>& value){
+        value = std::get<std::vector<Object>>(m_value);
+    }
 };
 
 
