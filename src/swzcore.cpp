@@ -19,11 +19,14 @@ Object::Object(double val): m_type{Type::Float}, m_value{val}{}
 Object::Object(std::vector<Object> list): m_type{Type::List}, m_value{list}{}
 
 // -*-
-Object::Object(std::vector<Object> params, Object ans, const Env<Object>& env)
+Object::Object(std::vector<Object> params, Object body, const Env<Object>& env)
 : m_type{Type::Lambda}{
     std::vector<Object> self;
     self.push_back(Object(params));
     self.push_back(ans);
+    Lambda lambda;
+    lambda.params = params;
+    lambda.body = body;
     auto _atoms = ans.atoms();
     for(auto name: _atoms){
         if(env.contains(name)){
@@ -102,8 +105,58 @@ bool Object::is_builtin() const{
 
 // -*-
 Object Object::apply(std::vector<Object> args, Env<Object>& env){
-    //! @todo
-    return Object();
+    Env<Object> scope;
+    Object result;
+    List params;
+    switch(this->m_type){
+    case Type::Lambda:{
+            auto self = *this;
+            List data;
+            self.unwrap(data);
+            std::vector<Object> vec;
+            if(data[0].m_type==Type::List){
+                throw Error(*this, env, ErrorKind::SyntaxError);
+            }else{
+                // for(size_t i=0; i < data[0].size()){}
+            }
+            params = vec;
+            if(params.size() != args.size()){
+                std::string msg = (
+                    args.size() > params.size() ?
+                    "No enough arguments" : "Too many arguments"
+                );
+                msg = swzlispExceptions[ErrorKind::SyntaxError] + ": " + msg;
+                throw Error(Object(args), env, msg.c_str());
+            }
+            scope = this->m_env;
+            scope.set_parent(env.get_pointer());
+            for(size_t i=0; i < params.size(); i++){
+                if(params[i].m_type!=Type::Atom){
+                    throw Error(*this, env, ErrorKind::RuntimError);
+                }
+                Object obj = params[i];
+                std::string name;
+                obj.unwrap(name);
+                scope.put(name, args[i]);
+            }
+            result = data[1].eval(scope);
+        }//
+        break;
+    case Type::Builtin:{
+            Builtin builtin;
+            auto self = *this;
+            self.unwrap(builtin);
+            result = builtin.fun(args, env);
+        }//
+        break;
+    default:{
+            std::string message = swzlispExceptions[ErrorKind::SyntaxError];
+            message += ": expect a function or a lambda";
+            throw Error(*this, env, message.c_str());
+        }//
+        break;
+    }
+    return result;
 }
 
 // -*-

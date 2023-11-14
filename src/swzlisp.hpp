@@ -71,13 +71,17 @@ static std::map<ErrorKind, std::string> swzlispExceptions = {
 
 // -*-
 template<typename T>
-class Env{
+class Env: public std::enable_shared_from_this<Env<T>>{
 public:
     Env();
     Env(const Env&);
     bool contains(const std::string& name) const;
     T get(std::string name) const;
     void put(std::string name, T value);
+
+    std::shared_ptr<Env<T>> get_pointer(){
+        return shared_from_this();
+    }
     void set_parent(const std::shared_ptr<Env>& parent){
         this->m_parent = parent;
     }
@@ -120,7 +124,20 @@ public:
     Object(double);                                                             // Type::Float
     Object(std::vector<Object>);                                                // Type::List
     Object(std::vector<Object> params, Object ans, const Env<Object>& env);     // Type::Lambda
-    Object(std::string, Fun);                                                   // Type::Builtin
+    Object(std::string, Fun);                                                  // Type::Builtin
+    
+    Object(const Object& other){
+        this->m_type = other.m_type;
+        this->m_value = other.m_value;
+    }
+
+    Object& operator=(const Object& other){
+        if(this!=&other){
+            this->m_type = other.m_type;
+            this->m_value = other.m_value;
+        }
+        return *this;
+    }
 
     // -
     static Object create_quote(Object obj);                                     // Quote
@@ -178,15 +195,25 @@ private:
     // Fun -> Builtin
     // std::vector<Object> -> List, Lambda, Quote
     Type m_type;
+    typedef std::vector<Object> List;
     struct Builtin{
         std::string name;
         Fun fun;
     };
-    typedef std::vector<Object> List;
-    typedef std::variant<long, double, std::string, Builtin, List> Value;
-    Env<Object> m_env; // lambda
+    struct Lambda{
+        List params;
+        std::shared_ptr<Object> body;
+        Env<Object> env; // lambda
+    };
+    
+    typedef std::variant<long, double, std::string, Lambda, Builtin, List> Value;
+    
     Value m_value;
 
+    // -*-
+    void unwrap(Lambda& value){
+        value = std::get<Lambda>(m_value);
+    }
     // -*-
     void unwrap(long& value){
         value = std::get<long>(m_value);
