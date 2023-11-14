@@ -132,8 +132,10 @@ long Object::as_integer() const{
 
 // -*-
 double Object::as_float() const{
-    //! @todo
-    return 0.0;
+    auto self = this->to_float();
+    double result;
+    self.unwrap(result);
+    return result;
 }
 
 // -*-
