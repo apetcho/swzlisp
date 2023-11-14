@@ -84,8 +84,24 @@ private:
     std::shared_ptr<Env> m_parent;
 };
 
+// -*-
+template<typename T>
+class Error {
+public:
+    Error();
+    Error(T value, const Env<T>& env, const char *cstr);
+    Error(const Error& other);
+    ~Error();
+
+    std::string describe();
+
+private:
+    std::shared_ptr<T> m_reason;
+    Env<T> m_env;
+    const char* m_cstr;
+};
+
 class Object;
-//class Env;
 typedef Object (*Fun)(std::vector<Object>, Env<Object>&);
 
 
