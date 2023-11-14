@@ -152,7 +152,7 @@ public:
     Object operator/(Object other) const;
     Object operator%(Object other) const;
     std::string type_name();
-    std::string to_string() const;
+    std::string str() const;
     std::string repr() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);

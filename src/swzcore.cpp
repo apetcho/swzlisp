@@ -591,9 +591,83 @@ std::string Object::type_name(){
 }
 
 // -*-
-std::string Object::to_string() const {
-    //! @todo
-    return "";
+std::string Object::str() const {
+    std::string result;
+    switch(this->m_type){
+    case Type::Quote:{
+            List data;
+            auto self = *this;
+            self.unwrap(data);
+            result = "'" + data[0].repr();
+        }//
+        break;
+    case Type::Atom:{
+            auto self = *this;
+            self.unwrap(result);
+        }//
+        break;
+    case Type::Integer:{
+            long data;
+            this->to_integer().unwrap(data);
+            std::ostringstream stream;
+            stream << data;
+            result = stream.str();
+        }//
+        break;
+    case Type::Float:{
+            double data;
+            this->to_float().unwrap(data);
+            std::ostringstream stream;
+            stream << data;
+            result = stream.str();
+        }//
+        break;
+    case Type::String:{
+            auto self = *this;
+            self.unwrap(result);
+        }//
+        break;
+    case Type::Lambda:{
+            std::string data = "";
+            List items;
+            auto self = *this;
+            self.unwrap(items);
+            for(auto item: items){
+                data += item.repr() + " ";
+            }
+            data = std::string(data.begin(), data.end()-1);
+            result = "(lambda " + data + ")";
+        }//
+        break;
+    case Type::List:{
+            List items;
+            auto self = *this;
+            self.unwrap(items);
+            std::string data = "";
+            for(auto item: items){
+                data += item.repr() + " ";
+            }
+            data = std::string(data.begin(), data.end()-1);
+            result = "(" + data + ")";
+        }//
+        break;
+    case Type::Builtin:{
+            Builtin builtin;
+            auto self = *this;
+            self.unwrap(builtin);
+            std::ostringstream stream;
+            stream << "<" << builtin.first << " @ ";
+            stream << "0x" << std::hex << builtin.second << ">";
+            result = stream.str();
+        }//
+        break;
+    case Type::Unit:
+        result = "()";
+        break;
+    default:
+        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+    }
+    return result;
 }
 
 // -*-
