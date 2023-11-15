@@ -93,7 +93,26 @@ static Object fun_defun(std::vector<Object> args, Env& env){
     return fun;
 }
 
-static Object fun_while(std::vector<Object> args, Env& env);
+// -*-
+// (while test body...)
+static Object fun_while(std::vector<Object> args, Env& env){
+    if(args.size()< 1){
+        Object self = Object();
+        std::string msg = "Invalid 'while-loop' expression";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    Object result;
+    while(args[0].eval(env).as_boolean()){
+        for(size_t i=1; i < args.size()-1; i++){
+            args[i].eval(env);
+        }
+        result = args[args.size()-1].eval(env);
+    }
+    return result;
+}
+
 static Object fun_for(std::vector<Object> args, Env& env);
 static Object fun_do(std::vector<Object> args, Env& env);
 static Object fun_scope(std::vector<Object> args, Env& env);
