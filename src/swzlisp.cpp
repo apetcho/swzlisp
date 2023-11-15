@@ -236,7 +236,63 @@ static double my_random(double minval, double maxval){
     return dist(rng);
 }
 
-static Object fun_random(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_random(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    Object result;
+    std::ostringstream stream;
+    stream << "Invalid 'random' call expression.\n";
+    stream << "Examples of how to call 'random' \n\n";
+    stream << "(random)               ; will return a random number in [0.0 1.0)\n";
+    stream << "(random max)           ; will return a random number in [0.0 max)\n";
+    stream << "(random min max)       ; will return a random number in [min max)\n";
+    stream << "(random min max count) ; will return a list of 'count' random ";
+    stream << "numbers in [min max)\n";
+    if(args.size()==0){
+        result = Object(my_random());
+    }else if(args.size()==1){
+        double max = args[0].as_float();
+        if(max < 0){
+            Object self = Object();
+            auto msg = stream.str();
+            auto error = Error(self, env, msg.c_str());
+            throw Error(error);
+        }
+        result = Object(my_random(max));
+    }else if(args.size()==2){
+        double min = args[0].as_float();
+        double max = args[1].as_float();
+        if(min > max){
+            Object self = Object();
+            auto msg = stream.str();
+            auto error = Error(self, env, msg.c_str());
+            throw Error(error);
+        }
+        result = Object(my_random(min, max));
+    }else if(args.size()==3){
+        double min = args[0].as_float();
+        double max = args[1].as_float();
+        size_t count = static_cast<size_t>(args[2].as_integer());
+        if(min > max){
+            Object self = Object();
+            auto msg = stream.str();
+            auto error = Error(self, env, msg.c_str());
+            throw Error(error);
+        }
+        std::vector<Object> values{};
+        for(size_t i=0; i < count; i++){
+            values.push_back(Object(my_random(min, max)));
+        }
+        result = Object(values);
+    }else{
+        Object self = Object();
+        auto msg = stream.str();
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    return result;
+}
+
 static Object fun_read_file(std::vector<Object> args, Env& env);
 static Object fun_write_file(std::vector<Object> args, Env& env);
 static Object fun_import(std::vector<Object> args, Env& env);
