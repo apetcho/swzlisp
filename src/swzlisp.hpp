@@ -302,7 +302,7 @@ public:
     static Object execute(Env& env);
     static Object execute(std::string source, Env& env);
     static Object execute(std::string filename);
-    static Object repl(Env& env);
+    static void repl(Env& env);
     static Env builtins;
 };
 

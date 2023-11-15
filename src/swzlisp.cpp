@@ -1160,10 +1160,10 @@ void export_to_file(const std::string& data){
 }
 
 // -*-
-Object Runtime::repl(Env& env){
+void Runtime::repl(Env& env){
     std::string source;
     std::string input;
-    Object tmp;
+    Object result;
     std::vector<Object> parsed{};
     /*
     - :help
@@ -1173,9 +1173,33 @@ Object Runtime::repl(Env& env){
     - :bye
     - :lookfor 
     */
-
-   return Object();
+    Env localEnv(env);
+    while(true){
+        std::cout << ">>> ";
+        std::getline(std::cin, input);
+        if(input==":quit" || input==":bye" || input==":exit"){
+            break;
+        }else if(input==":whos"){
+            whos(localEnv.bindings());
+        }else if(input==":export"){
+            export_to_file(source);
+        }else if(input != ""){
+            try{
+                result = Runtime::execute(input, localEnv);
+                std::cout << " => " << result.repr() << std::endl;
+                source += input + "\n";
+            }catch(Error& err){
+                std::cerr << err.describe() << std::endl;
+            }catch(std::exception& err){
+                std::cout << err.what() << std::endl;
+            }
+        }
+    }
 }
+
+// -*-
+
+// -*-
 
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
