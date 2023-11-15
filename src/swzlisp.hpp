@@ -69,17 +69,18 @@ static std::map<ErrorKind, std::string> swzlispExceptions = {
 // replace()
 // is_symbol() | is_valid_char()
 
+class Object;
 // -*-
-template<typename T>
-class Env: public std::enable_shared_from_this<Env<T>>{
+//template<typename T>
+class Env: public std::enable_shared_from_this<Env>{
 public:
     Env();
     Env(const Env&);
     bool contains(const std::string& name) const;
-    T get(std::string name) const;
-    void put(std::string name, T value);
+    const Object& get(std::string name) const;
+    void put(std::string name, Object& value);
 
-    std::shared_ptr<Env<T>> get_pointer(){
+    std::shared_ptr<Env> get_pointer(){
         return shared_from_this();
     }
     
@@ -90,17 +91,17 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Env&);
 
 private:
-    std::map<std::string, T> m_bindings;
+    std::map<std::string, Object> m_bindings;
     std::shared_ptr<Env> m_parent;
 };
 
 // -*-
-template<typename T>
+//template<typename T>
 class Error {
 public:
     Error();
-    Error(T value, const Env<T>& env, ErrorKind);
-    Error(T value, const Env<T>& env, const char *message);
+    Error(Object& value, const Env& env, ErrorKind);
+    Error(Object& value, const Env& env, const char *message);
     Error(const Error& other);
     ~Error();
 
@@ -108,13 +109,13 @@ public:
 
 private:
     ErrorKind m_error;
-    std::shared_ptr<T> m_reason;
-    Env<T> m_env;
+    std::shared_ptr<Object> m_reason;
+    Env m_env;
     const char* m_message;
 };
 
 class Object;
-typedef Object (*Fun)(std::vector<Object>, Env<Object>&);
+typedef Object (*Fun)(std::vector<Object>, Env&);
 
 
 // -*-
@@ -124,8 +125,8 @@ public:
     Object(long);                                                               // Type::Integer 
     Object(double);                                                             // Type::Float
     Object(std::vector<Object>);                                                // Type::List
-    Object(std::vector<Object> params, Object ans, const Env<Object>& env);     // Type::Lambda
-    Object(std::string, Fun);                                                  // Type::Builtin
+    Object(std::vector<Object> params, Object ans, const Env& env);             // Type::Lambda
+    Object(std::string, Fun);                                                   // Type::Builtin
     
     Object(const Object& other){
         this->m_type = other.m_type;
@@ -159,8 +160,8 @@ public:
     // -*-
     std::vector<std::string> atoms();
     bool is_builtin() const;
-    Object apply(std::vector<Object> args, Env<Object>& env);
-    Object eval(Env<Object>& env);
+    Object apply(std::vector<Object> args, Env& env);
+    Object eval(Env& env);
     bool is_number() const;
     bool as_boolean() const;
     long as_integer() const;
@@ -204,7 +205,7 @@ private:
     struct Lambda{
         List params;
         std::shared_ptr<Object> body;
-        Env<Object> env; // lambda
+        Env env; // lambda
     };
     
     typedef std::variant<long, double, std::string, Lambda, Builtin, List> Value;
@@ -258,13 +259,17 @@ private:
     std::string::iterator m_iter;
 
 public:
-    Parser(std::string& source);
+    Parser(const std::string& source);
     ~Parser() = default;
 
     // -*-
     static void replace(std::string &input, std::string old, std::string neo);
-    Object next_token();
     std::vector<Object> parse();
+private:
+    void skip_whitespace();
+    void skip_line();
+    bool is_valid_char();
+    Object next_token();
 };
 
 // -*-
@@ -281,11 +286,11 @@ public:
     // ::read_file(const std::string& filename) -> std::string
     static std::string read_file(const std::string& filename);
     // +run(std::string, Env<Object>&) -> Object
-    static Object execute(Env<Object>& env);
-    static Object execute(std::string source, Env<Object>& env);
+    static Object execute(Env& env);
+    static Object execute(std::string source, Env& env);
     static Object execute(std::string filename);
-    static Object repl(Env<Object>& env);
-    static Env<Object> builtins;
+    static Object repl(Env& env);
+    static Env builtins;
 };
 
 
