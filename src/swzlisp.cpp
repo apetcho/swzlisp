@@ -852,7 +852,34 @@ static Object fun_map(std::vector<Object> args, Env& env){
     return Object(result);
 }
 
-static Object fun_filter(std::vector<Object> args, Env& env);
+// -*-
+// (filter predicate listobj)
+static Object fun_filter(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid 'filter' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    std::vector<Object> result{};
+    std::vector<Object> tmp{};
+    std::vector<Object> data = args[1].as_list();
+    auto predicate = args[0];
+    for(size_t i=0; i < data.size(); i++){
+        tmp.push_back(data[i]);
+        // filter
+        if(predicate.apply(tmp, env).as_boolean()){
+            result.push_back(data[i]);
+        }
+        tmp.clear();
+    }
+
+    return Object(result);
+}
+
 static Object fun_reduce(std::vector<Object> args, Env& env);
 static Object fun_range(std::vector<Object> args, Env& env);
 
