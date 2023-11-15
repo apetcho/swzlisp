@@ -72,6 +72,20 @@ void Parser::read_unit(std::shared_ptr<Object>& unit){
     }
 }
 
+// -*-
+void Parser::read_quote(std::shared_ptr<Object>& objp){
+    std::string::iterator ptr = this->m_iter;
+    bool predicate = (*this->m_iter=='\'');
+    if(predicate){
+        this->skip_if(predicate);
+        Object self = Object::create_quote(this->next_token());
+        if(objp != nullptr){ objp.reset(); }
+        objp = std::make_shared<Object>(self);
+    }else{
+        throw Error();
+    }
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-
