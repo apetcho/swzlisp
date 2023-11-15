@@ -669,6 +669,7 @@ static Object fun_remove(std::vector<Object> args, Env& env){
 }
 
 // -*-
+// (length list)
 static Object fun_length(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
@@ -683,7 +684,25 @@ static Object fun_length(std::vector<Object> args, Env& env){
     return Object(static_cast<long>(data.size()));
 }
 
-static Object fun_push(std::vector<Object> args, Env& env);
+// -*-
+//(push data item1 item2 ... itemn)
+static Object fun_push(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 0){
+        Object self = Object();
+        std::string msg = "Invalid 'push' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto data = args[0].as_list();
+    for(size_t i=1; i < args.size(); i++){
+        data.push_back(args[i]);
+    }
+    return data;
+}
+
 static Object fun_pop(std::vector<Object> args, Env& env);
 static Object fun_head(std::vector<Object> args, Env& env);
 static Object fun_tail(std::vector<Object> args, Env& env);
