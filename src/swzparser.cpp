@@ -25,7 +25,7 @@ Object Parser::next_token(){
 }
 
 // -*-
-bool Parser::is_valid_char(){
+bool Parser::is_valid_symbol_char(){
     bool result = (
         (std::isalpha(*this->m_iter) || std::ispunct(*this->m_iter)) &&
         *this->m_iter != '(' && *this->m_iter != ')' &&

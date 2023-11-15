@@ -268,9 +268,15 @@ public:
 private:
     void skip_whitespace();
     void skip_line();
-    bool is_valid_char();
+    bool is_valid_symbol_char();
     Object next_token();
     void skip(bool predicate);
+    Object read_unit();
+    Object read_quote();
+    Object read_list();
+    Object read_number();
+    Object read_string();
+    Object read_symbol();
 };
 
 // -*-
