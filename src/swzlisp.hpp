@@ -80,6 +80,8 @@ public:
     const Object& get(std::string name) const;
     void put(std::string name, Object& value);
 
+    void merge(const Env& other);
+
     std::shared_ptr<Env> get_pointer(){
         return shared_from_this();
     }

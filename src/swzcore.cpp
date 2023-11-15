@@ -993,6 +993,14 @@ void Env::put(std::string name, Object& value){
     this->m_bindings[name] = value;
 }
 
+void Env::merge(const Env& other){
+    auto entry = other.m_bindings.begin();
+    while(entry != other.m_bindings.end()){
+        this->m_bindings[entry->first] = entry->second;
+        entry++;
+    }
+}
+
 // -*-------------------------------------------------------------------*-
 // -*- operator<<                                                      -*-
 // -*-------------------------------------------------------------------*-
