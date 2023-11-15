@@ -1277,7 +1277,26 @@ static Env swzlisp_init(){
 
     return env;
 }
+
 // -*-
+// ./prog
+// ./prog -h
+// ./prog -i
+// ./prog -f filename
+// ./prog -c sexpr
+
+
+static std::string progname;
+
+static void usage(){
+    std::string help = progname + " [-h]|[-i]|[-c sexpr]|[-f filename]\n";
+    std::cout << help << std::endl;
+    std::cout << "Options:\n";
+    std::cout << "     -h              Print this message\n";
+    std::cout << "     -i              Enter interactive mode\n";
+    std::cout << "     -c sexpr        Run 'sexpr'\n";
+    std::cout << "     -f script       Run 'scipt' in batch mode" << std::endl;
+}
 
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
