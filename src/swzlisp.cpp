@@ -983,10 +983,10 @@ static Object fun_range(std::vector<Object> args, Env& env){
     std::ostringstream err;
     err << "Invalid call to 'range' and argument are integer values\n";
     err << "Here is how to call 'range':\n\n";
-    err << "(range stop)            ; result: (0, 1, ... stop-1)";
-    err << "(range start stop)      ; result: (start, start+1, ..., stop-1)";
+    err << "(range stop)            ; result: (0, 1, ... stop-1)\n";
+    err << "(range start stop)      ; result: (start, start+1, ..., stop-1)\n";
     err << "(range start stop step) ; result: (start, start+step, ... last) ";
-    err << " where last <= stop";
+    err << " where last <= stop\n";
 
     std::vector<Object> result{};
     if(args.size() == 1){
@@ -1033,7 +1033,57 @@ static Object fun_range(std::vector<Object> args, Env& env){
 }
 
 // -*-
-static Object fun_linspace(std::vector<Object> args, Env& env);
+// (linspace start stop)
+// (linspace start stop count)
+static Object fun_linspace(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() < 2 || args.size() > 3){
+        Object self = Object();
+        std::string msg = "Invalid 'linspace' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    std::ostringstream err;
+    err << "Invalid call to 'linspace'.\n";
+    err << "Here is how to call 'linspace':\n\n";
+    err << "(range start stop)          ; start and stop are numbers\n";
+    err << "(range start stop count)    ; count is an integer\n";
+
+    std::vector<Object> result{};
+    if(args.size() == 2){
+        auto start = args[0];
+        auto stop = args[1];
+        if(!start.is_number() || !stop.is_number()){
+            auto self = Object();
+            throw Error(self, env, err.str().c_str());
+        }
+        auto values = my_linspace(start.as_float(), stop.as_float());
+        for(auto val: values){
+            result.emplace_back(Object(val));
+        }
+    }else if(args.size() == 3){
+        auto start = args[0];
+        auto stop = args[1];
+        auto step = args[2];
+        bool test = (
+            start.is_number() && stop.is_number() && step.is_integer()
+        );
+        if(!test){
+            auto self = Object();
+            throw Error(self, env, err.str().c_str());
+        }
+        auto values = my_linspace(
+            start.as_float(), stop.as_float(), step.as_integer()
+        );
+        for(auto val: values){
+            result.emplace_back(Object(val));
+        }
+    }
+
+    return Object(result);
+}
 
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
