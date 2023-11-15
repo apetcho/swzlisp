@@ -24,6 +24,17 @@ Object Parser::next_token(){
     return Object();
 }
 
+// -*-
+bool Parser::is_valid_char(){
+    bool result = (
+        (std::isalpha(*this->m_iter) || std::ispunct(*this->m_iter)) &&
+        *this->m_iter != '(' && *this->m_iter != ')' &&
+        *this->m_iter != '"' && *this->m_iter != '\''
+    );
+
+    return result;
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-
