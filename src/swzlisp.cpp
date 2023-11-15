@@ -19,7 +19,7 @@ static void evaluate(std::vector<Object>& args, Env& env){
 static Object fun_lambda(std::vector<Object> args, Env& env){
     if(args.size() != 2){
         Object self = Object();
-        std::string msg = "Invalid lambda syntax";
+        std::string msg = "Invalid lambda expression";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
@@ -27,14 +27,35 @@ static Object fun_lambda(std::vector<Object> args, Env& env){
     auto body = args[1];
     if(params.type()!=Type::List){
         Object self = Object();
-        std::string msg = "Invalid lambda syntax";
+        std::string msg = "Invalid lambda expression";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
     return Object(params.as_list(), body, env);
 }
 
-static Object fun_ifthenelse(std::vector<Object> args, Env& env);
+// -*-
+// (if test yes no)
+static Object fun_ifthenelse(std::vector<Object> args, Env& env){
+    if(args.size() != 3){
+        Object self = Object();
+        std::string msg = "Invalid if expression";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    Object result;
+    Object test = args[0];
+    Object yes = args[1];
+    Object no = args[2];
+    if(test.as_boolean()){
+        result = yes.eval(env);
+    }else{
+        result = no.eval(env);
+    }
+
+    return result;
+}
+
 static Object fun_define(std::vector<Object> args, Env& env);
 static Object fun_defun(std::vector<Object> args, Env& env);
 static Object fun_while(std::vector<Object> args, Env& env);
