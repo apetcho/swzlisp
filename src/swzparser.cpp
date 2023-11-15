@@ -20,7 +20,6 @@ void Parser::skip_whitespace(){
     }
 }
 
-
 // -*-
 bool Parser::is_valid_symbol_char(){
     bool result = (
@@ -268,6 +267,23 @@ Object Parser::next_token(){
         auto error = Error(self, Env(), msg.c_str());
         throw Error(error);
     }
+}
+
+// -*-
+std::vector<Object> Parser::parse(){
+    std::vector<Object> result{};
+    while(this->m_iter != this->m_end){
+        result.push_back(this->next_token());
+    }
+
+    if(this->m_iter != this->m_end){
+        Object self = Object();
+        std::string msg = "Malformed program";
+        auto error = Error(self, Env(), msg.c_str());
+        throw Error(error);
+    }
+
+    return result;
 }
 
 // -*------------------------------------------------------------------*-
