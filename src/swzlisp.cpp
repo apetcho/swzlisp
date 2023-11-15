@@ -668,7 +668,21 @@ static Object fun_remove(std::vector<Object> args, Env& env){
     return Object(data);
 }
 
-static Object fun_length(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_length(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'length' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto data = args[0].as_list();
+    return Object(static_cast<long>(data.size()));
+}
+
 static Object fun_push(std::vector<Object> args, Env& env);
 static Object fun_pop(std::vector<Object> args, Env& env);
 static Object fun_head(std::vector<Object> args, Env& env);
