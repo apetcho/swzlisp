@@ -826,7 +826,32 @@ static Object fun_repr(std::vector<Object> args, Env& env){
     return Object::create_string(args[0].repr());
 }
 
-static Object fun_map(std::vector<Object> args, Env& env);
+// -*-
+// (map fun listObj)
+static Object fun_map(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid 'map' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    std::vector<Object> result{};
+    std::vector<Object> tmp{};
+    auto fun = args[0];
+    std::vector<Object> data = args[1].as_list();
+    //! @note: fun must be a lambda, builtin or user define function
+    //! @todo: need to handle error appropriately
+    for(size_t i=0; data.size(); i++){
+        tmp.push_back(data[i]);
+        result.push_back(fun.apply(tmp, env));
+        tmp.clear();
+    }
+
+    return Object(result);
+}
+
 static Object fun_filter(std::vector<Object> args, Env& env);
 static Object fun_reduce(std::vector<Object> args, Env& env);
 static Object fun_range(std::vector<Object> args, Env& env);
