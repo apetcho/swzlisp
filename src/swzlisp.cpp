@@ -150,7 +150,18 @@ static Object fun_scope(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_quote(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_quote(std::vector<Object> args, Env& env){
+    std::vector<Object> rv;
+    (void)env;
+    for(auto self: args){
+        rv.push_back(self);
+    }
+
+    //! @note: maybe we should use Object::create_quote()
+    return Object(rv);
+}
+
 static Object fun_exit(std::vector<Object> args, Env& env);
 static Object fun_print(std::vector<Object> args, Env& env);
 static Object fun_input(std::vector<Object> args, Env& env);
