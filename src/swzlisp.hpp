@@ -24,7 +24,7 @@
     SWZLISP_DEF(Float, "float")     \
     SWZLISP_DEF(String, "string")   \
     SWZLISP_DEF(List, "list")       \
-    SWZLISP_DEF(Lambda, "lambda")   \
+    SWZLISP_DEF(Lambda, "function") \
     SWZLISP_DEF(Builtin, "function")
 
 #define SWZLISP_EXCEPTIONS                              \

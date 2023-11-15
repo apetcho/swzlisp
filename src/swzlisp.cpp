@@ -27,7 +27,7 @@ static Object fun_lambda(std::vector<Object> args, Env& env){
     auto body = args[1];
     if(params.type()!=Type::List){
         Object self = Object();
-        std::string msg = "Invalid lambda expression";
+        std::string msg = "Invalid 'lambda' expression";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
@@ -39,7 +39,7 @@ static Object fun_lambda(std::vector<Object> args, Env& env){
 static Object fun_ifthenelse(std::vector<Object> args, Env& env){
     if(args.size() != 3){
         Object self = Object();
-        std::string msg = "Invalid if expression";
+        std::string msg = "Invalid 'if' expression";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
@@ -61,7 +61,7 @@ static Object fun_ifthenelse(std::vector<Object> args, Env& env){
 static Object fun_define(std::vector<Object> args, Env& env){
     if(args.size() != 2){
         Object self = Object();
-        std::string msg = "Invalid define expression";
+        std::string msg = "Invalid 'define' expression";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
@@ -72,7 +72,27 @@ static Object fun_define(std::vector<Object> args, Env& env){
     return val;
 }
 
-static Object fun_defun(std::vector<Object> args, Env& env);
+// -*-
+// (defun name (param...) body)
+// name = args[0]
+// params = args[1]
+// body = args[2]
+static Object fun_defun(std::vector<Object> args, Env& env){
+    if(args.size() != 3){
+        Object self = Object();
+        std::string msg = "Invalid 'defun' expression";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto name = args[0].str();
+    auto params = args[1].as_list();
+    auto body = args[2];
+    auto fun = Object(params, body, env);
+    env.put(name, fun);
+    return fun;
+}
+
 static Object fun_while(std::vector<Object> args, Env& env);
 static Object fun_for(std::vector<Object> args, Env& env);
 static Object fun_do(std::vector<Object> args, Env& env);
