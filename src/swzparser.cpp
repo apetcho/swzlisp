@@ -51,7 +51,7 @@ void Parser::skip_line(){
 }
 
 // -*-
-void Parser::skip(bool predicate){
+void Parser::skip_if(bool predicate){
     if(predicate){ this->m_iter++; }
 }
 

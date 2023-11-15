@@ -270,7 +270,7 @@ private:
     void skip_line();
     bool is_valid_symbol_char();
     Object next_token();
-    void skip(bool predicate);
+    void skip_if(bool predicate);
     Object read_unit();
     Object read_quote();
     Object read_list();
