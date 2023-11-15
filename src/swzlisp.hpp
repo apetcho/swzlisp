@@ -271,12 +271,12 @@ private:
     bool is_valid_symbol_char();
     Object next_token();
     void skip_if(bool predicate);
-    Object read_unit();
-    Object read_quote();
-    Object read_list();
-    Object read_number();
-    Object read_string();
-    Object read_symbol();
+    void read_unit(std::shared_ptr<Object>& objp);
+    void read_quote(std::shared_ptr<Object>& objp);
+    void read_list(std::shared_ptr<Object>& objp);
+    void read_number(std::shared_ptr<Object>& objp);
+    void read_string(std::shared_ptr<Object>& objp);
+    void read_symbol(std::shared_ptr<Object>& objp);
 };
 
 // -*-

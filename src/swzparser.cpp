@@ -55,6 +55,23 @@ void Parser::skip_if(bool predicate){
     if(predicate){ this->m_iter++; }
 }
 
+// -*-
+void Parser::read_unit(std::shared_ptr<Object>& unit){
+    std::string::iterator ptr = this->m_iter;
+    if(*this->m_iter == '('){
+        this->skip_if(*this->m_iter=='(');
+        this->skip_whitespace();
+        if(*this->m_iter == ')'){
+            unit = std::make_shared<Object>();
+            this->skip_if((*this->m_iter==')'));
+            //return unit;
+        }
+    }else{
+        // otherwise, this is a list containing at least one element
+        this->m_iter = ptr; // reset the pointer to its original place
+    }
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-
