@@ -1,4 +1,5 @@
 #include "swzlisp.hpp"
+#include<cstdlib>
 #include<cctype>
 
 // -*------------------------------------------------------------------*-
@@ -58,18 +59,24 @@ void Parser::skip_if(bool predicate){
 // -*-
 void Parser::read_unit(std::shared_ptr<Object>& unit){
     std::string::iterator ptr = this->m_iter;
-    if(*this->m_iter == '('){
-        this->skip_if(*this->m_iter=='(');
-        this->skip_whitespace();
-        if(*this->m_iter == ')'){
-            if(unit != nullptr){ unit.reset(); }
-            unit = std::make_shared<Object>();
-            this->skip_if((*this->m_iter==')'));
-            //return unit;
-        }
-    }else{
-        // otherwise, this is a list containing at least one element
-        this->m_iter = ptr; // reset the pointer to its original place
+    bool ok = false;
+    bool predicate = (*this->m_iter == '(');
+    this->skip_if(predicate);
+    this->skip_whitespace();
+    if(*this->m_iter == ')'){
+        if(unit != nullptr){ unit.reset(); }
+        unit = std::make_shared<Object>();
+        predicate = (*this->m_iter == ')');
+        this->skip_if(predicate);
+        ok = true;
+    }
+    // otherwise, this is a list containing at least one element
+    this->m_iter = ptr; // reset the pointer to its original place
+    if(!ok){
+        // Jump to parse to read an actual list, therefore this is not an
+        // actual Unit but a list.
+        unit = nullptr;
+        throw Error();
     }
 }
 
@@ -112,11 +119,9 @@ void Parser::read_list(std::shared_ptr<Object>& objp){
 
 // -*-
 void Parser::read_number(std::shared_ptr<Object>& objp){
-    bool negate = (*this->m_iter == '-');
-    if(negate){ this->m_iter++; }
     std::string::iterator ptr = this->m_iter;
-    auto is_number_char = [&ptr]() -> bool{
-        std::string chars = "0123456789.eE";
+    auto is_number_char = [&ptr]() -> bool {
+        std::string chars = ".-+0123456789eE";
         return chars.find(*ptr) != std::string::npos;
     };
     while(is_number_char()){ ptr++;}
@@ -125,17 +130,71 @@ void Parser::read_number(std::shared_ptr<Object>& objp){
     this->skip_whitespace();
     if(objp != nullptr){ objp.reset(); }
     if(number.find('.') != std::string::npos){
-        double val = std::strtod(number.c_str(), NULL);
-        val = negate ? -1.0* val : val;
+        double val{};
+        try{
+            val = std::stod(number);
+        }catch(std::invalid_argument& err){
+            auto msg = err.what();
+            auto obj = Object();
+            throw Error(obj, Env(), msg);
+        }catch(std::out_of_range& err){
+            auto msg = err.what();
+            auto obj = Object();
+            throw Error(obj, Env(), msg);
+        }
+    
         auto self = Object(val);
         objp = std::make_shared<Object>(self);
     }else{
-        long val = std::strtol(number.c_str(), nullptr, 10);
-        val = negate ? -1*val : val;
+        long val{};
+        try{
+            val = std::stol(number);
+        }catch(std::invalid_argument& err){
+            auto msg = err.what();
+            auto obj = Object();
+            throw Error(obj, Env(), msg);
+        }catch(std::out_of_range& err){
+            auto msg = err.what();
+            auto obj = Object();
+            throw Error(obj, Env(), msg);
+        }
         auto self = Object(val);
         objp = std::make_shared<Object>(self);
     }
     this->m_iter = ptr;
+}
+
+// -*-
+void Parser::read_string(std::shared_ptr<Object>& objp){
+    std::string::iterator ptr = this->m_iter;
+    while(*(++ptr)!='\"'){
+        if(ptr==this->m_end){
+            auto unit = Object();
+            auto error = Error(unit, Env(), ErrorKind::SyntaxError);
+            throw Error(error);
+        }
+        if(*ptr == '\\'){ ++ptr; }
+    }
+
+    std::string data = std::string(this->m_iter, ptr);
+    ++ptr;
+    this->m_iter = ptr;
+    this->skip_whitespace();
+    for(auto i=0; i < data.size(); i++){
+        if(data[i] == '\\' && data[i+1]=='\\'){
+            data.replace(i, 2, "\\");
+        }else if(data[i]=='\\' && data[i+1]=='"'){
+            data.replace(i, 2, "\"");
+        }else if(data[i]=='\\' && data[i+1]=='n'){
+            data.replace(i, 2, "\n");
+        }else if(data[i]=='\\' && data[i+1]=='t'){
+            data.replace(i, 2, "\t");
+        }
+    }
+
+    if(objp != nullptr){ objp.reset(); }
+    auto self = Object::create_string(data);
+    objp = std::make_shared<Object>(self);
 }
 
 // -*------------------------------------------------------------------*-
