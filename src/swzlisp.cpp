@@ -401,7 +401,23 @@ static Object fun_sub(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_mul(std::vector<Object> args, Env& env);
+// -*-
+// (* n1 n2 ...)
+static Object fun_mul(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() < 2){
+        Object self = Object();
+        std::string msg = "Invalid '*' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    Object result = args[0];
+    for(size_t i=1; i < args.size(); i++){
+        result = result * args[i];
+    }
+    return result;
+}
+
 static Object fun_div(std::vector<Object> args, Env& env);
 static Object fun_mod(std::vector<Object> args, Env& env);
 static Object fun_equalp(std::vector<Object> args, Env& env);
