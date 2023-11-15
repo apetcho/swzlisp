@@ -328,7 +328,25 @@ static Object fun_write_file(std::vector<Object> args, Env& env){
     return Object(rv);
 }
 
-static Object fun_import(std::vector<Object> args, Env& env);
+// -*-
+// (import module)
+static Object fun_import(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'import' expression. Too many arguments";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    Env libenv;
+    auto filename = args[0].as_string();
+    auto source = Runtime::read_file(filename);
+    auto result = Runtime::execute(source, libenv);
+    env.merge(libenv); 
+    return result;
+}
+
 static Object fun_eval(std::vector<Object> args, Env& env);
 static Object fun_list(std::vector<Object> args, Env& env);
 static Object fun_add(std::vector<Object> args, Env& env);
