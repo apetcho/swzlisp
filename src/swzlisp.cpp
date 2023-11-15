@@ -597,7 +597,30 @@ static Object fun_toInteger(std::vector<Object> args, Env& env){
     return args[0].to_integer();
 }
 
-static Object fun_index(std::vector<Object> args, Env& env);
+// -*-
+//(index list i)
+static Object fun_index(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid 'index' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto data = args[0].as_list();
+    auto idx = args[1].as_integer();
+    if(data.empty() || idx >= data.size()){
+        std::ostringstream stream;
+        stream << "index out of range";
+        auto self = Object();
+        throw Error(self, env, stream.str().c_str());
+    }
+    
+    return data[idx];
+}
+
 static Object fun_insert(std::vector<Object> args, Env& env);
 static Object fun_remove(std::vector<Object> args, Env& env);
 static Object fun_length(std::vector<Object> args, Env& env);
