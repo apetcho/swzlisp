@@ -552,7 +552,23 @@ static Object fun_less_equalp(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_typename(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_typename(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'typename' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    
+    auto name = args[0].type_name();
+    Object result = Object::create_string(name);
+    return result;
+}
+
+
 static Object fun_toFloat(std::vector<Object> args, Env& env);
 static Object fun_toInteger(std::vector<Object> args, Env& env);
 static Object fun_index(std::vector<Object> args, Env& env);
