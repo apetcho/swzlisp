@@ -1100,7 +1100,7 @@ Object Runtime::execute(std::string source, Env& env){
 // -*-
 std::string Runtime::read_file(const std::string& filename){
     std::ifstream fin;
-    fin.open(filename);
+    fin.open(filename.c_str());
     if(!fin.is_open()){
         auto self = Object();
         throw Error(self, Env(), ("could not open file '" + filename + "'").c_str());
@@ -1150,6 +1150,16 @@ void whos(const std::map<std::string, Object>& bindings){
 }
 
 // -*-
+void export_to_file(const std::string& data){
+    std::cout << "Enter filename to export to: ";
+    std::string filename;
+    std::getline(std::cin, filename);
+    std::ofstream fout(filename.c_str());
+    fout << data;
+    fout.close();
+}
+
+// -*-
 Object Runtime::repl(Env& env){
     std::string source;
     std::string input;
@@ -1163,6 +1173,8 @@ Object Runtime::repl(Env& env){
     - :bye
     - :lookfor 
     */
+
+   return Object();
 }
 
 // -*--------------------------------------------------------------------*-
