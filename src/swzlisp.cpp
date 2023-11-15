@@ -779,8 +779,25 @@ static Object fun_parse(std::vector<Object> args, Env& env){
     return Object(ans);
 }
 
+// -*-
+// (replace stringObj old new)
+static Object fun_replace(std::vector<Object> args, Env& env){
+    evaluate(args, env);
 
-static Object fun_replace(std::vector<Object> args, Env& env);
+    if(args.size() != 3){
+        Object self = Object();
+        std::string msg = "Invalid 'replace' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    auto text = args[0].as_string();
+    auto old = args[1].as_string();
+    auto neo = args[2].as_string();
+    Parser::replace(text, old, neo);
+
+    return Object::create_string(text);
+}
+
 static Object fun_display(std::vector<Object> args, Env& env);
 static Object fun_debug(std::vector<Object> args, Env& env);
 static Object fun_map(std::vector<Object> args, Env& env);
