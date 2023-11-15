@@ -56,7 +56,22 @@ static Object fun_ifthenelse(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_define(std::vector<Object> args, Env& env);
+// -*-
+// (define key val)
+static Object fun_define(std::vector<Object> args, Env& env){
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid define expression";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto key = args[0].str();
+    auto val = args[1].eval(env);
+    env.put(key, val);
+    return val;
+}
+
 static Object fun_defun(std::vector<Object> args, Env& env);
 static Object fun_while(std::vector<Object> args, Env& env);
 static Object fun_for(std::vector<Object> args, Env& env);
