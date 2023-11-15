@@ -1097,6 +1097,26 @@ Object Runtime::execute(std::string source, Env& env){
     return result[result.size()-1].eval(env);
 }
 
+// -*-
+std::string Runtime::read_file(const std::string& filename){
+    std::ifstream fin;
+    fin.open(filename);
+    if(!fin.is_open()){
+        auto self = Object();
+        throw Error(self, Env(), ("could not open file '" + filename + "'").c_str());
+    }
+    fin.seekg(0, std::ios::end);
+    std::string data;
+    data.reserve(fin.tellg());
+    fin.seekg(0, std::ios::beg);
+    data.assign(
+        std::istreambuf_iterator<char>(fin),
+        std::istreambuf_iterator<char>()
+    );
+    fin.close();
+    return data;
+}
+
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
 // -*--------------------------------------------------------------------*-
