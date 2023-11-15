@@ -209,6 +209,22 @@ static Object fun_input(std::vector<Object> args, Env& env){
     return Object::create_string(data);
 }
 
+// -*-
+// (random) -> val in [0, 1)
+// (random max) -> val in [0, max]
+// (random min max) -> val in [min, max]
+// (random min max count) -> List[val] where val in [min, max]
+
+double my_random(){
+    std::random_device device;
+    std::mt19937 rng(device());
+    std::uniform_real_distribution<double> dist(0.0, 1.0);
+    return dist(rng);
+}
+
+double my_random(double maxval);
+double my_random(double minval, double maxval);
+
 static Object fun_random(std::vector<Object> args, Env& env);
 static Object fun_read_file(std::vector<Object> args, Env& env);
 static Object fun_write_file(std::vector<Object> args, Env& env);
