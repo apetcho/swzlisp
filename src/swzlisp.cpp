@@ -689,21 +689,34 @@ static Object fun_length(std::vector<Object> args, Env& env){
 static Object fun_push(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
-    if(args.size() != 0){
+    if(args.size() == 0){
         Object self = Object();
         std::string msg = "Invalid 'push' expression.";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
 
-    auto data = args[0].as_list();
     for(size_t i=1; i < args.size(); i++){
-        data.push_back(args[i]);
+        args[0].push(args[i]);
     }
-    return data;
+    return args[0];
 }
 
-static Object fun_pop(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_pop(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'pop' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    return args[0].pop();
+}
+
+// -*-
 static Object fun_head(std::vector<Object> args, Env& env);
 static Object fun_tail(std::vector<Object> args, Env& env);
 static Object fun_parse(std::vector<Object> args, Env& env);
