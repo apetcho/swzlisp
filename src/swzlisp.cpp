@@ -347,7 +347,19 @@ static Object fun_import(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_eval(std::vector<Object> args, Env& env);
+// -*-
+// (eval arg)
+static Object fun_eval(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'eval' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    return args[0].eval(env);
+}
+
 static Object fun_list(std::vector<Object> args, Env& env);
 static Object fun_add(std::vector<Object> args, Env& env);
 static Object fun_sub(std::vector<Object> args, Env& env);
