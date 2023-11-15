@@ -1086,5 +1086,17 @@ static Object fun_linspace(std::vector<Object> args, Env& env){
 }
 
 // -*--------------------------------------------------------------------*-
+// -*- Runtime                                                          -*-
+// -*--------------------------------------------------------------------*-
+Object Runtime::execute(std::string source, Env& env){
+    Parser parser(source);
+    auto result = parser.parse();
+    for(size_t i=0; i < result.size()-1; i++){
+        result[i].eval(env);
+    }
+    return result[result.size()-1].eval(env);
+}
+
+// -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
 // -*--------------------------------------------------------------------*-
