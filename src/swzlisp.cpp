@@ -222,7 +222,12 @@ double my_random(){
     return dist(rng);
 }
 
-double my_random(double maxval);
+double my_random(double maxval){
+    std::random_device device;
+    std::mt19937 rng(device());
+    std::uniform_real_distribution<double> dist(0.0, maxval);
+    return dist(rng);
+}
 double my_random(double minval, double maxval);
 
 static Object fun_random(std::vector<Object> args, Env& env);
