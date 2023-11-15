@@ -360,7 +360,13 @@ static Object fun_eval(std::vector<Object> args, Env& env){
     return args[0].eval(env);
 }
 
-static Object fun_list(std::vector<Object> args, Env& env);
+// -*-
+// (list ...)
+static Object fun_list(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    return Object(args);
+}
+
 static Object fun_add(std::vector<Object> args, Env& env);
 static Object fun_sub(std::vector<Object> args, Env& env);
 static Object fun_mul(std::vector<Object> args, Env& env);
