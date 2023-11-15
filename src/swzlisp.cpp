@@ -880,7 +880,32 @@ static Object fun_filter(std::vector<Object> args, Env& env){
     return Object(result);
 }
 
-static Object fun_reduce(std::vector<Object> args, Env& env);
+// -*-
+// (reduce fun acc listobj)
+static Object fun_reduce(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 3){
+        Object self = Object();
+        std::string msg = "Invalid 'reduce' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    std::vector<Object> data = args[2].as_list();
+    std::vector<Object> tmp{};
+    Object acc = args[1];
+    Object fun = args[0];
+    for(size_t i=0; i < data.size(); i++){
+        tmp.push_back(acc);
+        tmp.push_back(data[i]);
+        acc = fun.apply(tmp, env);
+        tmp.clear();
+    }
+
+    return acc;
+}
+
 static Object fun_range(std::vector<Object> args, Env& env);
 
 // -*--------------------------------------------------------------------*-
