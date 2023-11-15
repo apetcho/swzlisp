@@ -308,7 +308,26 @@ static Object fun_read_file(std::vector<Object> args, Env& env){
     return Object::create_string(data);
 }
 
-static Object fun_write_file(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_write_file(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size()!=2){
+        Object self = Object();
+        std::string msg = "Invalid 'write-file' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto filename = args[0].as_string();
+    auto data = args[1].as_string();
+    std::ofstream fout(filename);
+    long rv = ((fout << data)? 1 : 0);
+    if(fout.is_open()){
+        fout.close();
+    }
+    return Object(rv);
+}
+
 static Object fun_import(std::vector<Object> args, Env& env);
 static Object fun_eval(std::vector<Object> args, Env& env);
 static Object fun_list(std::vector<Object> args, Env& env);
