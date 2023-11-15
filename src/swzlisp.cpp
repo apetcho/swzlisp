@@ -568,8 +568,21 @@ static Object fun_typename(std::vector<Object> args, Env& env){
     return result;
 }
 
+// -*-
+// (float num)
+static Object fun_toFloat(std::vector<Object> args, Env& env){
+    evaluate(args, env);
 
-static Object fun_toFloat(std::vector<Object> args, Env& env);
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'float' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    
+    return args[0].to_float();
+}
+
 static Object fun_toInteger(std::vector<Object> args, Env& env);
 static Object fun_index(std::vector<Object> args, Env& env);
 static Object fun_insert(std::vector<Object> args, Env& env);
