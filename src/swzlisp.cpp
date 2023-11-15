@@ -518,7 +518,23 @@ static Object fun_lessp(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_greater_equalp(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_greater_equalp(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid '>=' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    
+    auto x = args[0];
+    auto y = args[1];
+    Object result = Object(static_cast<long>(x >= y));
+    return result;
+}
+
 static Object fun_less_equalp(std::vector<Object> args, Env& env);
 static Object fun_typename(std::vector<Object> args, Env& env);
 static Object fun_toFloat(std::vector<Object> args, Env& env);
