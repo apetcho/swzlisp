@@ -12,8 +12,28 @@ static void evaluate(std::vector<Object>& args, Env& env){
     }
 }
 
-// -
-static Object fun_lambda(std::vector<Object> args, Env& env);
+// -*-
+//(lambda (arg...) body)
+// arg = args[0] -> Type::List
+// body = args[1]
+static Object fun_lambda(std::vector<Object> args, Env& env){
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid lambda syntax";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    auto params = args[0];
+    auto body = args[1];
+    if(params.type()!=Type::List){
+        Object self = Object();
+        std::string msg = "Invalid lambda syntax";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    return Object(params.as_list(), body, env);
+}
+
 static Object fun_ifthenelse(std::vector<Object> args, Env& env);
 static Object fun_define(std::vector<Object> args, Env& env);
 static Object fun_defun(std::vector<Object> args, Env& env);
