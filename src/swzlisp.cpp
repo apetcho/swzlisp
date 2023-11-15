@@ -191,7 +191,24 @@ static Object fun_print(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_input(std::vector<Object> args, Env& env);
+// -*-
+// (input [prompt])
+static Object fun_input(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() > 1){
+        Object self = Object();
+        std::string msg = "Invalid 'input' expression. Too many arguments";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    // [promt]?
+    if(!args.empty()){ std::cout << args[0]; }
+
+    std::string data;
+    std::getline(std::cin, data);
+    return Object::create_string(data);
+}
+
 static Object fun_random(std::vector<Object> args, Env& env);
 static Object fun_read_file(std::vector<Object> args, Env& env);
 static Object fun_write_file(std::vector<Object> args, Env& env);
