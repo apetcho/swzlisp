@@ -645,7 +645,29 @@ static Object fun_insert(std::vector<Object> args, Env& env){
     return Object(data);
 }
 
-static Object fun_remove(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_remove(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid 'remove' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto data = args[0].as_list();
+    auto idx = args[1].as_integer();
+    if( data.empty() || idx < 0 || idx > data.size()){
+        std::string msg = "index out of range";
+        auto self = Object();
+        throw Error(self, env, msg.c_str());
+    }
+    data.erase(data.begin()+idx);
+
+    return Object(data);
+}
+
 static Object fun_length(std::vector<Object> args, Env& env);
 static Object fun_push(std::vector<Object> args, Env& env);
 static Object fun_pop(std::vector<Object> args, Env& env);
