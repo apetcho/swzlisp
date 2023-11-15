@@ -162,7 +162,16 @@ static Object fun_quote(std::vector<Object> args, Env& env){
     return Object(rv);
 }
 
-static Object fun_exit(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_exit(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    auto ecode = (
+        args.size() < 1 ? 0 : args[0].to_integer().as_integer()
+    );
+    std::exit(ecode);
+    return Object(); // never reached
+}
+
 static Object fun_print(std::vector<Object> args, Env& env);
 static Object fun_input(std::vector<Object> args, Env& env);
 static Object fun_random(std::vector<Object> args, Env& env);
