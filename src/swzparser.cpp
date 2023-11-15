@@ -62,6 +62,7 @@ void Parser::read_unit(std::shared_ptr<Object>& unit){
         this->skip_if(*this->m_iter=='(');
         this->skip_whitespace();
         if(*this->m_iter == ')'){
+            if(unit != nullptr){ unit.reset(); }
             unit = std::make_shared<Object>();
             this->skip_if((*this->m_iter==')'));
             //return unit;
@@ -83,6 +84,29 @@ void Parser::read_quote(std::shared_ptr<Object>& objp){
         objp = std::make_shared<Object>(self);
     }else{
         throw Error();
+    }
+}
+
+// -*-
+void Parser::read_list(std::shared_ptr<Object>& objp){
+    std::string::iterator ptr = this->m_iter;
+    bool predicate = (*this->m_iter == '(');
+    this->skip_if(predicate);
+    this->skip_whitespace();
+    // To construct an empty list, we write:
+    // (list)
+    // otherwise
+    // () correspond to Type::Unit
+    if(*this->m_iter !=')'){
+        Object self = Object(std::vector<Object>());
+        while(*this->m_iter !=')'){
+            self.push(this->next_token());
+        }
+        this->skip_whitespace();
+        predicate = (*this->m_iter == ')');
+        this->skip_if(predicate);
+        if(objp != nullptr){ objp.reset();}
+        objp = std::make_shared<Object>(self);
     }
 }
 
