@@ -45,6 +45,11 @@ void Parser::replace(std::string& source, std::string old, std::string neo){
     }
 }
 
+// -*-
+void Parser::skip_line(){
+    while(*this->m_iter !='\n'){ this->m_iter++; }
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-
