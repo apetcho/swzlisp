@@ -1,5 +1,60 @@
 #include "swzlisp.hpp"
 
+#define SWZLISP_BUILTINS                    \
+    SWZLISP_DEF("eval", _eval)              \
+    SWZLISP_DEF("typename", _typename)      \
+    SWZLISP_DEF("parse", _parse)            \
+    SWZLISP_DEF("do", _do)                  \
+    SWZLISP_DEF("if", _ifthenelse)          \
+    SWZLISP_DEF("for", _for)                \
+    SWZLISP_DEF("while", _while)            \
+    SWZLISP_DEF("scope", _scope)            \
+    SWZLISP_DEF("quote", _quote)            \
+    SWZLISP_DEF("defun", _defun)            \
+    SWZLISP_DEF("define", _define)          \
+    SWZLISP_DEF("lambda", _lambda)          \
+    SWZLISP_DEF("=", _equalp)               \
+    SWZLISP_DEF("!=", _not_equalp)          \
+    SWZLISP_DEF(">", _greaterp)             \
+    SWZLISP_DEF("<", _lessp)                \
+    SWZLISP_DEF(">=", _greater_equalp)      \
+    SWZLISP_DEF("<=", _less_equalp)         \
+    SWZLISP_DEF("+", _add)                  \
+    SWZLISP_DEF("-", _sub)                  \
+    SWZLISP_DEF("*", _mul)                  \
+    SWZLISP_DEF("/", _div)                  \
+    SWZLISP_DEF("%", _mod)                  \
+    SWZLISP_DEF("list", _list)              \
+    SWZLISP_DEF("insert", _insert)          \
+    SWZLISP_DEF("index", _index)            \
+    SWZLISP_DEF("remove", _remove)          \
+    SWZLISP_DEF("length", _length)          \
+    SWZLISP_DEF("push", _push)              \
+    SWZLISP_DEF("pop", _pop)                \
+    SWZLISP_DEF("head", _head)              \
+    SWZLISP_DEF("tail", _tail)              \
+    SWZLISP_DEF("first", _head)             \
+    SWZLISP_DEF("rest", _tail)              \
+    SWZLISP_DEF("last", _pop)               \
+    SWZLISP_DEF("range", _range)            \
+    SWZLISP_DEF("map", _map)                \
+    SWZLISP_DEF("filter", _filter)          \
+    SWZLISP_DEF("reduce", _reduce)          \
+    SWZLISP_DEF("exit", _exit)              \
+    SWZLISP_DEF("quit", _exit)              \
+    SWZLISP_DEF("print", _print)            \
+    SWZLISP_DEF("input", _input)            \
+    SWZLISP_DEF("random", _random)          \
+    SWZLISP_DEF("linspace", _linspace)      \
+    SWZLISP_DEF("import", _import)          \
+    SWZLISP_DEF("read-file", _read_file)    \
+    SWZLISP_DEF("repr", _repr)              \
+    SWZLISP_DEF("replace", _replace)        \
+    SWZLISP_DEF("display", _display)        \
+    SWZLISP_DEF("integer", _toInteger)      \
+    SWZLISP_DEF("float", _toFloat)          \
+    SWZLISP_DEF("float", _newline)
+
 // -*--------------------------------------------------------------------*-
 // -*- namespace::swzlisp                                               -*-
 // -*--------------------------------------------------------------------*-
@@ -568,6 +623,12 @@ static Object fun_typename(std::vector<Object> args, Env& env){
     return result;
 }
 
+// -*-
+static Object fun_newline(std::vector<Object> args, Env& env){
+    (void)args;
+    (void)env;
+    return Object::create_string("\n");
+}
 // -*-
 // (float num)
 static Object fun_toFloat(std::vector<Object> args, Env& env){
@@ -1198,7 +1259,24 @@ void Runtime::repl(Env& env){
 }
 
 // -*-
+Env Runtime::builtins = Env();
 
+static Env swzlisp_init(){
+    Env env{};
+#define SWZLISP_DEF(name, fname) { name, Object(name, fun##fname) },
+    
+    std::map<std::string, Object> keyvals{
+        SWZLISP_BUILTINS
+    };
+
+#undef SWZLISP_DEF
+
+    for(auto [key, val]: keyvals){
+        env.put(key, val);
+    }
+
+    return env;
+}
 // -*-
 
 // -*--------------------------------------------------------------------*-
