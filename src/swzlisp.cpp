@@ -418,7 +418,22 @@ static Object fun_mul(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_div(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_div(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid '/' expression. Expect two numbers as arguments";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    Object result;
+    auto x = args[0];
+    auto y = args[1];
+    result = x / y;
+    return result;
+}
+
 static Object fun_mod(std::vector<Object> args, Env& env);
 static Object fun_equalp(std::vector<Object> args, Env& env);
 static Object fun_not_equalp(std::vector<Object> args, Env& env);
