@@ -197,6 +197,25 @@ void Parser::read_string(std::shared_ptr<Object>& objp){
     objp = std::make_shared<Object>(self);
 }
 
+// -*-
+void Parser::read_atom(std::shared_ptr<Object>& objp){
+    std::string::iterator ptr = this->m_iter;
+    while(this->is_valid_symbol_char()){
+        if(this->m_iter == this->m_end){
+            auto self = Object();
+            throw Error(self, Env(), ErrorKind::SyntaxError);
+        }
+        this->m_iter++;
+    }
+
+    std::string data = std::string(ptr, this->m_iter);
+    this->skip_whitespace();
+    auto self = Object::create_atom(data);
+    if(objp!=nullptr){ objp.reset();}
+    objp = std::make_shared<Object>(self);
+}
+
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-

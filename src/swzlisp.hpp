@@ -276,7 +276,7 @@ private:
     void read_list(std::shared_ptr<Object>& objp);
     void read_number(std::shared_ptr<Object>& objp);
     void read_string(std::shared_ptr<Object>& objp);
-    void read_symbol(std::shared_ptr<Object>& objp);
+    void read_atom(std::shared_ptr<Object>& objp);
 };
 
 // -*-
