@@ -1118,6 +1118,18 @@ std::string Runtime::read_file(const std::string& filename){
 }
 
 // -*-
+static void help(){
+    std::cout << ":help     Print this message\n";
+    std::cout << ":whos     Print all variables currently in the local environment\n";
+    std::cout << ":clear    Clear all variables currently in the local environment\n";
+    std::cout << ":export   Request the writing all expressions currently in\n";
+    std::cout << "          the environment to a file\n";
+    std::cout << ":exit     Exit the interpreter\n";
+    std::cout << ":quit     Same as :exit\n";
+    std::cout << ":bye      Same as :exit\n";
+}
+
+// -*-
 Object Runtime::repl(Env& env){
     std::string source;
     std::string input;
@@ -1125,7 +1137,7 @@ Object Runtime::repl(Env& env){
     std::vector<Object> parsed{};
     /*
     - :help
-    - :show
+    - :whos
     - :export
     - :quit
     - :bye
