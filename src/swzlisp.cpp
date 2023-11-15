@@ -6,7 +6,11 @@
 namespace swzlisp{
 // -
 // -eval_args(Args&, Env&) -> void
-void evaluate(std::vector<Object>& arg, Env& env);
+static void evaluate(std::vector<Object>& args, Env& env){
+    for(size_t i=0; i < args.size(); i++){
+        args[i] = args[i].eval(env);
+    }
+}
 
 // -
 static Object fun_lambda(std::vector<Object> args, Env& env);
