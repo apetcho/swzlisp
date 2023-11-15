@@ -138,7 +138,18 @@ static Object fun_do(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_scope(std::vector<Object> args, Env& env);
+// -*-
+// Evaluate a block of expression in a new environement
+// (scope ...)
+static Object fun_scope(std::vector<Object> args, Env& env){
+    Env scope(env);
+    Object result;
+    for(auto self: args){
+        result = self.eval(scope);
+    }
+    return result;
+}
+
 static Object fun_quote(std::vector<Object> args, Env& env);
 static Object fun_exit(std::vector<Object> args, Env& env);
 static Object fun_print(std::vector<Object> args, Env& env);
