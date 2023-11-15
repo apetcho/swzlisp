@@ -172,7 +172,25 @@ static Object fun_exit(std::vector<Object> args, Env& env){
     return Object(); // never reached
 }
 
-static Object fun_print(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_print(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() < 1){
+        Object self = Object();
+        std::string msg = "Invalid 'print' expression: not enough arguments";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    Object result;
+    for(auto self: args){
+        result = self;
+        std::cout << result.str() << " ";
+    }
+    std::cout << std::endl;
+    return result;
+}
+
 static Object fun_input(std::vector<Object> args, Env& env);
 static Object fun_random(std::vector<Object> args, Env& env);
 static Object fun_read_file(std::vector<Object> args, Env& env);
