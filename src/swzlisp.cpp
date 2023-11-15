@@ -812,7 +812,20 @@ static Object fun_display(std::vector<Object> args, Env& env){
     return Object::create_string(args[0].str());
 }
 
-static Object fun_repr(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_repr(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'repr' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    return Object::create_string(args[0].repr());
+}
+
 static Object fun_map(std::vector<Object> args, Env& env);
 static Object fun_filter(std::vector<Object> args, Env& env);
 static Object fun_reduce(std::vector<Object> args, Env& env);
