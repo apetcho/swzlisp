@@ -621,7 +621,30 @@ static Object fun_index(std::vector<Object> args, Env& env){
     return data[idx];
 }
 
-static Object fun_insert(std::vector<Object> args, Env& env);
+// -*-
+// (insert data idx val)
+static Object fun_insert(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 3){
+        Object self = Object();
+        std::string msg = "Invalid 'insert' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto data = args[0].as_list();
+    auto idx = args[1].as_integer();
+    if(idx < 0 || idx > data.size()){
+        std::string msg = "index out of range";
+        auto self = Object();
+        throw Error(self, env, msg.c_str());
+    }
+    data.insert(data.begin() + idx, args[2]);
+
+    return Object(data);
+}
+
 static Object fun_remove(std::vector<Object> args, Env& env);
 static Object fun_length(std::vector<Object> args, Env& env);
 static Object fun_push(std::vector<Object> args, Env& env);
