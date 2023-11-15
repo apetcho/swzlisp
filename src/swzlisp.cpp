@@ -1130,6 +1130,26 @@ static void help(){
 }
 
 // -*-
+void whos(const std::map<std::string, Object>& bindings){
+    // -------------------------------------------------------
+    //  name |     object | size
+    // -------------------------------------------------------
+    std::cout << "-------------------------------------------------\n";
+    std::cout << "    NAME    |      OBJECT      |   SIZE (bytes)  \n";
+    std::cout << "-------------------------------------------------\n";
+
+    auto show = [](std::string key, Object val){
+        std::cout << " " << std::setw(10) << key << " |";
+        std::cout << " " << std::setw(16) << val.str() << " | ";
+        auto size = sizeof(val);
+        std::cout << size << " bytes" << std::endl;
+    };
+    for(auto [key, val]: bindings){
+        show(key, val);
+    }
+}
+
+// -*-
 Object Runtime::repl(Env& env){
     std::string source;
     std::string input;
