@@ -906,7 +906,134 @@ static Object fun_reduce(std::vector<Object> args, Env& env){
     return acc;
 }
 
-static Object fun_range(std::vector<Object> args, Env& env);
+// -*-
+static std::vector<long> my_range(long stop){
+    std::vector<long> result{};
+    long val = 0;
+    while(val < stop){
+        result.push_back(val);
+        val++;
+    }
+    return result;
+}
+
+// -
+static std::vector<long> my_range(long start, long stop){
+    std::vector<long> result{};
+    long val = start;
+    while(val < stop){
+        result.push_back(val);
+        val++;
+    }
+    return result;
+}
+
+// -
+static std::vector<double> my_linspace(double start, double stop){
+    std::vector<double> result{};
+    double nstep = 10;
+    double dx = (stop - start)/nstep;
+    size_t i = 0;
+    while(i < nstep){
+        double val = start + i*dx;
+        result.push_back(val);
+        i++;
+    }
+
+    return result;
+}
+
+static std::vector<long> my_range(long start, long stop, long step){
+    std::vector<long> result{};
+    long val = start;
+    while(val < stop){
+        result.push_back(val);
+        val += step;
+    }
+    return result;
+}
+
+// -*-
+static std::vector<double> my_linspace(double start, double stop, size_t nstep){
+    std::vector<double> result{};
+    double dx = (stop - start)/nstep;
+    size_t i = 0;
+    while(i < nstep){
+        double val = start + i * dx;
+        result.push_back(val);
+        i++;
+    }
+    return result;
+}
+
+// (range stop)             ==> (0, 1, ... stop-1)
+// (range start stop)       ==> (start, start+1, ..., stop-1)
+// (range start stop step)  ==> (start, start+step, ..., last)
+// where last < stop
+static Object fun_range(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() < 1 || args.size() > 3){
+        Object self = Object();
+        std::string msg = "Invalid 'range' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    std::ostringstream err;
+    err << "Invalid call to 'range' and argument are integer values\n";
+    err << "Here is how to call 'range':\n\n";
+    err << "(range stop)            ; result: (0, 1, ... stop-1)";
+    err << "(range start stop)      ; result: (start, start+1, ..., stop-1)";
+    err << "(range start stop step) ; result: (start, start+step, ... last) ";
+    err << " where last <= stop";
+
+    std::vector<Object> result{};
+    if(args.size() == 1){
+        auto stop = args[0];
+        if(!stop.is_integer()){
+            auto self = Object();
+            throw Error(self, env, err.str().c_str());
+        }
+        auto values = my_range(stop.as_integer());
+        for(auto val: values){
+            result.emplace_back(Object(val));
+        }
+    }else if(args.size() == 2){
+        auto start = args[0];
+        auto stop = args[1];
+        if(!start.is_integer() || !stop.is_integer()){
+            auto self = Object();
+            throw Error(self, env, err.str().c_str());
+        }
+        auto values = my_range(start.as_integer(), stop.as_integer());
+        for(auto val: values){
+            result.emplace_back(Object(val));
+        }
+    }else if(args.size() == 3){
+        auto start = args[0];
+        auto stop = args[1];
+        auto step = args[2];
+        bool test = (
+            start.is_integer() && stop.is_integer() && step.is_integer()
+        );
+        if(!test){
+            auto self = Object();
+            throw Error(self, env, err.str().c_str());
+        }
+        auto values = my_range(
+            start.as_integer(), stop.as_integer(), step.as_integer()
+        );
+        for(auto val: values){
+            result.emplace_back(Object(val));
+        }
+    }
+
+    return Object(result);
+}
+
+// -*-
+static Object fun_linspace(std::vector<Object> args, Env& env);
 
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
