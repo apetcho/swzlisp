@@ -434,7 +434,22 @@ static Object fun_div(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_mod(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_mod(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() != 2){
+        Object self = Object();
+        std::string msg = "Invalid '%' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    
+    auto x = args[0];
+    auto y = args[1];
+    Object result = x % y;
+    return result;
+}
+
 static Object fun_equalp(std::vector<Object> args, Env& env);
 static Object fun_not_equalp(std::vector<Object> args, Env& env);
 static Object fun_greaterp(std::vector<Object> args, Env& env);
