@@ -293,7 +293,21 @@ static Object fun_random(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_read_file(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_read_file(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'read-file' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    auto filename = args[0].as_string();
+    auto data = Runtime::read_file(filename);
+    return Object::create_string(data);
+}
+
 static Object fun_write_file(std::vector<Object> args, Env& env);
 static Object fun_import(std::vector<Object> args, Env& env);
 static Object fun_eval(std::vector<Object> args, Env& env);
