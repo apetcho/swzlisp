@@ -96,7 +96,7 @@ void Parser::read_list(std::shared_ptr<Object>& objp){
     // To construct an empty list, we write:
     // (list)
     // otherwise
-    // () correspond to Type::Unit
+    // () result int Type::Unit
     if(*this->m_iter !=')'){
         Object self = Object(std::vector<Object>());
         while(*this->m_iter !=')'){
@@ -108,6 +108,34 @@ void Parser::read_list(std::shared_ptr<Object>& objp){
         if(objp != nullptr){ objp.reset();}
         objp = std::make_shared<Object>(self);
     }
+}
+
+// -*-
+void Parser::read_number(std::shared_ptr<Object>& objp){
+    bool negate = (*this->m_iter == '-');
+    if(negate){ this->m_iter++; }
+    std::string::iterator ptr = this->m_iter;
+    auto is_number_char = [&ptr]() -> bool{
+        std::string chars = "0123456789.eE";
+        return chars.find(*ptr) != std::string::npos;
+    };
+    while(is_number_char()){ ptr++;}
+
+    std::string number = std::string(this->m_iter, ptr);
+    this->skip_whitespace();
+    if(objp != nullptr){ objp.reset(); }
+    if(number.find('.') != std::string::npos){
+        double val = std::strtod(number.c_str(), NULL);
+        val = negate ? -1.0* val : val;
+        auto self = Object(val);
+        objp = std::make_shared<Object>(self);
+    }else{
+        long val = std::strtol(number.c_str(), nullptr, 10);
+        val = negate ? -1*val : val;
+        auto self = Object(val);
+        objp = std::make_shared<Object>(self);
+    }
+    this->m_iter = ptr;
 }
 
 // -*------------------------------------------------------------------*-
