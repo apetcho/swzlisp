@@ -50,6 +50,11 @@ void Parser::skip_line(){
     while(*this->m_iter !='\n'){ this->m_iter++; }
 }
 
+// -*-
+void Parser::skip(bool predicate){
+    if(predicate){ this->m_iter++; }
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-

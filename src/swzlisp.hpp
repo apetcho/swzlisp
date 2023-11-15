@@ -270,6 +270,7 @@ private:
     void skip_line();
     bool is_valid_char();
     Object next_token();
+    void skip(bool predicate);
 };
 
 // -*-
