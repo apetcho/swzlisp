@@ -268,7 +268,7 @@ public:
 private:
     void skip_whitespace();
     void skip_line();
-    bool is_valid_symbol_char();
+    bool is_valid_atom_char();
     Object next_token();
     void skip_if(bool predicate);
     void read_unit(std::shared_ptr<Object>& objp);

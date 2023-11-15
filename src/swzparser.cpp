@@ -21,7 +21,7 @@ void Parser::skip_whitespace(){
 }
 
 // -*-
-bool Parser::is_valid_symbol_char(){
+bool Parser::is_valid_atom_char(){
     bool result = (
         (std::isalpha(*this->m_iter) || std::ispunct(*this->m_iter)) &&
         *this->m_iter != '(' && *this->m_iter != ')' &&
@@ -195,7 +195,7 @@ void Parser::read_string(std::shared_ptr<Object>& objp){
 // -*-
 void Parser::read_atom(std::shared_ptr<Object>& objp){
     std::string::iterator ptr = this->m_iter;
-    while(this->is_valid_symbol_char()){
+    while(this->is_valid_atom_char()){
         if(this->m_iter == this->m_end){
             auto self = Object();
             throw Error(self, Env(), ErrorKind::SyntaxError);
@@ -256,7 +256,7 @@ Object Parser::next_token(){
         Object result = *ptr;
         ptr = nullptr;
         return result;
-    }else if(this->is_valid_symbol_char()){
+    }else if(this->is_valid_atom_char()){
         this->read_atom(ptr);
         Object result = *ptr;
         ptr = nullptr;
