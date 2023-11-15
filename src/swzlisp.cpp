@@ -113,7 +113,21 @@ static Object fun_while(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_for(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_for(std::vector<Object> args, Env& env){
+    Object result;
+    auto argv = args[1].eval(env).as_list();
+    for(size_t i=0; i < argv.size(); i++){
+        env.put(args[0].as_atom(), argv[i]);
+        for(size_t j=1; j < args.size()-1; j++){
+            args[j].eval(env);
+        }
+        result = args[args.size()-1].eval(env);
+    }
+
+    return result;
+}
+
 static Object fun_do(std::vector<Object> args, Env& env);
 static Object fun_scope(std::vector<Object> args, Env& env);
 static Object fun_quote(std::vector<Object> args, Env& env);
