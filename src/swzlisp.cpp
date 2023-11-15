@@ -1117,6 +1117,22 @@ std::string Runtime::read_file(const std::string& filename){
     return data;
 }
 
+// -*-
+Object Runtime::repl(Env& env){
+    std::string source;
+    std::string input;
+    Object tmp;
+    std::vector<Object> parsed{};
+    /*
+    - :help
+    - :show
+    - :export
+    - :quit
+    - :bye
+    - :lookfor 
+    */
+}
+
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
 // -*--------------------------------------------------------------------*-

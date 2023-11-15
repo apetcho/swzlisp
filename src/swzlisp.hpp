@@ -92,6 +92,10 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Env&);
 
+    std::map<std::string, Object> bindings() const{
+        return this->m_bindings;
+    }
+
 private:
     std::map<std::string, Object> m_bindings;
     std::shared_ptr<Env> m_parent;
