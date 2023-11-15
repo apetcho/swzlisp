@@ -758,7 +758,28 @@ static Object fun_tail(std::vector<Object> args, Env& env){
     return Object(result);
 }
 
-static Object fun_parse(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_parse(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'parse' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+    if(args[0].type()!=Type::String){
+        auto self = Object();
+        throw Error(self, env, ErrorKind::TypeError);
+    }
+
+    auto source = args[0].as_string();
+    auto parser = Parser(source);
+    auto ans = parser.parse();
+    return Object(ans);
+}
+
+
 static Object fun_replace(std::vector<Object> args, Env& env);
 static Object fun_display(std::vector<Object> args, Env& env);
 static Object fun_debug(std::vector<Object> args, Env& env);
