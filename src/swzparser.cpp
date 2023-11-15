@@ -20,10 +20,6 @@ void Parser::skip_whitespace(){
     }
 }
 
-Object Parser::next_token(){
-    //! @todo
-    return Object();
-}
 
 // -*-
 bool Parser::is_valid_symbol_char(){
@@ -215,6 +211,64 @@ void Parser::read_atom(std::shared_ptr<Object>& objp){
     objp = std::make_shared<Object>(self);
 }
 
+// -*-
+Object Parser::next_token(){
+    this->skip_whitespace();
+    if(*this->m_iter == ';'){
+        bool predicate = (*this->m_iter==';');
+        this->skip_if(predicate);
+        this->skip_line();
+        this->skip_whitespace();
+        std::string::iterator ptr = this->m_iter;
+        std::string::iterator end = this->m_source.end()-1;
+        auto data = std::string(ptr, end);
+        if(data == ""){
+            return Object();
+        }
+    }
+
+    std::shared_ptr<Object> ptr = nullptr;
+    if(this->m_iter == this->m_end){
+        return Object();
+    }else if(*this->m_iter=='\''){
+        this->read_quote(ptr);
+        Object result = *ptr;
+        ptr = nullptr;
+        return result;
+    }else if(*this->m_iter=='('){
+        try{
+            this->read_unit(ptr);
+            Object result = *ptr;
+            ptr = nullptr;
+            return result;
+        }catch(Error& err){
+            this->read_list(ptr);
+            Object result = *ptr;
+            ptr = nullptr;
+            return result;
+        }
+    }else if(std::isdigit(*this->m_iter)||(*this->m_iter=='-' && std::isdigit(*(this->m_iter+1)))){
+        this->read_number(ptr);
+        Object result = *ptr;
+        ptr = nullptr;
+        return result;
+    }else if(*this->m_iter=='\"'){
+        this->read_string(ptr);
+        Object result = *ptr;
+        ptr = nullptr;
+        return result;
+    }else if(this->is_valid_symbol_char()){
+        this->read_atom(ptr);
+        Object result = *ptr;
+        ptr = nullptr;
+        return result;
+    }else{
+        Object self = Object();
+        std::string msg = "Malformed program";
+        auto error = Error(self, Env(), msg.c_str());
+        throw Error(error);
+    }
+}
 
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
