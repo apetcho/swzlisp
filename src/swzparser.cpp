@@ -35,6 +35,16 @@ bool Parser::is_valid_char(){
     return result;
 }
 
+// -*-
+void Parser::replace(std::string& source, std::string old, std::string neo){
+    auto idx = source.find(old, 0);
+    while(idx != std::string::npos){
+        source.replace(idx, old.size(), neo);
+        idx += neo.size();
+        idx = source.find(old, idx);
+    }
+}
+
 // -*------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                        -*-
 // -*------------------------------------------------------------------*-
