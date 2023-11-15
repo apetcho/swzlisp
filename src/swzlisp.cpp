@@ -128,7 +128,16 @@ static Object fun_for(std::vector<Object> args, Env& env){
     return result;
 }
 
-static Object fun_do(std::vector<Object> args, Env& env);
+// -*-
+// (do ....) <==> (progn ...)
+static Object fun_do(std::vector<Object> args, Env& env){
+    Object result;
+    for(auto item: args){
+        result = item.eval(env);
+    }
+    return result;
+}
+
 static Object fun_scope(std::vector<Object> args, Env& env);
 static Object fun_quote(std::vector<Object> args, Env& env);
 static Object fun_exit(std::vector<Object> args, Env& env);
