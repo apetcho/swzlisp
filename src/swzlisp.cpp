@@ -723,7 +723,7 @@ static Object fun_head(std::vector<Object> args, Env& env){
 
     if(args.size() != 1){
         Object self = Object();
-        std::string msg = "Invalid 'pop' expression.";
+        std::string msg = "Invalid 'head' expression.";
         auto error = Error(self, env, msg.c_str());
         throw Error(error);
     }
@@ -738,7 +738,26 @@ static Object fun_head(std::vector<Object> args, Env& env){
     return data[0];
 }
 
-static Object fun_tail(std::vector<Object> args, Env& env);
+// -*-
+static Object fun_tail(std::vector<Object> args, Env& env){
+    evaluate(args, env);
+
+    if(args.size() != 1){
+        Object self = Object();
+        std::string msg = "Invalid 'tail' expression.";
+        auto error = Error(self, env, msg.c_str());
+        throw Error(error);
+    }
+
+    std::vector<Object> result{};
+    std::vector<Object> data = args[0].as_list();
+    for(size_t i=1; i < data.size(); i++){
+        result.push_back(data[i]);
+    }
+
+    return Object(result);
+}
+
 static Object fun_parse(std::vector<Object> args, Env& env);
 static Object fun_replace(std::vector<Object> args, Env& env);
 static Object fun_display(std::vector<Object> args, Env& env);
