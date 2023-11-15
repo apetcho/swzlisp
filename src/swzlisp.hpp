@@ -111,7 +111,7 @@ private:
     ErrorKind m_error;
     std::shared_ptr<Object> m_reason;
     Env m_env;
-    const char* m_message;
+    std::string m_message;
 };
 
 class Object;

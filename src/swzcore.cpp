@@ -19,7 +19,7 @@ Object::Object(double val): m_type{Type::Float}, m_value{val}{}
 Object::Object(std::vector<Object> list): m_type{Type::List}, m_value{list}{}
 
 // -*-
-Object::Object(std::vector<Object> params, Object body, const Env<Object>& env)
+Object::Object(std::vector<Object> params, Object body, const Env& env)
 : m_type{Type::Lambda}{
     std::vector<Object> self;
     self.push_back(Object(params));
@@ -32,7 +32,8 @@ Object::Object(std::vector<Object> params, Object body, const Env<Object>& env)
     //auto _atoms = ans.atoms();
     for(auto name: body.atoms()){
         if(env.contains(name)){
-            lambda.env.put(name, env.get(name));
+            auto val = env.get(name);
+            lambda.env.put(name, val);
         }
     }
     this->m_value = lambda;
@@ -107,8 +108,8 @@ bool Object::is_builtin() const{
 }
 
 // -*-
-Object Object::apply(std::vector<Object> args, Env<Object>& env){
-    Env<Object> scope;
+Object Object::apply(std::vector<Object> args, Env& env){
+    Env scope;
     Object result;
     List params;
     switch(this->m_type){
@@ -123,7 +124,8 @@ Object Object::apply(std::vector<Object> args, Env<Object>& env){
                     "No enough arguments" : "Too many arguments"
                 );
                 msg = swzlispExceptions[ErrorKind::SyntaxError] + ": " + msg;
-                throw Error(Object(args), env, msg.c_str());
+                auto xxx = *this;
+                throw Error(xxx, env, msg.c_str());
             }
             lambda.env.set_parent(env.get_pointer());
             for(size_t i=0; i < params.size(); i++){
@@ -148,7 +150,8 @@ Object Object::apply(std::vector<Object> args, Env<Object>& env){
     default:{
             std::string message = swzlispExceptions[ErrorKind::SyntaxError];
             message += ": expect a function or a lambda";
-            throw Error(*this, env, message.c_str());
+            auto xxx = *this;
+            throw Error(xxx, env, message.c_str());
         }//
         break;
     }
@@ -156,7 +159,7 @@ Object Object::apply(std::vector<Object> args, Env<Object>& env){
 }
 
 // -*-
-Object Object::eval(Env<Object>& env){
+Object Object::eval(Env& env){
     Object result;
     switch(this->m_type){
     case Type::Quote:{
@@ -213,7 +216,8 @@ bool Object::as_boolean() const{
 // -*-
 long Object::as_integer() const{
     if(!this->is_number()){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     auto self = this->to_integer();
     long result;
@@ -224,7 +228,8 @@ long Object::as_integer() const{
 // -*-
 double Object::as_float() const{
     if(!this->is_number()){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     auto self = this->to_float();
     double result;
@@ -235,7 +240,8 @@ double Object::as_float() const{
 // -*-
 std::string Object::as_string() const{
     if(this->m_type != Type::String){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     std::string result{};
     auto self = *this;
@@ -246,7 +252,8 @@ std::string Object::as_string() const{
 // -*-
 std::string Object::as_atom() const {
     if(this->m_type != Type::Atom){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     auto self = *this;
     std::string result{};
@@ -257,7 +264,8 @@ std::string Object::as_atom() const {
 // -*-
 std::vector<Object> Object::as_list() const{
     if(this->m_type!=Type::List){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     auto self = *this;
     std::vector<Object> result = {};
@@ -268,7 +276,8 @@ std::vector<Object> Object::as_list() const{
 // -*-
 void Object::push(Object obj){
     if(this->m_type != Type::List){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
 
     List& self = std::get<List>(this->m_value);
@@ -278,7 +287,8 @@ void Object::push(Object obj){
 // -*-
 Object Object::pop(){
     if(this->m_type != Type::List){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     auto& self = std::get<List>(this->m_value);
     size_t len = self.size();
@@ -290,7 +300,8 @@ Object Object::pop(){
 // -*-
 Object Object::to_integer() const {
     if(!this->is_number()){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     if(this->m_type == Type::Integer){
         return *this;
@@ -303,7 +314,8 @@ Object Object::to_integer() const {
 // -*-
 Object Object::to_float() const {
     if(!this->is_number()){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     if(this->m_type == Type::Float){
         return *this;
@@ -410,7 +422,8 @@ bool Object::operator>(Object other) const{
 // -*-
 bool Object::operator<(Object other) const{
     if(!this->is_number()){
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     bool result = false;
     if(this->m_type==Type::Float){
@@ -445,7 +458,8 @@ Object Object::operator+(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::SyntaxError);
     }
     Object result;
 
@@ -470,7 +484,8 @@ Object Object::operator+(Object other) const {
             result.m_value = (x+y);
         }
     }else{
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     //! @note: ---- maybe implement the same operator for String & List
 
@@ -486,7 +501,8 @@ Object Object::operator-(Object other) const {
         return other;
     }
     if(!(this->is_number() && other.is_number())){
-        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::SyntaxError);
     }
 
     Object result;
@@ -511,7 +527,8 @@ Object Object::operator-(Object other) const {
             result.m_value = (x - y);
         }
     }else{
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
 
     return result;
@@ -524,7 +541,8 @@ Object Object::operator*(Object other) const {
     if(this->m_type==Type::Unit && other.is_number()){ return other; }
     if(other.m_type==Type::Unit && other.is_number()){ return *this; }
     if(!(this->is_number() && other.is_number())){
-        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::SyntaxError);
     }
 
     Object result;
@@ -549,7 +567,8 @@ Object Object::operator*(Object other) const {
             result.m_value = (x * y);
         }
     }else{
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     return result;
 }
@@ -564,7 +583,8 @@ Object Object::operator/(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::SyntaxError);
     }
 
     auto almost_equal = [](double x, double y) -> bool {
@@ -583,7 +603,8 @@ Object Object::operator/(Object other) const {
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         if(almost_equal(y, 0.0)){
-            throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+            auto xxx = *this;
+            throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
         }
         result.m_type = Type::Float;
         result.m_value = (x / y);
@@ -593,7 +614,8 @@ Object Object::operator/(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             if(almost_equal(y, 0.0)){
-                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+                auto xxx = *this;
+                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Float;
             result.m_value = (x / y);
@@ -602,13 +624,15 @@ Object Object::operator/(Object other) const {
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             if(y==0){
-                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+                auto xxx = *this;
+                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Integer;
             result.m_value = (x / y);
         }
     }else{
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::TypeError);
     }
     return result;
 }
@@ -623,7 +647,8 @@ Object Object::operator%(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        throw Error(*this, Env<Object>(), ErrorKind::SyntaxError);
+        auto xxx = *this;
+        throw Error(xxx, Env(), ErrorKind::SyntaxError);
     }
 
     auto almost_equal = [](double x, double y) -> bool {
@@ -642,7 +667,8 @@ Object Object::operator%(Object other) const {
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         if(almost_equal(y, 0.0)){
-            throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+            auto xxx = *this;
+            throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
         }
         result.m_type = Type::Float;
         result.m_value = std::fmod(x, y);
@@ -652,7 +678,8 @@ Object Object::operator%(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             if(almost_equal(y, 0.0)){
-                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+                auto xxx = *this;
+                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Float;
             result.m_value = std::fmod(x, y);
@@ -661,13 +688,14 @@ Object Object::operator%(Object other) const {
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             if(y==0){
-                throw Error(*this, Env<Object>(), ErrorKind::ZeroDivisionError);
+                Object xxx = *this;
+                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Integer;
             result.m_value = (x % y);
         }
     }else{
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        throw Error();
     }
     return result;
 }
@@ -753,7 +781,7 @@ std::string Object::str() const {
         result = "()";
         break;
     default:
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        throw Error();
     }
     return result;
 }
@@ -839,7 +867,7 @@ std::string Object::repr() const {
         result = "()";
         break;
     default:
-        throw Error(*this, Env<Object>(), ErrorKind::TypeError);
+        throw Error();
     }
     return result;
 }
@@ -869,12 +897,12 @@ static std::string get_default_error_message(ErrorKind err){
     }
     return result;
 }
+
 // -*-
-template<typename T>
-Error<T>::Error(){
+Error::Error(){
     this->m_error = ErrorKind::RuntimError;
-    this->m_reason = T().get_pointer();
-    this->m_env = Env<Object>();
+    this->m_reason = Object().get_pointer();
+    this->m_env = Env();
     this->m_message = "";
 }
 
@@ -884,8 +912,8 @@ std::shared_ptr<T> m_reason;
 Env<T> m_env;
 const char* m_message;
 */
-template<typename T>
-Error<T>::Error(T value, const Env<T>& env, ErrorKind err){
+// -*-
+Error::Error(Object& value, const Env& env, ErrorKind err){
     this->m_error = err;
     this->m_reason = value.get_pointer();
     this->m_env = env;
@@ -896,24 +924,24 @@ Error<T>::Error(T value, const Env<T>& env, ErrorKind err){
     this->m_message = "";
 }
 
-template<typename T>
-Error<T>::Error(T value, const Env<T>& env, const char *message){
+// -*-
+Error::Error(Object& value, const Env& env, const char *message){
     this->m_error = ErrorKind::RuntimError;
     this->m_reason = value.get_pointer();
     this->m_env = env;
     this->m_message = message;
 }
 
-template<typename T>
-Error<T>::Error(const Error& other){
+// -*-
+Error::Error(const Error& other){
     this->m_error = other.m_error;
     this->m_env = other.m_env;
     this->m_reason = other.m_reason;
     this->m_message = other.m_message;
 }
 
-template<typename T>
-std::string Error<T>::describe(){
+
+std::string Error::describe(){
     std::string result = swzlispExceptions[this->m_error] + ": ";
     if(this->m_message==""){
         result += get_default_error_message(this->m_error);
@@ -926,14 +954,12 @@ std::string Error<T>::describe(){
 // -*-------------------------------------------------------------------*-
 // -*- Env                                                             -*-
 // -*-------------------------------------------------------------------*-
-template<typename T>
-Env<T>::Env(){
+Env::Env(){
     this->m_bindings = {};
     this->m_parent = nullptr;
 }
 
-template<typename T>
-Env<T>::Env(const Env<T>& other){
+Env::Env(const Env& other){
     this->m_bindings = {};
     for(auto entry=other.m_bindings.begin(); entry!=other.m_bindings.end(); entry++){
         this->m_bindings[entry->first] = entry->second;
@@ -941,8 +967,7 @@ Env<T>::Env(const Env<T>& other){
     this->m_parent = other.m_parent;
 }
 
-template<typename T>
-bool Env<T>::contains(const std::string& name) const {
+bool Env::contains(const std::string& name) const {
     bool result = false;
     auto ptr = this->m_bindings.find(name);
     if(ptr!=this->m_bindings.end()){
@@ -953,8 +978,7 @@ bool Env<T>::contains(const std::string& name) const {
     return result;
 }
 
-template<typename T>
-T Env<T>::get(std::string name) const {
+const Object& Env::get(std::string name) const {
     auto entry = this->m_bindings.find(name);
     if(entry == this->m_bindings.end()){
         throw std::runtime_error(
@@ -964,8 +988,8 @@ T Env<T>::get(std::string name) const {
     return entry->second;
 }
 
-template<typename T>
-void Env<T>::put(std::string name, T value){
+// -*-
+void Env::put(std::string name, Object& value){
     this->m_bindings[name] = value;
 }
 
@@ -979,7 +1003,7 @@ std::ostream& operator<<(std::ostream& os, const Object& obj){
 }
 
 // -*-
-std::ostream& operator<<(std::ostream& os, const Env<Object>& env){
+std::ostream& operator<<(std::ostream& os, const Env& env){
     os << "{ " << std::endl;
     for(auto entry: env.m_bindings){
         os << "'" << entry.first << ": " << entry.second.repr() << ",\n";
