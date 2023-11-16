@@ -299,9 +299,9 @@ public:
     // ::read_file(const std::string& filename) -> std::string
     static std::string read_file(const std::string& filename);
     // +run(std::string, Env<Object>&) -> Object
-    static Object execute(Env& env);
+    //static Object execute(Env& env);
     static Object execute(std::string source, Env& env);
-    static Object execute(std::string filename);
+    //static Object execute(std::string filename);
     static void repl(Env& env);
     static Env builtins;
 };

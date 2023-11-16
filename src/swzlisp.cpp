@@ -1226,6 +1226,11 @@ void Runtime::repl(Env& env){
     std::string input;
     Object result;
     std::vector<Object> parsed{};
+    // -*- banner -*-
+    std::cout << "swzlisp  VERSION 0.1; MIT License" << std::endl;
+    std::cout << "Type :quit to exit" << std::endl;
+    std::cout << "Type :help for help" << std::endl;
+    //std::cout << banner.str();
     /*
     - :help
     - :whos
@@ -1301,3 +1306,38 @@ static void usage(){
 // -*--------------------------------------------------------------------*-
 }//-*- end::namespace::swzlisp                                          -*-
 // -*--------------------------------------------------------------------*-
+
+// -*-------------------------*-
+// -*- M A I N   D R I V E R -*-
+// -*-------------------------*-
+int main(int argc, char **argv){    
+    swzlisp::Runtime::builtins = swzlisp::swzlisp_init();
+    swzlisp::Env workspace(swzlisp::Runtime::builtins);
+    std::vector<swzlisp::Object> args;
+    for(int i=0; i < argc; i++){
+        args.emplace_back(swzlisp::Object::create_string(std::string(argv[i])));
+    }
+    swzlisp::Object self(args);
+    workspace.put(":argv", self);
+
+    try{
+        if(argc == 1 || (argc==2 && std::string(argv[1]) == "-i")){
+            swzlisp::Runtime::repl(workspace);
+        }else if(argc == 2 && std::string(argv[1])=="-h"){
+            swzlisp::help();
+        }else if(argc==3 && std::string(argv[1])=="-c"){
+            std::string sexpr(argv[2]);
+            swzlisp::Runtime::execute(sexpr, workspace);
+        }else if(argc==3 && std::string(argv[1])=="-f"){
+            std::string filename(argv[2]);
+            std::string source = swzlisp::Runtime::read_file(filename);
+            swzlisp::Runtime::execute(source, workspace);
+        }
+    }catch(swzlisp::Error& err){
+        std::cerr << err.describe() << std::endl;
+    }catch(std::exception& err){
+        std::cerr << err.what() << std::endl;
+    }
+
+    return EXIT_SUCCESS;
+}
