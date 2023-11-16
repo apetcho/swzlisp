@@ -1,4 +1,5 @@
 #include "swzlisp.hpp"
+#include<iomanip>
 
 // -*-------------------------------------------------------------------*-
 // -*- namespace::swzlisp                                              -*-
@@ -723,8 +724,8 @@ std::string Object::str(){
             Builtin builtin;
             unwrap(builtin);
             std::ostringstream stream;
-            stream << "<" << builtin.name << " @ ";
-            stream << "0x" << std::hex << builtin.fun << ">";
+            stream << "<Procedure::" << builtin.name << "@";
+            stream << "0x" << std::hex << reinterpret_cast<std::uint64_t>(builtin.fun) << ">";
             result = stream.str();
         }//
         break;
@@ -803,8 +804,9 @@ std::string Object::repr() {
             Builtin builtin;
             unwrap(builtin);
             std::ostringstream stream;
-            stream << "<" + builtin.name << " @ 0x";
-            stream << std::hex << builtin.fun << ">";
+            // + builtin.name 
+            stream << "<Procedure::" << "@0x";
+            stream << std::hex << reinterpret_cast<std::uint64_t>(builtin.fun) << ">";
             result = stream.str();
         }//
         break;
@@ -967,7 +969,7 @@ std::ostream& operator<<(std::ostream& os, const Object& obj){
 std::ostream& operator<<(std::ostream& os, const Env& env){
     os << "{ " << std::endl;
     for(auto entry: env.m_bindings){
-        os << "'" << entry.first << ": " << entry.second.repr() << ",\n";
+        os << "    '" << std::setw(12) << std::left << entry.first << ": " << entry.second.repr() << ",\n";
     }
     os << "}" << std::endl;
     return os;

@@ -1032,6 +1032,7 @@ std::string Runtime::read_file(const std::string& filename){
 static void help(){
     std::cout << ":help     Print this message\n";
     std::cout << ":whos     Print all variables currently in the local environment\n";
+    std::cout << ":global   Print all symbols in the global environment\n";
     std::cout << ":clear    Clear all variables currently in the local environment\n";
     std::cout << ":export   Request the writing all expressions currently in\n";
     std::cout << "          the environment to a file\n";
@@ -1043,6 +1044,15 @@ static void help(){
 // -*-
 static void clear(Env& env){
     env.clear();
+}
+
+static void gloabl(Env& env){
+    auto ptr = env.parent();
+    if(ptr == nullptr){
+        std::cout << "-*- EMPTY GLOBAL ENVIRONMENT -*-" << std::endl;
+        return;
+    }
+    std::cout << *ptr << std::endl;
 }
 
 // -*-
@@ -1103,8 +1113,14 @@ void Runtime::repl(Env& env){
         std::getline(std::cin, input);
         if(input==":quit" || input==":bye" || input==":exit" || input==":q"){
             break;
+        }else if(input==":help" || input==":h"){
+            help();
         }else if(input==":whos"){
             whos(localEnv.bindings());
+        }else if(input==":clear"){
+            clear(localEnv);
+        }else if(input==":global"){
+            gloabl(localEnv);
         }else if(input==":export"){
             export_to_file(source);
         }else if(input != ""){

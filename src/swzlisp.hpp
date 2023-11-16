@@ -100,6 +100,10 @@ public:
         this->m_bindings.clear();
     }
 
+    std::shared_ptr<Env> parent() const {
+        return this->m_parent;
+    }
+
 private:
     std::map<std::string, Object> m_bindings;
     std::shared_ptr<Env> m_parent;
