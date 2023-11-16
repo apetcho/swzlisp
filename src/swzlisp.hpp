@@ -96,6 +96,10 @@ public:
         return this->m_bindings;
     }
 
+    void clear(){
+        this->m_bindings.clear();
+    }
+
 private:
     std::map<std::string, Object> m_bindings;
     std::shared_ptr<Env> m_parent;
