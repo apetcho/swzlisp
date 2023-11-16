@@ -74,17 +74,17 @@ static void evaluate(std::vector<Object>& args, Env& env){
 // body = args[1]
 static Object fun_lambda(std::vector<Object> args, Env& env){
     if(args.size() != 2){
-        Object self = Object();
+        //Object self = Object();
         std::string msg = "Invalid lambda expression";
-        auto error = Error(self, env, msg.c_str());
+        auto error = Error(env, msg.c_str());
         throw Error(error);
     }
     auto params = args[0];
     auto body = args[1];
     if(params.type()!=Type::List){
-        Object self = Object();
+        // Object self = Object();
         std::string msg = "Invalid 'lambda' expression";
-        auto error = Error(self, env, msg.c_str());
+        auto error = Error(env, msg.c_str());
         throw Error(error);
     }
     return Object(params.as_list(), body, env);
@@ -94,10 +94,7 @@ static Object fun_lambda(std::vector<Object> args, Env& env){
 // (if test yes no)
 static Object fun_ifthenelse(std::vector<Object> args, Env& env){
     if(args.size() != 3){
-        Object self = Object();
-        std::string msg = "Invalid 'if' expression";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'if' expression");
     }
     Object result;
     Object test = args[0];
@@ -116,10 +113,7 @@ static Object fun_ifthenelse(std::vector<Object> args, Env& env){
 // (define key val)
 static Object fun_define(std::vector<Object> args, Env& env){
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid 'define' expression";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'define' expression");
     }
 
     auto key = args[0].str();
@@ -135,10 +129,7 @@ static Object fun_define(std::vector<Object> args, Env& env){
 // body = args[2]
 static Object fun_defun(std::vector<Object> args, Env& env){
     if(args.size() != 3){
-        Object self = Object();
-        std::string msg = "Invalid 'defun' expression";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'defun' expression");
     }
 
     auto name = args[0].str();
@@ -153,10 +144,7 @@ static Object fun_defun(std::vector<Object> args, Env& env){
 // (while test body...)
 static Object fun_while(std::vector<Object> args, Env& env){
     if(args.size()< 1){
-        Object self = Object();
-        std::string msg = "Invalid 'while-loop' expression";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'while' expression");
     }
 
     Object result;
@@ -232,10 +220,7 @@ static Object fun_exit(std::vector<Object> args, Env& env){
 static Object fun_print(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() < 1){
-        Object self = Object();
-        std::string msg = "Invalid 'print' expression: not enough arguments";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'print' expression: not enough arguments");
     }
 
     Object result;
@@ -252,10 +237,7 @@ static Object fun_print(std::vector<Object> args, Env& env){
 static Object fun_input(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() > 1){
-        Object self = Object();
-        std::string msg = "Invalid 'input' expression. Too many arguments";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'input' expression. Too many arguments");
     }
     // [promt]?
     if(!args.empty()){ std::cout << args[0]; }
@@ -309,20 +291,14 @@ static Object fun_random(std::vector<Object> args, Env& env){
     }else if(args.size()==1){
         double max = args[0].as_float();
         if(max < 0){
-            Object self = Object();
-            auto msg = stream.str();
-            auto error = Error(self, env, msg.c_str());
-            throw Error(error);
+            throw Error(env, stream.str().c_str());
         }
         result = Object(my_random(max));
     }else if(args.size()==2){
         double min = args[0].as_float();
         double max = args[1].as_float();
         if(min > max){
-            Object self = Object();
-            auto msg = stream.str();
-            auto error = Error(self, env, msg.c_str());
-            throw Error(error);
+            throw Error(env, stream.str().c_str());
         }
         result = Object(my_random(min, max));
     }else if(args.size()==3){
@@ -330,10 +306,7 @@ static Object fun_random(std::vector<Object> args, Env& env){
         double max = args[1].as_float();
         size_t count = static_cast<size_t>(args[2].as_integer());
         if(min > max){
-            Object self = Object();
-            auto msg = stream.str();
-            auto error = Error(self, env, msg.c_str());
-            throw Error(error);
+            throw Error(env, stream.str().c_str());
         }
         std::vector<Object> values{};
         for(size_t i=0; i < count; i++){
@@ -341,10 +314,7 @@ static Object fun_random(std::vector<Object> args, Env& env){
         }
         result = Object(values);
     }else{
-        Object self = Object();
-        auto msg = stream.str();
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, stream.str().c_str());
     }
     return result;
 }
@@ -353,10 +323,7 @@ static Object fun_random(std::vector<Object> args, Env& env){
 static Object fun_read_file(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'read-file' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'read-file' expression.");
     }
 
     auto filename = args[0].as_string();
@@ -368,10 +335,7 @@ static Object fun_read_file(std::vector<Object> args, Env& env){
 static Object fun_write_file(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size()!=2){
-        Object self = Object();
-        std::string msg = "Invalid 'write-file' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'write-file' expression.");
     }
 
     auto filename = args[0].as_string();
@@ -389,10 +353,7 @@ static Object fun_write_file(std::vector<Object> args, Env& env){
 static Object fun_import(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'import' expression. Too many arguments";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'import' expression. Too many arguments");
     }
 
     Env libenv;
@@ -408,10 +369,7 @@ static Object fun_import(std::vector<Object> args, Env& env){
 static Object fun_eval(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'eval' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'eval' expression.");
     }
     return args[0].eval(env);
 }
@@ -428,10 +386,7 @@ static Object fun_list(std::vector<Object> args, Env& env){
 static Object fun_add(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() < 2){
-        Object self = Object();
-        std::string msg = "Invalid '+' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '+' expression.");
     }
     Object result = args[0];
     for(size_t i=1; i < args.size(); i++){
@@ -445,10 +400,7 @@ static Object fun_add(std::vector<Object> args, Env& env){
 static Object fun_sub(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() < 2){
-        Object self = Object();
-        std::string msg = "Invalid '-' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '-' expression.");
     }
     Object result = args[0];
     for(size_t i=1; i < args.size(); i++){
@@ -462,10 +414,7 @@ static Object fun_sub(std::vector<Object> args, Env& env){
 static Object fun_mul(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() < 2){
-        Object self = Object();
-        std::string msg = "Invalid '*' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '*' expression.");
     }
     Object result = args[0];
     for(size_t i=1; i < args.size(); i++){
@@ -478,10 +427,7 @@ static Object fun_mul(std::vector<Object> args, Env& env){
 static Object fun_div(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '/' expression. Expect two numbers as arguments";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '/' expression. Expect two numbers as arguments");
     }
     Object result;
     auto x = args[0];
@@ -494,10 +440,7 @@ static Object fun_div(std::vector<Object> args, Env& env){
 static Object fun_mod(std::vector<Object> args, Env& env){
     evaluate(args, env);
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '%' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '%' expression.");
     }
     
     auto x = args[0];
@@ -511,10 +454,7 @@ static Object fun_equalp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '=' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '=' expression.");
     }
     
     auto x = args[0];
@@ -528,10 +468,7 @@ static Object fun_not_equalp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '!=' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '!=' expression.");
     }
     
     auto x = args[0];
@@ -545,10 +482,7 @@ static Object fun_greaterp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '>' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '>' expression.");
     }
     
     auto x = args[0];
@@ -562,10 +496,7 @@ static Object fun_lessp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '<' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '<' expression.");
     }
     
     auto x = args[0];
@@ -579,10 +510,7 @@ static Object fun_greater_equalp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '>=' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '>=' expression.");
     }
     
     auto x = args[0];
@@ -596,10 +524,7 @@ static Object fun_less_equalp(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid '<=' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid '<=' expression.");
     }
     
     auto x = args[0];
@@ -613,10 +538,7 @@ static Object fun_typename(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'typename' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'typename' expression.");
     }
     
     auto name = args[0].type_name();
@@ -636,10 +558,7 @@ static Object fun_toFloat(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'float' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'float' expression.");
     }
     
     return args[0].to_float();
@@ -650,10 +569,7 @@ static Object fun_toInteger(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'integer' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'integer' expression.");
     }
     
     return args[0].to_integer();
@@ -665,19 +581,13 @@ static Object fun_index(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid 'index' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'index' expression.");
     }
 
     auto data = args[0].as_list();
     auto idx = args[1].as_integer();
     if(data.empty() || idx >= data.size()){
-        std::ostringstream stream;
-        stream << "index out of range";
-        auto self = Object();
-        throw Error(self, env, stream.str().c_str());
+        throw Error(env, "index out of range");
     }
     
     return data[idx];
@@ -689,18 +599,13 @@ static Object fun_insert(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 3){
-        Object self = Object();
-        std::string msg = "Invalid 'insert' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'insert' expression.");
     }
 
     auto data = args[0].as_list();
     auto idx = args[1].as_integer();
     if(idx < 0 || idx > data.size()){
-        std::string msg = "index out of range";
-        auto self = Object();
-        throw Error(self, env, msg.c_str());
+        throw Error(env, "index out of range");
     }
     data.insert(data.begin() + idx, args[2]);
 
@@ -712,18 +617,13 @@ static Object fun_remove(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid 'remove' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'remove' expression.");
     }
 
     auto data = args[0].as_list();
     auto idx = args[1].as_integer();
     if( data.empty() || idx < 0 || idx > data.size()){
-        std::string msg = "index out of range";
-        auto self = Object();
-        throw Error(self, env, msg.c_str());
+        throw Error(env, "index out of range");
     }
     data.erase(data.begin()+idx);
 
@@ -736,10 +636,7 @@ static Object fun_length(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'length' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'length' expression.");
     }
 
     auto data = args[0].as_list();
@@ -752,10 +649,7 @@ static Object fun_push(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() == 0){
-        Object self = Object();
-        std::string msg = "Invalid 'push' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'push' expression.");
     }
 
     for(size_t i=1; i < args.size(); i++){
@@ -769,10 +663,7 @@ static Object fun_pop(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'pop' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'pop' expression.");
     }
 
     return args[0].pop();
@@ -784,17 +675,12 @@ static Object fun_head(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'head' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'head' expression.");
     }
 
     auto data = args[0].as_list();
     if(data.empty()){
-        std::string msg = "index out of range";
-        auto self = Object();
-        throw Error(self, env, msg.c_str());
+        throw Error(env, "index out of range");
     }
 
     return data[0];
@@ -805,10 +691,7 @@ static Object fun_tail(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'tail' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'tail' expression.");
     }
 
     std::vector<Object> result{};
@@ -825,14 +708,10 @@ static Object fun_parse(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'parse' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'parse' expression.");
     }
     if(args[0].type()!=Type::String){
-        auto self = Object();
-        throw Error(self, env, ErrorKind::TypeError);
+        throw Error(env, ErrorKind::TypeError);
     }
 
     auto source = args[0].as_string();
@@ -847,10 +726,7 @@ static Object fun_replace(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 3){
-        Object self = Object();
-        std::string msg = "Invalid 'replace' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'replace' expression.");
     }
     auto text = args[0].as_string();
     auto old = args[1].as_string();
@@ -865,10 +741,7 @@ static Object fun_display(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'display' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'display' expression.");
     }
 
     return Object::create_string(args[0].str());
@@ -879,10 +752,7 @@ static Object fun_repr(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 1){
-        Object self = Object();
-        std::string msg = "Invalid 'repr' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'repr' expression.");
     }
 
     return Object::create_string(args[0].repr());
@@ -894,10 +764,7 @@ static Object fun_map(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid 'map' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'map' expression.");
     }
     std::vector<Object> result{};
     std::vector<Object> tmp{};
@@ -920,10 +787,7 @@ static Object fun_filter(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 2){
-        Object self = Object();
-        std::string msg = "Invalid 'filter' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        auto error = Error(env, "Invalid 'filter' expression.");
     }
 
     std::vector<Object> result{};
@@ -948,10 +812,7 @@ static Object fun_reduce(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() != 3){
-        Object self = Object();
-        std::string msg = "Invalid 'reduce' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'reduce' expression.");
     }
 
     std::vector<Object> data = args[2].as_list();
@@ -1036,10 +897,7 @@ static Object fun_range(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() < 1 || args.size() > 3){
-        Object self = Object();
-        std::string msg = "Invalid 'range' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        throw Error(env, "Invalid 'range' expression.");
     }
 
     std::ostringstream err;
@@ -1054,8 +912,7 @@ static Object fun_range(std::vector<Object> args, Env& env){
     if(args.size() == 1){
         auto stop = args[0];
         if(!stop.is_integer()){
-            auto self = Object();
-            throw Error(self, env, err.str().c_str());
+            throw Error(env, err.str().c_str());
         }
         auto values = my_range(stop.as_integer());
         for(auto val: values){
@@ -1065,8 +922,7 @@ static Object fun_range(std::vector<Object> args, Env& env){
         auto start = args[0];
         auto stop = args[1];
         if(!start.is_integer() || !stop.is_integer()){
-            auto self = Object();
-            throw Error(self, env, err.str().c_str());
+            throw Error(env, err.str().c_str());
         }
         auto values = my_range(start.as_integer(), stop.as_integer());
         for(auto val: values){
@@ -1080,8 +936,7 @@ static Object fun_range(std::vector<Object> args, Env& env){
             start.is_integer() && stop.is_integer() && step.is_integer()
         );
         if(!test){
-            auto self = Object();
-            throw Error(self, env, err.str().c_str());
+            throw Error(env, err.str().c_str());
         }
         auto values = my_range(
             start.as_integer(), stop.as_integer(), step.as_integer()
@@ -1101,10 +956,7 @@ static Object fun_linspace(std::vector<Object> args, Env& env){
     evaluate(args, env);
 
     if(args.size() < 2 || args.size() > 3){
-        Object self = Object();
-        std::string msg = "Invalid 'linspace' expression.";
-        auto error = Error(self, env, msg.c_str());
-        throw Error(error);
+        auto error = Error(env, "Invalid 'linspace' expression.");
     }
 
     std::ostringstream err;
@@ -1118,8 +970,7 @@ static Object fun_linspace(std::vector<Object> args, Env& env){
         auto start = args[0];
         auto stop = args[1];
         if(!start.is_number() || !stop.is_number()){
-            auto self = Object();
-            throw Error(self, env, err.str().c_str());
+            throw Error(env, err.str().c_str());
         }
         auto values = my_linspace(start.as_float(), stop.as_float());
         for(auto val: values){
@@ -1133,8 +984,7 @@ static Object fun_linspace(std::vector<Object> args, Env& env){
             start.is_number() && stop.is_number() && step.is_integer()
         );
         if(!test){
-            auto self = Object();
-            throw Error(self, env, err.str().c_str());
+            throw Error(env, err.str().c_str());
         }
         auto values = my_linspace(
             start.as_float(), stop.as_float(), step.as_integer()
@@ -1164,8 +1014,7 @@ std::string Runtime::read_file(const std::string& filename){
     std::ifstream fin;
     fin.open(filename.c_str());
     if(!fin.is_open()){
-        auto self = Object();
-        throw Error(self, Env(), ("could not open file '" + filename + "'").c_str());
+        throw Error(Env(), ("could not open file '" + filename + "'").c_str());
     }
     fin.seekg(0, std::ios::end);
     std::string data;

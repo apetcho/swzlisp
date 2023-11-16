@@ -106,8 +106,8 @@ private:
 class Error {
 public:
     Error();
-    Error(Object& value, const Env& env, ErrorKind);
-    Error(Object& value, const Env& env, const char *message);
+    Error(const Env& env, ErrorKind);
+    Error(const Env& env, const char *message);
     Error(const Error& other);
     ~Error() = default;
 
@@ -115,7 +115,7 @@ public:
 
 private:
     ErrorKind m_error;
-    std::shared_ptr<Object> m_reason;
+    //std::shared_ptr<Object> m_reason;
     Env m_env;
     std::string m_message;
 };

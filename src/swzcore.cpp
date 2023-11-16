@@ -119,13 +119,13 @@ Object Object::apply(std::vector<Object> args, Env& env){
                     "No enough arguments" : "Too many arguments"
                 );
                 msg = swzlispExceptions[ErrorKind::SyntaxError] + ": " + msg;
-                auto xxx = *this;
-                throw Error(xxx, env, msg.c_str());
+                //auto xxx = *this;
+                throw Error(env, msg.c_str());
             }
             lambda.env.set_parent(env.get_pointer());
             for(size_t i=0; i < params.size(); i++){
                 if(params[i].m_type!=Type::Atom){
-                    throw Error(*this, env, ErrorKind::RuntimError);
+                    throw Error(env, ErrorKind::RuntimError);
                 }
                 Object obj = params[i];
                 std::string name;
@@ -144,8 +144,8 @@ Object Object::apply(std::vector<Object> args, Env& env){
     default:{
             std::string message = swzlispExceptions[ErrorKind::SyntaxError];
             message += ": expect a function or a lambda";
-            auto xxx = *this;
-            throw Error(xxx, env, message.c_str());
+            //auto xxx = *this;
+            throw Error(env, message.c_str());
         }//
         break;
     }
@@ -174,7 +174,7 @@ Object Object::eval(Env& env){
             List data;
             unwrap(data);
             if(data.size() == 0){
-                throw Error(*this, env, ErrorKind::SyntaxError);
+                throw Error(env, ErrorKind::SyntaxError);
             }
             argv = std::vector<Object>(data.begin()+1, data.end());
             fun = data[0].eval(env);
@@ -206,8 +206,7 @@ bool Object::as_boolean() const{
 // -*-
 long Object::as_integer() const{
     if(!this->is_number()){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     auto self = this->to_integer();
     long result;
@@ -218,8 +217,7 @@ long Object::as_integer() const{
 // -*-
 double Object::as_float() const{
     if(!this->is_number()){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     auto self = this->to_float();
     double result;
@@ -230,8 +228,7 @@ double Object::as_float() const{
 // -*-
 std::string Object::as_string() const{
     if(this->m_type != Type::String){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     std::string result{};
     auto self = *this;
@@ -242,8 +239,7 @@ std::string Object::as_string() const{
 // -*-
 std::string Object::as_atom() const {
     if(this->m_type != Type::Atom){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     auto self = *this;
     std::string result{};
@@ -254,8 +250,7 @@ std::string Object::as_atom() const {
 // -*-
 std::vector<Object> Object::as_list() const{
     if(this->m_type!=Type::List){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     auto self = *this;
     std::vector<Object> result = {};
@@ -266,8 +261,7 @@ std::vector<Object> Object::as_list() const{
 // -*-
 void Object::push(Object obj){
     if(this->m_type != Type::List){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
 
     List& self = std::get<List>(this->m_value);
@@ -277,8 +271,7 @@ void Object::push(Object obj){
 // -*-
 Object Object::pop(){
     if(this->m_type != Type::List){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     auto& self = std::get<List>(this->m_value);
     size_t len = self.size();
@@ -290,8 +283,7 @@ Object Object::pop(){
 // -*-
 Object Object::to_integer() const {
     if(!this->is_number()){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     if(this->m_type == Type::Integer){
         return *this;
@@ -304,8 +296,7 @@ Object Object::to_integer() const {
 // -*-
 Object Object::to_float() const {
     if(!this->is_number()){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     if(this->m_type == Type::Float){
         return *this;
@@ -406,8 +397,7 @@ bool Object::operator>(Object other) const{
 // -*-
 bool Object::operator<(Object other) const{
     if(!this->is_number()){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     bool result = false;
     if(this->m_type==Type::Float){
@@ -442,8 +432,7 @@ Object Object::operator+(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::SyntaxError);
+        throw Error(Env(), ErrorKind::SyntaxError);
     }
     Object result;
 
@@ -477,8 +466,7 @@ Object Object::operator+(Object other) const {
             result.m_value = (x+y);
         }
     }else{
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     //! @note: ---- maybe implement the same operator for String & List
 
@@ -494,8 +482,7 @@ Object Object::operator-(Object other) const {
         return other;
     }
     if(!(this->is_number() && other.is_number())){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::SyntaxError);
+        throw Error(Env(), ErrorKind::SyntaxError);
     }
 
     Object result;
@@ -520,22 +507,18 @@ Object Object::operator-(Object other) const {
             result.m_value = (x - y);
         }
     }else{
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
 
     return result;
 }
-
-
 
 // -*-
 Object Object::operator*(Object other) const {
     if(this->m_type==Type::Unit && other.is_number()){ return other; }
     if(other.m_type==Type::Unit && other.is_number()){ return *this; }
     if(!(this->is_number() && other.is_number())){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::SyntaxError);
+        throw Error(Env(), ErrorKind::SyntaxError);
     }
 
     Object result;
@@ -560,8 +543,7 @@ Object Object::operator*(Object other) const {
             result.m_value = (x * y);
         }
     }else{
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     return result;
 }
@@ -576,8 +558,7 @@ Object Object::operator/(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::SyntaxError);
+        throw Error(Env(), ErrorKind::SyntaxError);
     }
 
     auto almost_equal = [](double x, double y) -> bool {
@@ -596,8 +577,7 @@ Object Object::operator/(Object other) const {
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         if(almost_equal(y, 0.0)){
-            auto xxx = *this;
-            throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+            throw Error(Env(), ErrorKind::ZeroDivisionError);
         }
         result.m_type = Type::Float;
         result.m_value = (x / y);
@@ -607,8 +587,7 @@ Object Object::operator/(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             if(almost_equal(y, 0.0)){
-                auto xxx = *this;
-                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+                throw Error(Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Float;
             result.m_value = (x / y);
@@ -617,15 +596,13 @@ Object Object::operator/(Object other) const {
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             if(y==0){
-                auto xxx = *this;
-                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+                throw Error(Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Integer;
             result.m_value = (x / y);
         }
     }else{
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::TypeError);
+        throw Error(Env(), ErrorKind::TypeError);
     }
     return result;
 }
@@ -640,8 +617,7 @@ Object Object::operator%(Object other) const {
     }
 
     if(!(this->is_number() && other.is_number())){
-        auto xxx = *this;
-        throw Error(xxx, Env(), ErrorKind::SyntaxError);
+        throw Error(Env(), ErrorKind::SyntaxError);
     }
 
     auto almost_equal = [](double x, double y) -> bool {
@@ -660,8 +636,7 @@ Object Object::operator%(Object other) const {
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         if(almost_equal(y, 0.0)){
-            auto xxx = *this;
-            throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+            throw Error(Env(), ErrorKind::ZeroDivisionError);
         }
         result.m_type = Type::Float;
         result.m_value = std::fmod(x, y);
@@ -671,8 +646,7 @@ Object Object::operator%(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             if(almost_equal(y, 0.0)){
-                auto xxx = *this;
-                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+                throw Error(Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Float;
             result.m_value = std::fmod(x, y);
@@ -681,14 +655,13 @@ Object Object::operator%(Object other) const {
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             if(y==0){
-                Object xxx = *this;
-                throw Error(xxx, Env(), ErrorKind::ZeroDivisionError);
+                throw Error(Env(), ErrorKind::ZeroDivisionError);
             }
             result.m_type = Type::Integer;
             result.m_value = (x % y);
         }
     }else{
-        throw Error();
+        throw Error(Env(), ErrorKind::RuntimError);
     }
     return result;
 }
@@ -882,7 +855,7 @@ static std::string get_default_error_message(ErrorKind err){
 // -*-
 Error::Error(){
     this->m_error = ErrorKind::RuntimError;
-    this->m_reason = Object().get_pointer();
+    //this->m_reason = Object().get_pointer();
     this->m_env = Env();
     this->m_message = "";
 }
@@ -894,9 +867,9 @@ Env<T> m_env;
 const char* m_message;
 */
 // -*-
-Error::Error(Object& value, const Env& env, ErrorKind err){
+Error::Error(const Env& env, ErrorKind err){
     this->m_error = err;
-    this->m_reason = value.get_pointer();
+    //this->m_reason = value.get_pointer();
     this->m_env = env;
     auto entry = swzlispExceptions.find(err);
     if(entry == swzlispExceptions.end()){
@@ -906,9 +879,9 @@ Error::Error(Object& value, const Env& env, ErrorKind err){
 }
 
 // -*-
-Error::Error(Object& value, const Env& env, const char *message){
+Error::Error(const Env& env, const char *message){
     this->m_error = ErrorKind::RuntimError;
-    this->m_reason = value.get_pointer();
+    //this->m_reason = value.get_pointer();
     this->m_env = env;
     this->m_message = message;
 }
@@ -917,7 +890,7 @@ Error::Error(Object& value, const Env& env, const char *message){
 Error::Error(const Error& other){
     this->m_error = other.m_error;
     this->m_env = other.m_env;
-    this->m_reason = other.m_reason;
+    //this->m_reason = other.m_reason;
     this->m_message = other.m_message;
 }
 

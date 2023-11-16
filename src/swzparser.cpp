@@ -130,13 +130,9 @@ Object Parser::read_number(){
         try{
             val = std::stod(number);
         }catch(std::invalid_argument& err){
-            auto msg = err.what();
-            auto obj = Object();
-            throw Error(obj, Env(), msg);
+            throw Error(Env(), err.what());
         }catch(std::out_of_range& err){
-            auto msg = err.what();
-            auto obj = Object();
-            throw Error(obj, Env(), msg);
+            throw Error(Env(), err.what());
         }    
         result = Object(val);
     }else{
@@ -144,13 +140,9 @@ Object Parser::read_number(){
         try{
             val = std::stol(number);
         }catch(std::invalid_argument& err){
-            auto msg = err.what();
-            auto obj = Object();
-            throw Error(obj, Env(), msg);
+            throw Error(Env(), err.what());
         }catch(std::out_of_range& err){
-            auto msg = err.what();
-            auto obj = Object();
-            throw Error(obj, Env(), msg);
+            throw Error(Env(), err.what());
         }
         result = Object(val);
     }
@@ -164,9 +156,7 @@ Object Parser::read_string(){
     std::string::iterator ptr = this->m_iter;
     while(*(++ptr)!='\"'){
         if(ptr==this->m_end){
-            auto unit = Object();
-            auto error = Error(unit, Env(), ErrorKind::SyntaxError);
-            throw Error(error);
+            throw Error(Env(), ErrorKind::SyntaxError);
         }
         if(*ptr == '\\'){ ++ptr; }
     }
@@ -196,8 +186,7 @@ Object Parser::read_atom(){
     std::string::iterator ptr = this->m_iter;
     while(this->is_valid_atom_char()){
         if(this->m_iter == this->m_end){
-            auto self = Object();
-            throw Error(self, Env(), ErrorKind::SyntaxError);
+            throw Error(Env(), ErrorKind::SyntaxError);
         }
         this->m_iter++;
     }
@@ -243,10 +232,7 @@ Object Parser::next_token(){
     }else if(this->is_valid_atom_char()){
         result = this->read_atom();
     }else{
-        Object self = Object();
-        std::string msg = "Malformed program";
-        auto error = Error(self, Env(), msg.c_str());
-        throw Error(error);
+        throw Error(Env(), "Malformed program");
     }
 
     return result;
@@ -260,10 +246,7 @@ std::vector<Object> Parser::parse(){
     }
 
     if(this->m_iter != this->m_end){
-        Object self = Object();
-        std::string msg = "Malformed program";
-        auto error = Error(self, Env(), msg.c_str());
-        throw Error(error);
+        throw Error(Env(), "Malformed program");
     }
 
     return result;
