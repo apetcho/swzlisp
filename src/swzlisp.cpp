@@ -1041,6 +1041,11 @@ static void help(){
 }
 
 // -*-
+static void clear(Env& env){
+    env.clear();
+}
+
+// -*-
 void whos(const std::map<std::string, Object>& bindings){
     // -------------------------------------------------------
     //  name |     object | size
@@ -1096,7 +1101,7 @@ void Runtime::repl(Env& env){
     while(true){
         std::cout << ">>> ";
         std::getline(std::cin, input);
-        if(input==":quit" || input==":bye" || input==":exit"){
+        if(input==":quit" || input==":bye" || input==":exit" || input==":q"){
             break;
         }else if(input==":whos"){
             whos(localEnv.bindings());
