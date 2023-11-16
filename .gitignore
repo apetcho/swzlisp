@@ -61,4 +61,8 @@ refs/
 build/
 .vscode/
 notes.md
+<<<<<<< HEAD
 design.md
+=======
+design.md
+>>>>>>> v-cpp
