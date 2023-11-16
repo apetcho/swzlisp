@@ -52,15 +52,15 @@ void Parser::skip_if(bool predicate){
 }
 
 // -*-
-void Parser::read_unit(std::shared_ptr<Object>& unit){
+Object Parser::read_unit(){
     std::string::iterator ptr = this->m_iter;
+    Object unit;
     bool ok = false;
     bool predicate = (*this->m_iter == '(');
     this->skip_if(predicate);
     this->skip_whitespace();
     if(*this->m_iter == ')'){
-        if(unit != nullptr){ unit.reset(); }
-        unit = std::make_shared<Object>();
+        unit = Object();
         predicate = (*this->m_iter == ')');
         this->skip_if(predicate);
         ok = true;
@@ -70,27 +70,27 @@ void Parser::read_unit(std::shared_ptr<Object>& unit){
     if(!ok){
         // Jump to parse to read an actual list, therefore this is not an
         // actual Unit but a list.
-        unit = nullptr;
         throw Error();
     }
+    return unit;
 }
 
 // -*-
-void Parser::read_quote(std::shared_ptr<Object>& objp){
+Object Parser::read_quote(){
     std::string::iterator ptr = this->m_iter;
     bool predicate = (*this->m_iter=='\'');
+    Object result;
     if(predicate){
         this->skip_if(predicate);
-        Object self = Object::create_quote(this->next_token());
-        if(objp != nullptr){ objp.reset(); }
-        objp = std::make_shared<Object>(self);
+        result = Object::create_quote(this->next_token());
     }else{
         throw Error();
     }
+    return result;
 }
 
 // -*-
-void Parser::read_list(std::shared_ptr<Object>& objp){
+Object Parser::read_list(){
     std::string::iterator ptr = this->m_iter;
     bool predicate = (*this->m_iter == '(');
     this->skip_if(predicate);
@@ -99,21 +99,21 @@ void Parser::read_list(std::shared_ptr<Object>& objp){
     // (list)
     // otherwise
     // () result int Type::Unit
+    Object result;
     if(*this->m_iter !=')'){
-        Object self = Object(std::vector<Object>());
+        result = Object(std::vector<Object>());
         while(*this->m_iter !=')'){
-            self.push(this->next_token());
+            result.push(this->next_token());
         }
         this->skip_whitespace();
         predicate = (*this->m_iter == ')');
         this->skip_if(predicate);
-        if(objp != nullptr){ objp.reset();}
-        objp = std::make_shared<Object>(self);
     }
+    return result;
 }
 
 // -*-
-void Parser::read_number(std::shared_ptr<Object>& objp){
+Object Parser::read_number(){
     std::string::iterator ptr = this->m_iter;
     auto is_number_char = [&ptr]() -> bool {
         std::string chars = ".-+0123456789eE";
@@ -121,9 +121,10 @@ void Parser::read_number(std::shared_ptr<Object>& objp){
     };
     while(is_number_char()){ ptr++;}
 
+    Object result;
+
     std::string number = std::string(this->m_iter, ptr);
     this->skip_whitespace();
-    if(objp != nullptr){ objp.reset(); }
     if(number.find('.') != std::string::npos){
         double val{};
         try{
@@ -136,10 +137,8 @@ void Parser::read_number(std::shared_ptr<Object>& objp){
             auto msg = err.what();
             auto obj = Object();
             throw Error(obj, Env(), msg);
-        }
-    
-        auto self = Object(val);
-        objp = std::make_shared<Object>(self);
+        }    
+        result = Object(val);
     }else{
         long val{};
         try{
@@ -153,14 +152,15 @@ void Parser::read_number(std::shared_ptr<Object>& objp){
             auto obj = Object();
             throw Error(obj, Env(), msg);
         }
-        auto self = Object(val);
-        objp = std::make_shared<Object>(self);
+        result = Object(val);
     }
     this->m_iter = ptr;
+
+    return result;
 }
 
 // -*-
-void Parser::read_string(std::shared_ptr<Object>& objp){
+Object Parser::read_string(){
     std::string::iterator ptr = this->m_iter;
     while(*(++ptr)!='\"'){
         if(ptr==this->m_end){
@@ -170,7 +170,7 @@ void Parser::read_string(std::shared_ptr<Object>& objp){
         }
         if(*ptr == '\\'){ ++ptr; }
     }
-
+    Object result;
     std::string data = std::string(this->m_iter, ptr);
     ++ptr;
     this->m_iter = ptr;
@@ -187,13 +187,12 @@ void Parser::read_string(std::shared_ptr<Object>& objp){
         }
     }
 
-    if(objp != nullptr){ objp.reset(); }
-    auto self = Object::create_string(data);
-    objp = std::make_shared<Object>(self);
+    result = Object::create_string(data);
+    return result;
 }
 
 // -*-
-void Parser::read_atom(std::shared_ptr<Object>& objp){
+Object Parser::read_atom(){
     std::string::iterator ptr = this->m_iter;
     while(this->is_valid_atom_char()){
         if(this->m_iter == this->m_end){
@@ -203,11 +202,11 @@ void Parser::read_atom(std::shared_ptr<Object>& objp){
         this->m_iter++;
     }
 
+    Object result;
     std::string data = std::string(ptr, this->m_iter);
     this->skip_whitespace();
-    auto self = Object::create_atom(data);
-    if(objp!=nullptr){ objp.reset();}
-    objp = std::make_shared<Object>(self);
+    result = Object::create_atom(data);
+    return result;
 }
 
 // -*-
@@ -226,47 +225,31 @@ Object Parser::next_token(){
         }
     }
 
-    std::shared_ptr<Object> ptr = nullptr;
+    Object result;
     if(this->m_iter == this->m_end){
         return Object();
     }else if(*this->m_iter=='\''){
-        this->read_quote(ptr);
-        Object result = *ptr;
-        ptr = nullptr;
-        return result;
+        result = this->read_quote();
     }else if(*this->m_iter=='('){
         try{
-            this->read_unit(ptr);
-            Object result = *ptr;
-            ptr = nullptr;
-            return result;
+            result = this->read_unit();
         }catch(Error& err){
-            this->read_list(ptr);
-            Object result = *ptr;
-            ptr = nullptr;
-            return result;
+            result = this->read_list();
         }
     }else if(std::isdigit(*this->m_iter)||(*this->m_iter=='-' && std::isdigit(*(this->m_iter+1)))){
-        this->read_number(ptr);
-        Object result = *ptr;
-        ptr = nullptr;
-        return result;
+        result = this->read_number();
     }else if(*this->m_iter=='\"'){
-        this->read_string(ptr);
-        Object result = *ptr;
-        ptr = nullptr;
-        return result;
+        result = this->read_string();
     }else if(this->is_valid_atom_char()){
-        this->read_atom(ptr);
-        Object result = *ptr;
-        ptr = nullptr;
-        return result;
+        result = this->read_atom();
     }else{
         Object self = Object();
         std::string msg = "Malformed program";
         auto error = Error(self, Env(), msg.c_str());
         throw Error(error);
     }
+
+    return result;
 }
 
 // -*-

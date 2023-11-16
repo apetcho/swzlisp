@@ -23,13 +23,9 @@ Object::Object(std::vector<Object> params, Object body, const Env& env)
 : m_type{Type::Lambda}{
     std::vector<Object> self;
     self.push_back(Object(params));
-    //self.push_back(ans);
     Lambda lambda;
     lambda.params = params;
-    // lambda.body.m_type = body.m_type;
-    // lambda.body.m_value = body.m_value;
     lambda.body = std::make_shared<Object>(body);
-    //auto _atoms = ans.atoms();
     for(auto name: body.atoms()){
         if(env.contains(name)){
             auto val = env.get(name);
@@ -114,9 +110,8 @@ Object Object::apply(std::vector<Object> args, Env& env){
     List params;
     switch(this->m_type){
     case Type::Lambda:{
-            auto self = *this;
             Lambda lambda;
-            self.unwrap(lambda);
+            unwrap(lambda);
             params = lambda.params;
             if(params.size() != args.size()){
                 std::string msg = (
@@ -142,8 +137,7 @@ Object Object::apply(std::vector<Object> args, Env& env){
         break;
     case Type::Builtin:{
             Builtin builtin;
-            auto self = *this;
-            self.unwrap(builtin);
+            unwrap(builtin);
             result = builtin.fun(args, env);
         }//
         break;
@@ -164,15 +158,13 @@ Object Object::eval(Env& env){
     switch(this->m_type){
     case Type::Quote:{
             List data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             result = data[0];
         }//
         break;
     case Type::Atom:{
             std::string data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             result = env.get(data);
         }//
         break;
@@ -180,15 +172,13 @@ Object Object::eval(Env& env){
             List argv;
             Object fun;
             List data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             if(data.size() == 0){
                 throw Error(*this, env, ErrorKind::SyntaxError);
             }
             argv = std::vector<Object>(data.begin()+1, data.end());
             fun = data[0].eval(env);
             if(!fun.is_builtin()){
-                // user-defined function
                 for(size_t i=0; i < argv.size(); i++){
                     argv[i] = argv[i].eval(env);
                 }
@@ -341,16 +331,14 @@ bool Object::operator==(Object other) const{
     switch(this->m_type){
     case Type::Float:{
             double x, y;
-            auto self = *this;
-            self.unwrap(x);
+            x = std::get<double>(this->m_value);
             other.unwrap(y);
             result = (x == y);
         }//
         break;
     case Type::Integer:{
             long x, y;
-            auto self = *this;
-            self.unwrap(x);
+            x = std::get<long>(this->m_value);
             other.unwrap(y);
             result = (x == y);
         }//
@@ -358,8 +346,7 @@ bool Object::operator==(Object other) const{
     case Type::Builtin:{
             Builtin fn1;
             Builtin fn2;
-            auto self = *this;
-            self.unwrap(fn1);
+            fn1 = std::get<Builtin>(this->m_value);
             other.unwrap(fn2);
             result = (
                 fn1.name==fn2.name && fn1.fun==fn2.fun
@@ -369,8 +356,7 @@ bool Object::operator==(Object other) const{
     case Type::String:
     case Type::Atom:{
             std::string x, y;
-            auto self = *this;
-            self.unwrap(x);
+            x = std::get<std::string>(this->m_value);
             other.unwrap(y);
             result = x == y;
         }//
@@ -378,16 +364,14 @@ bool Object::operator==(Object other) const{
     case Type::Lambda:
     case Type::List:{
             List x, y;
-            auto self = *this;
-            self.unwrap(x);
+            x = std::get<List>(this->m_value);
             other.unwrap(y);
             result = (x == y);
         }//
         break;
     case Type::Quote:{
             List x, y;
-            auto self = *this;
-            self.unwrap(x);
+            x = std::get<List>(this->m_value);
             other.unwrap(y);
             result = (x[0]==y[0]);
         }//
@@ -463,11 +447,16 @@ Object Object::operator+(Object other) const {
     }
     Object result;
 
+    auto print = []( auto x, auto y){
+        std::cout << x << " and " << y << std::endl;
+    };
     if(this->m_type==Type::Float){
         double x, y;
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         result.m_type = Type::Float;
+        std::cout << "Adding ";
+        print(x, y);
         result.m_value = (x+y);
     }else if(this->m_type==Type::Integer){
         if(other.m_type==Type::Float){
@@ -475,12 +464,16 @@ Object Object::operator+(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             result.m_type = Type::Float;
+            std::cout << "Adding ";
+            print(x, y);
             result.m_value = (x + y);
         }else{
             long x, y;
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             result.m_type = Type::Integer;
+            std::cout << "Adding ";
+            print(x, y);
             result.m_value = (x+y);
         }
     }else{
@@ -707,19 +700,17 @@ std::string Object::type_name(){
 }
 
 // -*-
-std::string Object::str() const {
+std::string Object::str(){
     std::string result;
     switch(this->m_type){
     case Type::Quote:{
             List data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             result = "'" + data[0].repr();
         }//
         break;
     case Type::Atom:{
-            auto self = *this;
-            self.unwrap(result);
+            unwrap(result);
         }//
         break;
     case Type::Integer:{
@@ -739,15 +730,13 @@ std::string Object::str() const {
         }//
         break;
     case Type::String:{
-            auto self = *this;
-            self.unwrap(result);
+            unwrap(result);
         }//
         break;
     case Type::Lambda:{
             std::string data = "";
             List items;
-            auto self = *this;
-            self.unwrap(items);
+            unwrap(items);
             for(auto item: items){
                 data += item.repr() + " ";
             }
@@ -757,8 +746,7 @@ std::string Object::str() const {
         break;
     case Type::List:{
             List items;
-            auto self = *this;
-            self.unwrap(items);
+            unwrap(items);
             std::string data = "";
             for(auto item: items){
                 data += item.repr() + " ";
@@ -769,8 +757,7 @@ std::string Object::str() const {
         break;
     case Type::Builtin:{
             Builtin builtin;
-            auto self = *this;
-            self.unwrap(builtin);
+            unwrap(builtin);
             std::ostringstream stream;
             stream << "<" << builtin.name << " @ ";
             stream << "0x" << std::hex << builtin.fun << ">";
@@ -787,19 +774,17 @@ std::string Object::str() const {
 }
 
 // -*-
-std::string Object::repr() const {
+std::string Object::repr() {
     std::string result{};
     switch(this->m_type){
     case Type::Quote:{
             List data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             result = "'" + data[0].repr();
         }//
         break;
     case Type::Atom:{
-            auto self = *this;
-            self.unwrap(result);
+            unwrap(result);
         }//
         break;
     case Type::Integer:{
@@ -820,8 +805,7 @@ std::string Object::repr() const {
         break;
     case Type::String:{
             std::string data;
-            auto self = *this;
-            self.unwrap(data);
+            unwrap(data);
             for(size_t i=0; i < data.size(); i++){
                 if(data[i]=='"'){ result += "\\\""; }
                 else{ result.push_back(data[i]); }
@@ -831,8 +815,7 @@ std::string Object::repr() const {
         break;
     case Type::Lambda:{
             List items;
-            auto self = *this;
-            self.unwrap(items);
+            unwrap(items);
             std::string data = "";
             for(auto item: items){
                 data += item.repr() + " ";
@@ -843,8 +826,7 @@ std::string Object::repr() const {
         break;
     case Type::List:{
             List items;
-            auto self = *this;
-            self.unwrap(items);
+            unwrap(items);
             std::string data = "";
             for(auto item: items){
                 data += item.repr() + " ";
@@ -855,8 +837,7 @@ std::string Object::repr() const {
         break;
     case Type::Builtin:{
             Builtin builtin;
-            auto self = *this;
-            self.unwrap(builtin);
+            unwrap(builtin);
             std::ostringstream stream;
             stream << "<" + builtin.name << " @ 0x";
             stream << std::hex << builtin.fun << ">";
@@ -1006,7 +987,8 @@ void Env::merge(const Env& other){
 // -*-------------------------------------------------------------------*-
 // -*-
 std::ostream& operator<<(std::ostream& os, const Object& obj){
-    os << obj.str();
+    Object self(obj);
+    os << self.str();
     return os;
 }
 

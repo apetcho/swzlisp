@@ -191,8 +191,8 @@ public:
     Object operator/(Object other) const;
     Object operator%(Object other) const;
     std::string type_name();
-    std::string str() const;
-    std::string repr() const;
+    std::string str();
+    std::string repr();
 
     friend std::ostream& operator<<(std::ostream& os, const Object& obj);
 
@@ -277,12 +277,12 @@ private:
     bool is_valid_atom_char();
     Object next_token();
     void skip_if(bool predicate);
-    void read_unit(std::shared_ptr<Object>& objp);
-    void read_quote(std::shared_ptr<Object>& objp);
-    void read_list(std::shared_ptr<Object>& objp);
-    void read_number(std::shared_ptr<Object>& objp);
-    void read_string(std::shared_ptr<Object>& objp);
-    void read_atom(std::shared_ptr<Object>& objp);
+    Object read_unit();
+    Object read_quote();
+    Object read_list();
+    Object read_number();
+    Object read_string();
+    Object read_atom();
 };
 
 // -*-

@@ -1,4 +1,5 @@
 #include "swzlisp.hpp"
+#include<csignal>
 
 #define SWZLISP_BUILTINS                    \
     SWZLISP_DEF("eval", _eval)              \
@@ -1307,10 +1308,18 @@ static void usage(){
 }//-*- end::namespace::swzlisp                                          -*-
 // -*--------------------------------------------------------------------*-
 
+static void sighandler(int sig){
+    if(sig==SIGINT || sig==SIGTERM){
+        std::exit(EXIT_SUCCESS);
+    }
+}
+
 // -*-------------------------*-
 // -*- M A I N   D R I V E R -*-
 // -*-------------------------*-
-int main(int argc, char **argv){    
+int main(int argc, char **argv){
+    std::signal(SIGINT, sighandler);
+    std::signal(SIGTERM, sighandler);    
     swzlisp::Runtime::builtins = swzlisp::swzlisp_init();
     swzlisp::Env workspace(swzlisp::Runtime::builtins);
     std::vector<swzlisp::Object> args;
