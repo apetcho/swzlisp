@@ -109,7 +109,7 @@ public:
     Error(Object& value, const Env& env, ErrorKind);
     Error(Object& value, const Env& env, const char *message);
     Error(const Error& other);
-    ~Error();
+    ~Error() = default;
 
     std::string describe();
 
