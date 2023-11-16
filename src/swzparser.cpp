@@ -53,26 +53,10 @@ void Parser::skip_if(bool predicate){
 
 // -*-
 Object Parser::read_unit(){
-    std::string::iterator ptr = this->m_iter;
-    Object unit;
-    bool ok = false;
-    bool predicate = (*this->m_iter == '(');
+    bool predicate = (*this->m_iter == '@');
     this->skip_if(predicate);
     this->skip_whitespace();
-    if(*this->m_iter == ')'){
-        unit = Object();
-        predicate = (*this->m_iter == ')');
-        this->skip_if(predicate);
-        ok = true;
-    }
-    // otherwise, this is a list containing at least one element
-    this->m_iter = ptr; // reset the pointer to its original place
-    if(!ok){
-        // Jump to parse to read an actual list, therefore this is not an
-        // actual Unit but a list.
-        throw Error();
-    }
-    return unit;
+    return Object();
 }
 
 // -*-
@@ -99,16 +83,13 @@ Object Parser::read_list(){
     // (list)
     // otherwise
     // () result int Type::Unit
-    Object result;
-    if(*this->m_iter !=')'){
-        result = Object(std::vector<Object>());
-        while(*this->m_iter !=')'){
-            result.push(this->next_token());
-        }
-        this->skip_whitespace();
-        predicate = (*this->m_iter == ')');
-        this->skip_if(predicate);
+    Object result = Object(std::vector<Object>());
+    while(*this->m_iter !=')'){
+        result.push(this->next_token());
     }
+    this->skip_whitespace();
+    predicate = (*this->m_iter == ')');
+    this->skip_if(predicate);
     return result;
 }
 
@@ -220,15 +201,18 @@ Object Parser::next_token(){
     }else if(*this->m_iter=='\''){
         result = this->read_quote();
     }else if(*this->m_iter=='('){
-        try{
-            result = this->read_unit();
-        }catch(Error& err){
-            result = this->read_list();
-        }
+        // try{
+        //     result = this->read_unit();
+        // }catch(Error& err){
+        //     result = this->read_list();
+        // }
+        result = this->read_list();
     }else if(std::isdigit(*this->m_iter)||(*this->m_iter=='-' && std::isdigit(*(this->m_iter+1)))){
         result = this->read_number();
     }else if(*this->m_iter=='\"'){
         result = this->read_string();
+    }else if(*this->m_iter=='@'){
+        result = this->read_unit();
     }else if(this->is_valid_atom_char()){
         result = this->read_atom();
     }else{

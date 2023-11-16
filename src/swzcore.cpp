@@ -436,16 +436,11 @@ Object Object::operator+(Object other) const {
     }
     Object result;
 
-    auto print = []( auto x, auto y){
-        std::cout << x << " and " << y << std::endl;
-    };
     if(this->m_type==Type::Float){
         double x, y;
         this->to_float().unwrap(x);
         other.to_float().unwrap(y);
         result.m_type = Type::Float;
-        std::cout << "Adding ";
-        print(x, y);
         result.m_value = (x+y);
     }else if(this->m_type==Type::Integer){
         if(other.m_type==Type::Float){
@@ -453,16 +448,12 @@ Object Object::operator+(Object other) const {
             this->to_float().unwrap(x);
             other.to_float().unwrap(y);
             result.m_type = Type::Float;
-            std::cout << "Adding ";
-            print(x, y);
             result.m_value = (x + y);
         }else{
             long x, y;
             this->to_integer().unwrap(x);
             other.to_integer().unwrap(y);
             result.m_type = Type::Integer;
-            std::cout << "Adding ";
-            print(x, y);
             result.m_value = (x+y);
         }
     }else{
@@ -738,7 +729,7 @@ std::string Object::str(){
         }//
         break;
     case Type::Unit:
-        result = "()";
+        result = "@";
         break;
     default:
         throw Error();
@@ -818,7 +809,7 @@ std::string Object::repr() {
         }//
         break;
     case Type::Unit:
-        result = "()";
+        result = "@";
         break;
     default:
         throw Error();
