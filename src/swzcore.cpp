@@ -925,12 +925,19 @@ bool Env::contains(const std::string& name) const {
 
 const Object& Env::get(std::string name) const {
     auto entry = this->m_bindings.find(name);
-    if(entry == this->m_bindings.end()){
-        throw std::runtime_error(
-            "'" + name + "' has no binding in the current environment"
-        );
+    if(entry != this->m_bindings.end()){
+        return entry->second;
+    }else if(this->m_parent != nullptr){
+        entry = this->m_parent->m_bindings.find(name);
+        if(entry != this->m_parent->m_bindings.end()){
+            return entry->second;
+        }else{
+            return this->m_parent->get(name);
+        }
     }
-    return entry->second;
+    throw std::runtime_error(
+        "'" + name + "' has no binding in the current environment"
+    );
 }
 
 // -*-
