@@ -1089,7 +1089,10 @@ void Runtime::repl(Env& env){
     - :bye
     - :lookfor 
     */
-    Env localEnv(env);
+
+    Env localEnv;
+    auto self = std::make_shared<Env>(env);
+    localEnv.set_parent(self);
     while(true){
         std::cout << ">>> ";
         std::getline(std::cin, input);
